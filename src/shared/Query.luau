@@ -1,3 +1,4 @@
+-- test
 local Query = {}
 
 function Query.AskAI(message)
