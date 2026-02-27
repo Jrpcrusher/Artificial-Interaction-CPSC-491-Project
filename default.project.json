@@ -24,6 +24,17 @@
           "$path": "src/client"
         }
       }
+    },
+
+    "StarterGui": {
+      "$className": "StarterGui",
+      "AIChatGui": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/ui/AIChatGui/Scripts",
+          "$className": "Folder"
+        } 
+      }
     }
   }
 }
