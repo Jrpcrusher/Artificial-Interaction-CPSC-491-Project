@@ -14,3 +14,8 @@ local messageHistory = chatFrame:WaitForChild("MessageHistory")
 local playerMessageTemplate = chatFrame:WaitForChild("PlayerMessageTemplate")
 local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
 
+-- Services & Remotes
+local UserInputService = game:GetService("UserInputService")
+--[[ Below code will be uncommented once remote events are created in my local project. This will also need to be done in the main project. ]]
+-- local ChatbotRequest = game.ReplicatedStorage:WaitForChild("ChatbotRequest")
+-- local ChatbotResponse = game.ReplicatedStorage:WaitForChild("ChatbotResponse")
