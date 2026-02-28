@@ -23,7 +23,7 @@ local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
 
 
 --[[Message Display]]
-local function addMessage(text, isPlayer)
+local function addMessage(text, isPlayer)   
     -- Chooses the correct row template to use based on message being sent/received.
     local row = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
     row.Visible = true
@@ -37,7 +37,7 @@ local function addMessage(text, isPlayer)
 
     -- Automatically moves to the most recent message in message history.
     task.wait()
-    messageHistory.CanvasPosition = Vector2.new(0, messageHistory.CanvasSize.Y.Offset)
+    messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.Y)
 end
 
 
