@@ -31,7 +31,7 @@
       "AIChatGui": {
         "$className": "ScreenGui",
         "Scripts": {
-          "$path": "src/client/ui/AIChatGui/Scripts",
+          "$path": "src/client/StarterGui/AIChatGui/Scripts",
           "$className": "Folder"
         } 
       }
