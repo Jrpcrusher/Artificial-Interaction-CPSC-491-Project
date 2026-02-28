@@ -16,7 +16,6 @@ local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
 
 
 --[[Services & Remotes]]
-local EncodingService = game:GetService("EncodingService")
 local UserInputService = game:GetService("UserInputService")
 --[Below code will be uncommented once remote events are created in my local project. This will also need to be done in the main project.]
 -- local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
