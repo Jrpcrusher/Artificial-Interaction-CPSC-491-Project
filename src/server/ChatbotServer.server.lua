@@ -1,3 +1,5 @@
+print("ChatbotServer loaded.")
+
 -- Reference to module script connecting AI chat bot to the game.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Query = require(ReplicatedStorage.Shared.Query)
