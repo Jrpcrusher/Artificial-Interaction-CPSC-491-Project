@@ -33,3 +33,21 @@ local function addMessage(text, isPlayer)
     task.wait()
     messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.y)
 end
+
+--[[Opening & Closing Chat Window]]
+-- Opening with the GUI button.
+local function openChat()
+    chatFrame.Visible = true
+    openButton.Visible = false
+    task.wait(0.05)
+    input:CaptureFocus()
+end
+
+-- Closing with the X button on the window.
+local function closeChat()
+    chatFrame.Visible = false
+    openButton.Visible = true
+end
+
+openButton.MouseButton1Click:Connect(openChat)
+closeButton.MouseButton1Click:Connect(closeChat)
