@@ -32,7 +32,7 @@ local function addMessage(text, isPlayer)
     message.Text = text
     message.Parent = messageHistory
 
-    -- Automatically moves to the bottom of the message history.
+    -- Automatically moves to the most recent message in message history.
     task.wait()
     messageHistory.CanvasPosition = Vector2.new(0, messageHistory.CanvasSize.Y.Offset)
 end
