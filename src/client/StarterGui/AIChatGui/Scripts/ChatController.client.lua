@@ -25,12 +25,16 @@ local UserInputService = game:GetService("UserInputService")
 
 --[[Message Display]]
 local function addMessage(text, isPlayer)
-    -- Chooses the template to use based on message being sent/received.
-    local message = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
+    -- Chooses the correct row template to use based on message being sent/received.
+    local row = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
+    row.Visible = true
 
-    message.Visible = true
-    message.Text = text
-    message.Parent = messageHistory
+    -- Bubble is the Textlabel (text message) inside the row.
+    local bubble = row:WaitForChild("Bubble")
+    bubble.Text = text
+
+    -- Add message (row) to scrolling frame.
+    row.Parent = messageHistory
 
     -- Automatically moves to the most recent message in message history.
     task.wait()
