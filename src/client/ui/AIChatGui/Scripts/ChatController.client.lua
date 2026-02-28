@@ -67,3 +67,18 @@ UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
         end
     end
 end)
+
+
+--[[Sending Player Message]]
+local function sendMessage()
+    local text = input.Text
+    if text == "" then return end
+
+    addMessage(text, true)  -- Adds the player's message to the message history.
+    input.Text = ""         -- Clears out input.
+
+    -- Send to server
+    -- ChatbotRequest:FireServer(text)
+end
+
+send.MouseButton1Click:Connect(sendMessage)
