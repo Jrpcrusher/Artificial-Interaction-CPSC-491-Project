@@ -86,3 +86,9 @@ local function sendMessage()
 end
 
 send.MouseButton1Click:Connect(sendMessage)
+
+input.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        sendMessage()
+    end
+end)
