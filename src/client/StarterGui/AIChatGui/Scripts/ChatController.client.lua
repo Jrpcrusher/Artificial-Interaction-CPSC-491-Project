@@ -57,8 +57,8 @@ local function closeChat()
     openButton.Visible = true
 end
 
-openButton.MouseButton1Click:Connect(openChat)
-closeButton.MouseButton1Click:Connect(closeChat)
+openButton.MouseButton1Click:Connect(openChat)    -- Mouse button input for the AI Chat button (right side labeled 'Charlie.AI').
+closeButton.MouseButton1Click:Connect(closeChat)  -- Mouse button input for the 'X' button for the AI Chat window.
 
 -- Toggle chat with Q key. (Can be remapped to a different button later.)
 UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
@@ -85,8 +85,9 @@ local function sendMessage()
     -- ChatbotRequest:FireServer(text)
 end
 
-send.MouseButton1Click:Connect(sendMessage)
+send.MouseButton1Click:Connect(sendMessage)     -- Mouse input for send button.
 
+-- Allows player to use the 'Enter' key to send the message.
 input.FocusLost:Connect(function(enterPressed)
     if enterPressed then
         sendMessage()
