@@ -14,12 +14,15 @@ local messageHistory = chatFrame:WaitForChild("MessageHistory")
 local playerMessageTemplate = chatFrame:WaitForChild("PlayerMessageTemplate")
 local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
 
+
 --[[Services & Remotes]]
+local EncodingService = game:GetService("EncodingService")
 local UserInputService = game:GetService("UserInputService")
 --[Below code will be uncommented once remote events are created in my local project. This will also need to be done in the main project.]
 -- local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
 -- local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
 -- local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
+
 
 --[[Message Display]]
 local function addMessage(text, isPlayer)
@@ -34,6 +37,7 @@ local function addMessage(text, isPlayer)
     task.wait()
     messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.y)
 end
+
 
 --[[Opening & Closing Chat Window]]
 -- Opening with the GUI button.
@@ -52,3 +56,15 @@ end
 
 openButton.MouseButton1Click:Connect(openChat)
 closeButton.MouseButton1Click:Connect(closeChat)
+
+-- Toggle chat with Q key. (Can be remapped to a different button later.)
+UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
+    if gameProcessed then return end
+    if inputObj.KeyCode == Enum.KeyCode.Q then
+        if chatFrame.Visible then
+            closeChat()
+        else
+            openChat()
+        end
+    end
+end)
