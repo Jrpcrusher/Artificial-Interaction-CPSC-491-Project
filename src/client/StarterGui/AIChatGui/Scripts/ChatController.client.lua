@@ -93,3 +93,9 @@ input.FocusLost:Connect(function(enterPressed)
         sendMessage()
     end
 end)
+
+
+--[[Receiving AI Response]]
+-- ChatbotResponse.OnClientEvent:Connect(function(response)
+--     addMessage(response, false)
+-- end)
