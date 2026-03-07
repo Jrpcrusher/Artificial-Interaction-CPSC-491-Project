@@ -20,20 +20,29 @@ function Transcript.Add(user_id, compiled_message) -- Method to add message afte
 	return message_store, "Message added successfully."
 end
 
-function Transcript.Reset(time) -- Method to reset messages to when the users last save point is
-	return 0
+function Transcript.Reset(delete_after, user_id) -- Method to reset messages to when the users last save point is
+	local ordered_messages = message_store[user_id]
+	for i = #ordered_messages, 1, -1 do -- For the time message dictionary
+		if ordered_messages[i].time > delete_after then -- If the time is after the time of last save
+			table.remove(ordered_messages, i) -- remove it
+		end
+	end
+	return ordered_messages, "Messages after last save removed."
 end
 
 function Transcript.Get(user_id) -- Method to get all messages from database
-	return 0
+	message_database:GetAsync(user_id)
+	return message_store, "Messages retrieved from database."
 end
 
 function Transcript.Save(user_id) -- Handles saving to database
-	return 0
+	message_database:SetAsync(user_id, message_store[user_id])
+	return message_store, "Messages saved to database."
 end
 
-function Transcript.Delete() -- Handles deleting from database
-	return 0
+function Transcript.Delete(user_id) -- Handles deleting from database
+	message_database:RemoveAsync(user_id)
+	return message_store, "Messages deleted from database."
 end
 
 return Transcript
