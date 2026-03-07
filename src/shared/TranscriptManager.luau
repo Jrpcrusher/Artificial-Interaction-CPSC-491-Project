@@ -31,7 +31,7 @@ function Transcript.Reset(delete_after, user_id) -- Method to reset messages to 
 end
 
 function Transcript.Get(user_id) -- Method to get all messages from database
-	-- message_database:GetAsync(user_id)
+	message_database:GetAsync(user_id)
 	return message_store, "Messages retrieved from database."
 end
 
