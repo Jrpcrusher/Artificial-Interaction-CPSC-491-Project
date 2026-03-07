@@ -14,10 +14,15 @@ local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
 
 -- Fired when a player sends a message from the UI.
 ChatbotRequest.OnServerEvent:Connect(function(player, message)
+	local time_value = os.time()
+	local _, debug_statement = TranscriptManager.Add(MessageManager.Create("Jrpcrusher", time_value, message))
+	TranscriptManager.Save()
+	print(TranscriptManager.Get())
+	print(debug_statement)
 	-- Ask the AI model for a reply using message.
 	local reply = Query.AskAI(message)
-	local time_value = os.time()
-	local _, debug_statement = TranscriptManager.Add(MessageManager.Create("AI", time_value, reply))
+	time_value = os.time()
+	_, debug_statement = TranscriptManager.Add(MessageManager.Create("AI", time_value, reply))
 	TranscriptManager.Save()
 	print(TranscriptManager.Get())
 	print(debug_statement)
