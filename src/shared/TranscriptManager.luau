@@ -31,6 +31,10 @@ function Transcript.Save() -- Handles saving to database
 	return message_store, "Messages saved to database."
 end
 
+function Transcript.Get()
+	return message_store
+end
+
 function Transcript.Delete() -- Handles deleting from database
 	message_database:RemoveAsync(__user_id)
 	return message_store, "Messages deleted from database."
