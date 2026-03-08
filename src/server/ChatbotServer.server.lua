@@ -2,10 +2,9 @@ print("ChatbotServer loaded.")
 
 -- Reference to module script connecting AI chat bot to the game.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 local Query = require(ReplicatedStorage.Shared.Query)
 local MessageManager = require(ReplicatedStorage.Shared.MessageManager)
-local TranscriptManager = require(ServerScriptService.Server.TranscriptManager)
+local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 
 -- References to remote events in ReplicatedStorage.
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -15,17 +14,11 @@ local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
 -- Fired when a player sends a message from the UI.
 ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	local time_value = os.time()
-	local _, debug_statement = TranscriptManager.Add(MessageManager.Create("Jrpcrusher", time_value, message))
-	TranscriptManager.Save()
-	print(TranscriptManager.Get())
-	print(debug_statement)
+	TranscriptManager.Add(MessageManager.Create(player.UserId, time_value, message))
 	-- Ask the AI model for a reply using message.
 	local reply = Query.AskAI(message)
 	time_value = os.time()
-	_, debug_statement = TranscriptManager.Add(MessageManager.Create("AI", time_value, reply))
-	TranscriptManager.Save()
-	print(TranscriptManager.Get())
-	print(debug_statement)
+	TranscriptManager.Add(MessageManager.Create(0, time_value, reply))
 
 	-- Fallback if the AI fails
 	if reply == -1 then
