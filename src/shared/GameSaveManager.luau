@@ -44,7 +44,7 @@ end
 
 -- Loads the player's game state and returns the scene number they were at.
 function GameSaveManager.Load(user_id)
-    local key = "Player" .. user_id     -- Uses the same key used for saving to retrieve the correct record.
+    local key = "Player_" .. user_id     -- Uses the same key used for saving to retrieve the correct record.
 
     local success, result = attempt(function()
         return save_datastore:GetAsync(key)
