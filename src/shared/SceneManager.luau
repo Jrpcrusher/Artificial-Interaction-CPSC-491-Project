@@ -24,7 +24,8 @@ local Scenes = table.freeze({
 	[16] = require(SceneFolder.Scene16),
 })
 
-function Scenes.ChangeScene(user_id, state: number)
+-- Takes in player object to be used by GameSaveManager.
+function Scenes.ChangeScene(player, state: number)
 	-- Given the state, load the appropriate assets
 	-- Each scene will have separate logic
 	local current_scene = Scenes[state]
@@ -49,6 +50,11 @@ function Scenes.ChangeScene(user_id, state: number)
 	end
 
 	-- Saves current game state and messages after successful transition.
+	local new_scene_number = state + 1
+	player:SetAttribute("Scene", new_scene_number) -- Live state of the player's current save.
+	GameSaveManager.Save(player.UserId, new_scene_number) -- Persistent state of the player's current save.
+
+	TranscriptManager.Save() -- TranscriptManager already knows the player's user ID from Main.server.lua.
 
 	return true, { "Scene changed to: ", state + 1 }
 end
