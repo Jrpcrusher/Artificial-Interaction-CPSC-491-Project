@@ -58,3 +58,16 @@ function GameSaveManager.Load(user_id)
     -- If no data exists or loading failed, return nil.
     return nil
 end
+
+-- Deletes the player's saved data entirely.
+function GameSaveManager.Delete(user_id)
+    local key = "Player_" .. user_id
+
+    -- Attempts to remove the key from the DataStore.
+    return attempt(function()  
+        return save_datastore:RemoveAsync(key)
+    end)
+end
+
+return GameSaveManager
+-- Returns the table so other scripts can require() and use it.
