@@ -1,6 +1,6 @@
 -- Initial file to set everything up for the user
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Progression = require(ReplicatedStorage.Shared.Progression) -- Module to keep track of the progression in the story
+local Progression = require(ReplicatedStorage.Shared.ProgressionManager) -- Module to keep track of the progression in the story
 local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 
 -----------------------------------------------------------------------------------
