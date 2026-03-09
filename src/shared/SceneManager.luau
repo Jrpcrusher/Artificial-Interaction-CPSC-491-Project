@@ -1,4 +1,4 @@
-local SceneFolder = script.Parent.scenes
+local SceneFolder = script.Parent.Scenes
 
 local Scenes = table.freeze({
 	[1] = require(SceneFolder.Scene1),
