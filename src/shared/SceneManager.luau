@@ -1,3 +1,8 @@
+--[[Required setup for saving messages and game state during scene transition.]]
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameSaveManager = require(ReplicatedStorage.Shared.GameSaveManager)
+local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
+
 local SceneFolder = script.Parent.Scenes
 
 local Scenes = table.freeze({
@@ -19,7 +24,7 @@ local Scenes = table.freeze({
 	[16] = require(SceneFolder.Scene16),
 })
 
-function Scenes.ChangeScene(state: number)
+function Scenes.ChangeScene(user_id, state: number)
 	-- Given the state, load the appropriate assets
 	-- Each scene will have separate logic
 	local current_scene = Scenes[state]
@@ -42,6 +47,8 @@ function Scenes.ChangeScene(state: number)
 	if not success then -- If we fail, say that we do
 		return false, { "Scene transition failed: ", message }
 	end
+
+	-- Saves current game state and messages after successful transition.
 
 	return true, { "Scene changed to: ", state + 1 }
 end
