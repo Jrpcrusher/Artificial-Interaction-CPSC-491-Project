@@ -34,7 +34,11 @@
           "$path": "src/client/StarterGui/AIChatGui/Scripts",
           "$className": "Folder"
         } 
+      },
+       "DialogueGui": {
+          "$className": "ScreenGui",
+              "$path": "src/client/StarterGui/DialogueGui"
       }
-    }
+   }
   }
 }
