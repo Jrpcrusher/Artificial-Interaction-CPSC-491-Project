@@ -34,7 +34,7 @@ if newGame then
 	-- Todo: add method to reset the chat messages between the user and AI
 	-- Todo: Make method to update datastoreservice to remove the information of the previous save
 else
-	local game_state = Progression.Get()
+	local _game_state = Progression.Get()
 	--Scenes.Load(game_state)
 end
 -----------------------------------------------------------------------------------
