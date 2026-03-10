@@ -2,6 +2,11 @@
 -- The game is divided into parts, after each part completion, increment the counter by 1
 -- Then, when the users game saves automatically, the counter is increased by 1
 
+-- Required for set function.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameSaveManager = require(ReplicatedStorage.Shared.GameSaveManager)
+
+
 local Progression = {}
 local current_state = 1
 
@@ -22,6 +27,20 @@ end
 function Progression.Reset() -- Reset the state on start of new game, useful for starting new save
 	print("State reset to 1")
 	current_state = 1
+	return current_state
+end
+
+function Progression.Set(user_id) -- Sets the current state from retrieving state value from GameSaveManager.
+	if not user_id then
+		warn("Progression.Set() called before player joined.")
+		return current_state
+	end
+
+	local loaded = GameSaveManager.Load(user_id)
+	if loaded then
+		current_state = loaded
+	end
+
 	return current_state
 end
 
