@@ -1,6 +1,6 @@
 -- Initial file to set everything up for the user
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Progression = require(ReplicatedStorage.Shared.Progression) -- Module to keep track of the progression in the story
+local Progression = require(ReplicatedStorage.Shared.ProgressionManager) -- Module to keep track of the progression in the story
 local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 
 -----------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ if newGame then
 	-- Todo: add method to reset the chat messages between the user and AI
 	-- Todo: Make method to update datastoreservice to remove the information of the previous save
 else
-	local game_state = Progression.Get()
+	local _game_state = Progression.Get()
 	--Scenes.Load(game_state)
 end
 -----------------------------------------------------------------------------------
