@@ -36,10 +36,10 @@
         } 
       },
 
-      "Tasks": {
+      "MainMenuGui": {
         "$className": "ScreenGui",
         "Scripts": {
-          "$path": "src/client/StarterGui/Tasks/Scripts",
+          "$path": "src/client/StarterGui/MainMenuGui/Scripts",
           "$className": "Folder"
         } 
       }
