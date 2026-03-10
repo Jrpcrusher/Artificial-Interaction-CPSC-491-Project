@@ -4,7 +4,8 @@ local StarterGui = game:GetService("StarterGui")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local menuGui = script.Parent
+local scriptsFolder = script.Parent
+local menuGui = scriptsFolder.Parent
 
 local background = menuGui:WaitForChild("BackgroundFrame", 5)
 if not background then 
