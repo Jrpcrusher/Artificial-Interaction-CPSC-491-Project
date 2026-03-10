@@ -1,5 +1,5 @@
 [package]
-name = "katsu/artificial-interaction-cpsc-491-project"
+name = "jrpcr/artificialinteraction"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
