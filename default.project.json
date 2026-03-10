@@ -42,6 +42,14 @@
           "$path": "src/client/StarterGui/MainMenuGui/Scripts",
           "$className": "Folder"
         } 
+      },
+      
+      "Tasks": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/Tasks/Scripts",
+          "$className": "Folder"
+        } 
       }
     }
   }

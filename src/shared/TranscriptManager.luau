@@ -7,27 +7,22 @@ local message_store = {}
 
 function Transcript.Create(user_id) -- Method to save all messages
 	__user_id = user_id
-	if message_store[user_id] then -- if already made, skip making again
-		error("message storage already made")
-		return false, "New transcript fail, one already exists."
-	end
-
-	__user_id = user_id
-	message_store[__user_id] = {} -- initialize the message store to be a dictionary, equal to a list
+	message_store = {} -- initialize the message store to be a dictionary, equal to a list
 	return true, "New transcript created."
 end
 
 function Transcript.Add(compiled_message) -- Method to add message after transcript made
-	table.insert(message_store[__user_id], compiled_message)
+	table.insert(message_store, compiled_message)
 	return message_store, "Message added successfully."
 end
 
 function Transcript.Load() -- Method to get all messages from database
-	return message_database:GetAsync(__user_id), "Messages retrieved from database."
+	message_store = message_database:GetAsync(__user_id)
+	return message_store, "Messages retrieved from database."
 end
 
 function Transcript.Save() -- Handles saving to database
-	message_database:SetAsync(__user_id, message_store[__user_id])
+	message_database:SetAsync(__user_id, message_store)
 	return message_store, "Messages saved to database."
 end
 
