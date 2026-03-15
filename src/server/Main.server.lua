@@ -2,6 +2,33 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Progression = require(ReplicatedStorage.Shared.ProgressionManager) -- Module to keep track of the progression in the story
 local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
+local InteractionHandler = require(ReplicatedStorage.Shared.InteractionHandler) -- keeps track of interaction
+
+-----------------------------------------------------------------------------------
+-- Interaction setup
+-----------------------------------------------------------------------------------
+local function connectPrompt(prompt)
+	prompt.Triggered:Connect(function(player) -- when player presses E
+		local interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent -- finds 1st proxprompt in model
+
+		if interactable then
+			InteractionHandler.HandleInteraction(player, interactable) -- call interactionhandler script
+		end
+	end)
+end
+
+-- This loop only runs once when the server starts.
+-- So if a prompt is created later during gameplay, it will not connect.
+local function setupInteractionPrompts() -- connects every proximityprompt to system (can review later)
+	for _, obj in ipairs(workspace:GetDescendants()) do -- Looks through entire world and finds every ProximityPrompt
+		if obj:IsA("ProximityPrompt") then
+			connectPrompt(obj) -- attaches the behavior to the prompt
+		end
+	end
+end
+-----------------------------------------------------------------------------------
+-- Interaction setup: End
+-----------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------
 -- Section 1: This section gets the information about the user, including player name and userID
@@ -40,6 +67,10 @@ end
 -----------------------------------------------------------------------------------
 -- Section 3: End
 -----------------------------------------------------------------------------------
+
+setupInteractionPrompts()
+
+
 
 -----------------------------------------------------------------------------------
 -- Section 4: On user disconnect

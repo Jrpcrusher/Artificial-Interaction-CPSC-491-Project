@@ -7,7 +7,7 @@ TaskConfig.Tasks = {
 		Objective = "Look around the room for the missing journal.",
 		Steps = "Search the desk near the window.",
 		Type = "Required",
-		Completed = false,
+		Completed = true,
 	},
 	{
 		Id = "task_002",
