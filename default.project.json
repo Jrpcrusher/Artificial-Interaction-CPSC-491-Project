@@ -35,10 +35,30 @@
           "$className": "Folder"
         } 
       },
-       "DialogueGui": {
-          "$className": "ScreenGui",
-              "$path": "src/client/StarterGui/DialogueGui"
+
+      "MainMenuGui": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/MainMenuGui/Scripts",
+          "$className": "Folder"
+        } 
+      },
+      
+      "Tasks": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/Tasks/Scripts",
+          "$className": "Folder"
+        } 
+      },
+
+      "DialogueGui": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/DialogueGui/Scripts",
+          "$className": "Folder"
+        }
       }
-   }
+    }
   }
 }
