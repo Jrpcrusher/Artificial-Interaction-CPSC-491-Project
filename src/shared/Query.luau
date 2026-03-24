@@ -19,7 +19,7 @@ function Query.AskAI(message)
 			["content-type"] = "application/json",
 		},
 		Body = HttpService:JSONEncode({
-			model = "vicgalle/Roleplay-Llama-3-8B:featherless-ai",
+			model = "Qwen/Qwen2-7B-Instruct:featherless-ai",
 			messages = {
 				{
 					role = "user",
