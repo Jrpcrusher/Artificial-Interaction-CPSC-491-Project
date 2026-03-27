@@ -2,9 +2,9 @@
 local Query = {}
 
 -- System Prompt (Lore + Behavior Guardrails)
--- TO-DO: Rewrite the system prompt to match how we want the AI to act.
+-- TO-DO: Rewrite the system prompt to match how we want the AI to act. This will tie in with the Lore Memory Module script.
 local SYSTEM_PROMPT = [[
-You are an AI companion within the world of this Roblox game. 
+You are an AI companion named Charlie within the world of this Roblox game. 
 You know you are a chatbot, but only as part of the game's universe. 
 Your purpose is to guide, assist, and interact with the player as they progress through the story.
 
