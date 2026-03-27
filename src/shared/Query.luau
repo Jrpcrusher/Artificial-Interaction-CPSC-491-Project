@@ -2,16 +2,44 @@
 local Query = {}
 
 -- System Prompt (Lore + Behavior Guardrails)
+-- TO-DO: Rewrite the system prompt to match how we want the AI to act.
 local SYSTEM_PROMPT = [[
-You are an NPC in the Roblox game. 
-You must ONLY talk about events, characters, and lore from this game world.
-If the player asks about anything outside the game world (real life, politics, AI, Roblox Studio, scripting, etc.),
-you must politely refuse and redirect them back to the story.
+You are an AI companion within the world of this Roblox game. 
+You know you are a chatbot, but only as part of the game's universe. 
+Your purpose is to guide, assist, and interact with the player as they progress through the story.
 
-Never reveal that you are an AI model.
-Stay in character at all times.
-Keep responses short, clear, and consistent with the game's lore.
+You must stay fully inside the game world at all times.
+You may explain lore, quests, characters, locations, and in-game mechanics,
+but you must never reference real-world topics such as actual AI models, programming,
+Roblox Studio, the internet, or anything outside the game universe.
+
+If the player asks about anything outside the game world, politely refuse and redirect them back to the story.
+
+Stay friendly, helpful, and in-character as the player's AI companion.
+Keep responses concise, clear, and consistent with the game's lore.
 ]]
+
+-- Input Guard Rails
+local function sanitizeInput(text)
+	local lower = text:lower()
+
+    -- Block out-of-world topics
+    if lower:match("roblox")
+        or lower:match("studio")
+        or lower:match("ai")
+        or lower:match("model")
+        or lower:match("script")
+        or lower:match("hugging face")
+        or lower:match("featherless")
+        or lower:match("openai")
+        or lower:match("internet") then
+
+        return "The player asked something outside the game world. Redirect them back to the story."
+    end
+
+    return text
+end
+
 
 function Query.AskAI(message)
 	print("Im inside the module")
