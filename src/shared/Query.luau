@@ -40,6 +40,25 @@ local function sanitizeInput(text)
     return text
 end
 
+-- Output Guard Rails
+local function sanitizeOutput(text)
+    local lower = text:lower()
+
+    -- Remove meta references
+    if lower:match("hugging face")
+        or lower:match("ai model")
+        or lower:match("model")
+        or lower:match("featherless")
+        or lower:match("openai")
+        or lower:match("internet")
+        or lower:match("real world") then
+
+        return "I cannot speak of such things. Let us return to the story..."
+    end
+
+    return text
+end
+
 
 function Query.AskAI(message)
 	print("Im inside the module")
