@@ -90,7 +90,7 @@ function Query.AskAI(message)
 				},
 				{
 					role = "user",
-					content = message,
+					content = cleanedInput,
 				},
 			},
 		}),
