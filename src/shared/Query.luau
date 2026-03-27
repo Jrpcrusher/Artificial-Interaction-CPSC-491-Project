@@ -19,7 +19,7 @@ Stay friendly, helpful, and in-character as the player's AI companion.
 Keep responses concise, clear, and consistent with the game's lore.
 ]]
 
--- Input Guard Rails
+-- Input Guardrails
 local function sanitizeInput(text)
 	local lower = text:lower()
 
@@ -40,7 +40,7 @@ local function sanitizeInput(text)
     return text
 end
 
--- Output Guard Rails
+-- Output Guardrails
 local function sanitizeOutput(text)
     local lower = text:lower()
 
@@ -67,6 +67,10 @@ function Query.AskAI(message)
 	-- Get information to reach out to Inference API
 	local HF_TOKEN = HttpService:GetSecret("HF_TOKEN"):AddPrefix("Bearer ")
 
+	-- Apply input guardrails.
+	local cleanedInput = sanitizeInput(message)
+	print("Sanitizing input.")
+
 	-- Get response from the AI model
 	print("Requesting Response from AI")
 
@@ -81,6 +85,10 @@ function Query.AskAI(message)
 			model = "Qwen/Qwen2-7B-Instruct:featherless-ai",
 			messages = {
 				{
+					role = "system",
+					content = SYSTEM_PROMPT
+				},
+				{
 					role = "user",
 					content = message,
 				},
@@ -93,7 +101,10 @@ function Query.AskAI(message)
 	if response.Success then
 		local data = HttpService:JSONDecode(response.Body)
 		local reply = data.choices[1].message.content
-		return reply
+
+		-- Apply output guardrails.
+		local cleanedReply = sanitizeOutput(reply)
+		return cleanedReply
 	else
 		print("Error, AI model could not respond.")
 		print("Error code:", response.StatusCode)
