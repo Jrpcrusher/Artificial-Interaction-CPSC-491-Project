@@ -23,13 +23,13 @@ local function BuildLoreSection(playerMessage)
 	return combined
 end
 
--- System Prompt (Lore + Behavior Guardrails)
+-- Base System Prompt (Basic Lore + Behavior Guardrails)
 --[[ 
-TO-DO: Rewrite the system prompt to match how we want the AI to act how you see fit. If the current prompt is fine, no rewriting needed.
+TO-DO: Rewrite the base system prompt to match how we want the AI to act how you see fit. If the current prompt is fine, no rewriting needed.
 
 This prompt is before any lore-related guardrails from LoreMemoryManager is appended to this prompt.
 ]]
-local SYSTEM_PROMPT = [[
+local BASE_SYSTEM_PROMPT = [[
 You are an AI companion named Charlie within the world of this Roblox game. 
 You know you are a chatbot, but only as part of the game's universe. 
 Your purpose is to guide, assist, and interact with the player as they progress through the story.
@@ -96,6 +96,10 @@ function Query.AskAI(message)
 	-- Apply input guardrails.
 	local cleanedInput = sanitizeInput(message)
 	print("Sanitizing input.")
+
+	-- Inject lore based on progression.
+	local loreSection = BuildLoreSection(cleanedInput)
+	local SYSTEM_PROMPT = BASE_SYSTEM_PROMPT .. loreSection
 
 	-- Get response from the AI model
 	print("Requesting Response from AI")
