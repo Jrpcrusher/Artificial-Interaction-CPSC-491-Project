@@ -34,6 +34,18 @@ LoreMemory.CANONICAL_FACTS = {
     -- TO-DO: Add lore entries.
 }
 
+-- Return all lore facts the player is allowed to know.
+function LoreMemory.GetUnlockedFacts(currentProgress)
+    local results = {}
+
+    for _, fact in ipairs(LoreMemory.CANONICAL_FACTS) do
+        if fact.min_progress and currentProgress >= fact.min_progress then
+            table.insert(results, fact)
+        end
+    end
+
+    return results
+end
 
 
 return LoreMemory
