@@ -29,7 +29,6 @@ LoreMemory.CANONICAL_FACTS = {
     },
 }
 ]]
-
 LoreMemory.CANONICAL_FACTS = {
     -- TO-DO: Add lore entries.
 }
@@ -47,5 +46,22 @@ function LoreMemory.GetUnlockedFacts(currentProgress)
     return results
 end
 
+-- Retrieve lore relevant to a specific player message.
+-- Only returns lore the player has unlocked.
+function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
+    local unlocked = LoreMemory.GetUnlockedFacts(currentProgress)
+    local results = {}
+
+    --[[
+        TO-DO: Add keyword -> lore mappings.
+
+        Example:
+        if playerMessage:lower():match("background") then
+            table.insert(results, unlocked[1])
+        end
+    ]]
+    
+    return results
+end
 
 return LoreMemory
