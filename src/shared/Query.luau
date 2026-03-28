@@ -1,8 +1,16 @@
--- test
 local Query = {}
 
+-- Requiring LoreMemoryManager and ProgressionManager module.
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LoreMemoryManager = require(ReplicatedStorage.Shared.LoreMemoryManager)
+local ProgressionManager = require(ReplicatedStorage.Shared.ProgressionManager)
+
 -- System Prompt (Lore + Behavior Guardrails)
--- TO-DO: Rewrite the system prompt to match how we want the AI to act. This will tie in with the Lore Memory Module script.
+--[[ 
+TO-DO: Rewrite the system prompt to match how we want the AI to act how you see fit. If the current prompt is fine, no rewriting needed.
+
+This prompt is before any lore-related guardrails from LoreMemoryManager is appended to this prompt.
+]]
 local SYSTEM_PROMPT = [[
 You are an AI companion named Charlie within the world of this Roblox game. 
 You know you are a chatbot, but only as part of the game's universe. 
