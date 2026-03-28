@@ -5,6 +5,24 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LoreMemoryManager = require(ReplicatedStorage.Shared.LoreMemoryManager)
 local ProgressionManager = require(ReplicatedStorage.Shared.ProgressionManager)
 
+-- Build dynamic lore injection based on progression.
+local function BuildLoreSection(playerMessage)
+	local currentProgress = ProgressionManager.Get()
+	local relevantFacts = LoreMemoryManager.GetRelevantFacts(playerMessage, currentProgress)
+
+	if #relevantFacts == 0 then
+		return "" -- No lore to inject
+	end
+
+	local combined = "\n\nRelevant Lore:\n"
+
+	for _, fact in ipairs(relevantFacts) do
+		combined ..= "- " .. fact.text .. "\n"
+	end
+
+	return combined
+end
+
 -- System Prompt (Lore + Behavior Guardrails)
 --[[ 
 TO-DO: Rewrite the system prompt to match how we want the AI to act how you see fit. If the current prompt is fine, no rewriting needed.
