@@ -1,5 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TweenService = game:GetService("TweenService")
 
 local TaskConfig = require(ReplicatedStorage.Shared.TaskConfig)
 local TaskUpdated = ReplicatedStorage.Shared:WaitForChild("TaskUpdated")
@@ -18,7 +17,7 @@ local function getTaskById(taskId)
 	return nil
 end
 
-local function completeTaskById(taskId)
+local function completeTaskById(player, taskId)
 	for _, task in ipairs(TaskConfig.Tasks) do
 		if task.Id == taskId then
 			if task.Completed then
@@ -28,7 +27,7 @@ local function completeTaskById(taskId)
 			task.Completed = true
 			print("Completed task:", task.Title)
 
-			TaskUpdated:Fire(taskId) -- this notifies the UI
+			TaskUpdated:FireClient(player, taskId) -- this notifies the UI
 			return
 		end
 	end
@@ -46,41 +45,6 @@ local function areRequiredTasksBeforeDoorComplete()
 	return true
 end
 
-local function openDoor(interactable)
-	if interactable:IsA("BasePart") then
-		interactable.CanCollide = false
-
-		local tween = TweenService:Create(
-			interactable,
-			TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-			{
-				CFrame = interactable.CFrame * CFrame.new(0, 0, -4)
-			}
-		)
-		tween:Play()
-		return
-	end
-
-	local primaryPart = interactable.PrimaryPart or interactable:FindFirstChildWhichIsA("BasePart")
-
-	if primaryPart then
-		for _, descendant in ipairs(interactable:GetDescendants()) do
-			if descendant:IsA("BasePart") then
-				descendant.CanCollide = false
-			end
-		end
-
-		local tween = TweenService:Create(
-			primaryPart,
-			TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-			{
-				CFrame = primaryPart.CFrame * CFrame.new(0, 0, -4)
-			}
-		)
-		tween:Play() -- door anim
-	end
-end
-
 function InteractionHandler.HandleInteraction(player, interactable)
 	local interactionType = interactable:GetAttribute("InteractionType")
 
@@ -89,7 +53,7 @@ function InteractionHandler.HandleInteraction(player, interactable)
 
 		local taskId = interactable:GetAttribute("TaskId")
 		if taskId then
-			completeTaskById(taskId)
+			completeTaskById(player, taskId)
 		end
 
 	elseif interactionType == "Object" then
@@ -97,7 +61,7 @@ function InteractionHandler.HandleInteraction(player, interactable)
 
 		local taskId = interactable:GetAttribute("TaskId")
 		if taskId then
-			completeTaskById(taskId)
+			completeTaskById(player, taskId)
 		end
 
 		if interactable:IsA("BasePart") then
@@ -128,20 +92,33 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			return
 		end
 
-		-- to unlock, all required tasks before the door must be completed
+		-- All required tasks must be completed before door unlocks
 		if not areRequiredTasksBeforeDoorComplete() then
 			print("There is more to do.")
 			return
 		end
 
-		-- If player finishes everything, open the door
 		if not doorTask.Completed then
 			doorTask.Completed = true
+			TaskUpdated:FireClient(player, FINAL_DOOR_TASK_ID)
 			print("Door task completed:", doorTask.Title)
 		end
 
-		print("Door unlocked. Opening door.")
-		openDoor(interactable)
+		print("Door unlocked. Walking through.")
+
+		-- Just remove collision so player can walk through, no animation
+		for _, descendant in ipairs(interactable:GetDescendants()) do
+			if descendant:IsA("BasePart") then
+				descendant.CanCollide = false
+			end
+		end
+
+		-- Disable the prompt so player can't interact again
+		for _, descendant in ipairs(interactable:GetDescendants()) do
+			if descendant:IsA("ProximityPrompt") then
+				descendant.Enabled = false
+			end
+		end
 	end
 end
 
