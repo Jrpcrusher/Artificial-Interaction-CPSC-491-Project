@@ -119,16 +119,19 @@ end)
 -----------------------------------------------------------------------------------
 -- Section 3: Load the scene based on save state
 -----------------------------------------------------------------------------------
-local newGame = true -- Temporary variable, remove this later
+-- Client chose "New Game"
+StartNewGame.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
 
-if newGame then
+	GameSaveManager.Delete(user_id)
 	Progression.Reset()
-	-- Todo: add method to reset the chat messages between the user and AI
-	-- Todo: Make method to update datastoreservice to remove the information of the previous save
-else
-	local _game_state = Progression.Get()
-	--Scenes.Load(game_state)
-end
+	TranscriptManager.Create(user_id)		-- Soft reset method for resetting chat messages between the user and AI.
+
+	-- Commented out until LoadScene function is created in SceneManager.
+	 --local ok, msg = Scenes.LoadScene(player, 1)
+	 -- if not ok then warn("Failed to load new game scene:", msg)
+end)
+
 -----------------------------------------------------------------------------------
 -- Section 3: End
 -----------------------------------------------------------------------------------
