@@ -83,13 +83,6 @@ pcall(function()
     StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false) 
 end)
 
--- MENU LOGIC & STATE CHECKS
-
-if not playerHasSaveData then
-    continueBtn.Active = false
-    continueBtn.TextTransparency = 0.6 
-end
-
 creditsBtn.MouseButton1Click:Connect(function() 
     credFrame.Visible = true 
 end)
@@ -141,11 +134,13 @@ end
 
 local function startNewGame()
     print("Backend Alert: Wiping old save data.")
+    StartNewGame:FireServer()
     transitionToGame()
 end
 
 local function continueGame()
     print("Backend Alert: Loading existing save data.")
+    ContinueGameRemote:FireServer()
     transitionToGame()
 end
 
@@ -174,5 +169,10 @@ continueBtn.MouseButton1Click:Connect(function()
 end)
 
 playBtn.MouseButton1Click:Connect(function() 
-    continueGame() 
+    -- If no save, treat Play as New Game; otherwise Continue
+    if playerHasSaveData then
+        continueGame()
+    else
+        startNewGame()
+    end
 end)
