@@ -21,8 +21,20 @@ end
 -- Additional Remotes for Save System Integration with Main Menu
 -----------------------------------------------------------------------------------
 local function getOrCreateRemote(name: string)
-	local remote = ReplicatedStorage.Remotes:FindFirstChild(name)
+	local remote = ReplicatedStorage.Remotes:FindFirstChild(name) -- Checks if the remote event is in the Remotes folder of Replicated Storage.
+	if not remote then
+		remote = Instance.new("RemoteEvent")
+		remote.Name = name
+		remote.Parent = ReplicatedStorage.Remotes
+	end
+
+	return remote
 end
+
+local SavaDataRequest = getOrCreateRemote("SaveDataRequest")
+local SaveDataResponse = getOrCreateRemote("SaveDataResponse")
+local StartNewGame = getOrCreateRemote("StartNewGame")
+local ContinueGame = getOrCreateRemote("ContinueGame")
 -----------------------------------------------------------------------------------
 -- Remotes Setup End
 -----------------------------------------------------------------------------------
@@ -75,31 +87,6 @@ local function onPlayerAdded(player)
 	local user_id = player.UserId
 	local _, message = TranscriptManager.Create(user_id)
 	print(message)
-
-	-----------------------------------------------------------------------------------
-	-- Section 2: GUI logic for main menu
-	-----------------------------------------------------------------------------------
-
-	-----------------------------------------------------------------------------------
-	-- Section 2: End
-	-----------------------------------------------------------------------------------
-
-	-----------------------------------------------------------------------------------
-	-- Section 3: Load the scene based on save state
-	-----------------------------------------------------------------------------------
-	local newGame = true -- Temporary variable, remove this later
-
-	if newGame then
-		Progression.Reset()
-		-- Todo: add method to reset the chat messages between the user and AI
-		-- Todo: Make method to update datastoreservice to remove the information of the previous save
-	else
-		local _game_state = Progression.Get()
-		--Scenes.Load(game_state)
-	end
-	-----------------------------------------------------------------------------------
-	-- Section 3: End
-	-----------------------------------------------------------------------------------
 end
 
 -- Handle all future players
@@ -112,6 +99,40 @@ end
 -----------------------------------------------------------------------------------
 -- Section 1: End
 -----------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------
+-- Section 2: Check for save data
+-----------------------------------------------------------------------------------
+SavaDataRequest.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
+	local loadedScene = GameSaveManager.Load(user_id)
+
+	local hasSave = loadedScene ~= nil
+	local sceneNumber = loadedScene or 1
+
+	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
+end)
+-----------------------------------------------------------------------------------
+-- Section 2: End
+-----------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------
+-- Section 3: Load the scene based on save state
+-----------------------------------------------------------------------------------
+local newGame = true -- Temporary variable, remove this later
+
+if newGame then
+	Progression.Reset()
+	-- Todo: add method to reset the chat messages between the user and AI
+	-- Todo: Make method to update datastoreservice to remove the information of the previous save
+else
+	local _game_state = Progression.Get()
+	--Scenes.Load(game_state)
+end
+-----------------------------------------------------------------------------------
+-- Section 3: End
+-----------------------------------------------------------------------------------
+
 
 -----------------------------------------------------------------------------------
 -- Section 4: On user disconnect
