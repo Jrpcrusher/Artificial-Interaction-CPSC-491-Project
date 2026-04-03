@@ -6,6 +6,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local TaskConfig = require(Shared:WaitForChild("TaskConfig"))
+local TaskUpdated = Shared:WaitForChild("TaskUpdated")
 
 local tasksGui = playerGui:WaitForChild("Tasks")
 
@@ -174,3 +175,16 @@ populateTaskList()
 
 selectedTask = getDefaultTask()
 updatePinnedTracker(selectedTask)
+
+TaskUpdated.OnClientEvent:Connect(function(taskId)
+	for _, task in ipairs(TaskConfig.Tasks) do
+		if task.Id == taskId then
+			task.Completed = true
+			break
+		end
+	end
+
+	populateTaskList()
+	selectedTask = getDefaultTask()
+	updatePinnedTracker(selectedTask)
+end)
