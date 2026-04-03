@@ -24,6 +24,25 @@ local Scenes = table.freeze({
 	[16] = require(SceneFolder.Scene16),
 })
 
+-- Direct scene loader helper function to be used for Main Menu Logic.
+function Scenes.LoadScene(player, sceneNumber: number)
+	local scene = Scenes[sceneNumber]
+	if not scene then
+		return false, string.format("Invalid scene number: %d", sceneNumber)
+	end
+
+	local success, message = pcall(function()
+		scene.Load()
+	end)
+
+	if not success then
+		return false, string.format("Error loading scene %d: %s", sceneNumber, message)
+	end
+
+	player:SetAttribute("Scene", sceneNumber)
+	return true, string.format("Scene loaded: %d", sceneNumber)
+end
+
 -- Takes in player object to be used by GameSaveManager.
 function Scenes.ChangeScene(player, state: number)
 	-- Given the state, load the appropriate assets
@@ -54,7 +73,7 @@ function Scenes.ChangeScene(player, state: number)
 	player:SetAttribute("Scene", new_scene_number) -- Live state of the player's current save.
 	GameSaveManager.Save(player.UserId, new_scene_number) -- Persistent state of the player's current save.
 
-	TranscriptManager.Save() -- TranscriptManager already knows the player's user ID from Main.server.lua.
+	TranscriptManager.Save(player.UserId)
 
 	return true, { "Scene changed to: ", state + 1 }
 end
