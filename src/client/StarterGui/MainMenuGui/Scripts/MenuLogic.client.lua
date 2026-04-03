@@ -30,14 +30,15 @@ local noBtn = warningFrame:WaitForChild("NoButton", 5)
 local warningText = warningFrame:WaitForChild("WarningText", 5)
 
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
+local taskGui = playerGui:WaitForChild("Tasks", 5)
 
 -- BACKEND HANDSHAKE
 local playerHasSaveData = true 
 local currentSavedScene = "Scene 2" 
 
 -- FREEZE PLAYER ON JOIN
-local function freezePlayer(player)
-	local humanoid = player:WaitForChild("Humanoid")
+local function freezePlayer(joiningPlayer)
+	local humanoid = joiningPlayer:WaitForChild("Humanoid")
 	humanoid.WalkSpeed = 0
 	humanoid.JumpPower = 0
 
@@ -91,6 +92,7 @@ local function transitionToGame()
     
     task.wait(1)
     
+    -- Unfreeze the player after transitioning the game.
 	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 	if humanoid then
 		humanoid.WalkSpeed = 16
@@ -103,6 +105,10 @@ local function transitionToGame()
     
     if aiChatGui then 
         aiChatGui.Enabled = true 
+    end
+
+    if taskGui then
+        taskGui.Enabled = true
     end
     
     menuGui:Destroy()
