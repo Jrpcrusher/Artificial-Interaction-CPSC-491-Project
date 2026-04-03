@@ -132,6 +132,19 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	 -- if not ok then warn("Failed to load new game scene:", msg)
 end)
 
+-- Client chose "Continue"
+ContinueGame.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
+
+	local loadedScene = GameSaveManager.Load(user_id)
+	local sceneNumber = loadedScene or 1
+
+	Progression.Set(user_id)
+
+	-- Commented out until LoadScene function is created in SceneManager.
+	-- local ok, msg = Scenes.LoadScene(player, sceneNumber)
+	-- if not ok then warn ("Failed to load continue scene:", msg) end
+end)
 -----------------------------------------------------------------------------------
 -- Section 3: End
 -----------------------------------------------------------------------------------
