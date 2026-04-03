@@ -124,8 +124,9 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 
 	GameSaveManager.Delete(user_id)
+	TranscriptManager.Delete(user_id)
 	Progression.Reset()
-	TranscriptManager.Create(user_id)		-- Soft reset method for resetting chat messages between the user and AI.
+	TranscriptManager.Create(user_id)
 
 	-- Commented out until LoadScene function is created in SceneManager.
 	 --local ok, msg = Scenes.LoadScene(player, 1)
@@ -140,6 +141,7 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	local sceneNumber = loadedScene or 1
 
 	Progression.Set(user_id)
+	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
 
 	-- Commented out until LoadScene function is created in SceneManager.
 	-- local ok, msg = Scenes.LoadScene(player, sceneNumber)
