@@ -36,13 +36,6 @@ local playerHasSaveData = true
 local currentSavedScene = "Scene 2" 
 
 -- FREEZE PLAYER ON JOIN
--- task.spawn(function()
---     local _ = player.Character or player.CharacterAdded:Wait()
---     local playerScripts = player:WaitForChild("PlayerScripts")
---     local playerModule = playerScripts:WaitForChild("PlayerModule")
---     local controls = require(playerModule :: any):GetControls()
---     controls:Disable()
--- end)
 local function freezePlayer(player)
 	local humanoid = player:WaitForChild("Humanoid")
 	humanoid.WalkSpeed = 0
@@ -107,10 +100,6 @@ local function transitionToGame()
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
 	end
-
-    -- local playerScripts = player:WaitForChild("PlayerScripts")
-    -- local playerModule = playerScripts:WaitForChild("PlayerModule")
-    -- require(playerModule :: any):GetControls():Enable()
     
     if aiChatGui then 
         aiChatGui.Enabled = true 
