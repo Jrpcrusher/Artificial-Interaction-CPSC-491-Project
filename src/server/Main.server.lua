@@ -129,7 +129,9 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	TranscriptManager.Create(user_id)
 
 	local ok, msg = Scenes.LoadScene(player, 1)
-	if not ok then warn("Failed to load new game scene:", msg)
+	if not ok then 
+		warn("Failed to load new game scene:", msg)
+	end
 end)
 
 -- Client chose "Continue"
@@ -143,7 +145,9 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
 
 	local ok, msg = Scenes.LoadScene(player, sceneNumber)
-	if not ok then warn ("Failed to load continue scene:", msg) end
+	if not ok then
+		warn ("Failed to load continue scene:", msg)
+	end
 end)
 -----------------------------------------------------------------------------------
 -- Section 3: End
