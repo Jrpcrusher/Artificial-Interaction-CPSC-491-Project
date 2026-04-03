@@ -128,9 +128,8 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	Progression.Reset()
 	TranscriptManager.Create(user_id)
 
-	-- Commented out until LoadScene function is created in SceneManager.
-	 --local ok, msg = Scenes.LoadScene(player, 1)
-	 -- if not ok then warn("Failed to load new game scene:", msg)
+	local ok, msg = Scenes.LoadScene(player, 1)
+	if not ok then warn("Failed to load new game scene:", msg)
 end)
 
 -- Client chose "Continue"
@@ -143,9 +142,8 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	Progression.Set(user_id)
 	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
 
-	-- Commented out until LoadScene function is created in SceneManager.
-	-- local ok, msg = Scenes.LoadScene(player, sceneNumber)
-	-- if not ok then warn ("Failed to load continue scene:", msg) end
+	local ok, msg = Scenes.LoadScene(player, sceneNumber)
+	if not ok then warn ("Failed to load continue scene:", msg) end
 end)
 -----------------------------------------------------------------------------------
 -- Section 3: End
