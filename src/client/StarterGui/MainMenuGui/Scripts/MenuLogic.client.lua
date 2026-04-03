@@ -1,6 +1,12 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local SaveDataRequest = ReplicatedStorage.Remotes:WaitForChild("SaveDataRequest")
+local SaveDataResponse = ReplicatedStorage.Remotes:WaitForChild("SaveDataResponse")
+local StartNewGame = ReplicatedStorage.Remotes:WaitForChild("StartNewGame")
+local ContinueGameRemote = ReplicatedStorage.Remotes:WaitForChild("ContinueGame")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -33,8 +39,27 @@ local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
 local taskGui = playerGui:WaitForChild("Tasks", 5)
 
 -- BACKEND HANDSHAKE
-local playerHasSaveData = true 
-local currentSavedScene = "Scene 2" 
+local playerHasSaveData = false 
+local currentSavedScene = "Scene 1"
+
+local function updateContinueButton()
+    if playerHasSaveData then
+        continueBtn.Active = true
+        continueBtn.TextTransparency = 0
+    else
+        continueBtn.Active = false
+        continueBtn.TextTransparency = 0.6
+    end
+end
+
+-- Ask server for save data
+SaveDataRequest:FireServer()
+
+SaveDataResponse.OnClientEvent:Connect(function(hasSave, sceneNumber)
+	playerHasSaveData = hasSave
+	currentSavedScene = "Scene " .. tostring(sceneNumber)
+	updateContinueButton()
+end)
 
 -- FREEZE PLAYER ON JOIN
 local function freezePlayer(joiningPlayer)
