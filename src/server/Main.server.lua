@@ -17,10 +17,22 @@ end
 -- TaskUpdated: End
 -----------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------
+-- Additional Remotes for Save System Integration with Main Menu
+-----------------------------------------------------------------------------------
+local function getOrCreateRemote(name: string)
+	local remote = ReplicatedStorage.Remotes:FindFirstChild(name)
+end
+-----------------------------------------------------------------------------------
+-- Remotes Setup End
+-----------------------------------------------------------------------------------
+
 -- Now safe to require modules that depend on TaskUpdated
 local Progression = require(ReplicatedStorage.Shared.ProgressionManager) -- Module to keep track of the progression in the story
 local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.InteractionHandler) -- keeps track of interaction
+local GameSaveManager = require(ReplicatedStorage.Shared.GameSaveManager)
+local Scenes = require(ReplicatedStorage.Shared.SceneManager)
 
 -----------------------------------------------------------------------------------
 -- Interaction setup
