@@ -17,10 +17,34 @@ end
 -- TaskUpdated: End
 -----------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------------
+-- Additional Remotes for Save System Integration with Main Menu
+-----------------------------------------------------------------------------------
+local function getOrCreateRemote(name: string)
+	local remote = ReplicatedStorage.Remotes:FindFirstChild(name) -- Checks if the remote event is in the Remotes folder of Replicated Storage.
+	if not remote then
+		remote = Instance.new("RemoteEvent")
+		remote.Name = name
+		remote.Parent = ReplicatedStorage.Remotes
+	end
+
+	return remote
+end
+
+local SavaDataRequest = getOrCreateRemote("SaveDataRequest")
+local SaveDataResponse = getOrCreateRemote("SaveDataResponse")
+local StartNewGame = getOrCreateRemote("StartNewGame")
+local ContinueGame = getOrCreateRemote("ContinueGame")
+-----------------------------------------------------------------------------------
+-- Remotes Setup End
+-----------------------------------------------------------------------------------
+
 -- Now safe to require modules that depend on TaskUpdated
 local Progression = require(ReplicatedStorage.Shared.ProgressionManager) -- Module to keep track of the progression in the story
 local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.InteractionHandler) -- keeps track of interaction
+local GameSaveManager = require(ReplicatedStorage.Shared.GameSaveManager)
+local Scenes = require(ReplicatedStorage.Shared.SceneManager)
 
 -----------------------------------------------------------------------------------
 -- Interaction setup
@@ -63,31 +87,6 @@ local function onPlayerAdded(player)
 	local user_id = player.UserId
 	local _, message = TranscriptManager.Create(user_id)
 	print(message)
-
-	-----------------------------------------------------------------------------------
-	-- Section 2: GUI logic for main menu
-	-----------------------------------------------------------------------------------
-
-	-----------------------------------------------------------------------------------
-	-- Section 2: End
-	-----------------------------------------------------------------------------------
-
-	-----------------------------------------------------------------------------------
-	-- Section 3: Load the scene based on save state
-	-----------------------------------------------------------------------------------
-	local newGame = true -- Temporary variable, remove this later
-
-	if newGame then
-		Progression.Reset()
-		-- Todo: add method to reset the chat messages between the user and AI
-		-- Todo: Make method to update datastoreservice to remove the information of the previous save
-	else
-		local _game_state = Progression.Get()
-		--Scenes.Load(game_state)
-	end
-	-----------------------------------------------------------------------------------
-	-- Section 3: End
-	-----------------------------------------------------------------------------------
 end
 
 -- Handle all future players
@@ -100,6 +99,62 @@ end
 -----------------------------------------------------------------------------------
 -- Section 1: End
 -----------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------
+-- Section 2: Check for save data
+-----------------------------------------------------------------------------------
+SavaDataRequest.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
+	local loadedScene = GameSaveManager.Load(user_id)
+
+	local hasSave = loadedScene ~= nil	-- Stores scene number or has value of nil if there is no save.
+	local sceneNumber = loadedScene or 1 -- Returns stored scene number or scene 1 if there is no save.
+
+	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
+end)
+-----------------------------------------------------------------------------------
+-- Section 2: End
+-----------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------
+-- Section 3: Load the scene based on save state
+-----------------------------------------------------------------------------------
+-- Client chose "New Game"
+StartNewGame.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
+
+	-- Deletes save and resets transcripts and progression regardless of whether the
+	-- player is playing for the first time or is starting a new game after a playthrough.
+	GameSaveManager.Delete(user_id)
+	TranscriptManager.Delete(user_id)
+	Progression.Reset()
+	TranscriptManager.Create(user_id)
+
+	local ok, msg = Scenes.LoadScene(player, 1)
+	if not ok then 
+		warn("Failed to load new game scene:", msg)
+	end
+end)
+
+-- Client chose "Continue"
+ContinueGame.OnServerEvent:Connect(function(player)
+	local user_id = player.UserId
+
+	local loadedScene = GameSaveManager.Load(user_id)
+	local sceneNumber = loadedScene or 1	-- Scene Number is 1 if the retrieval of the saved scene number fails.
+
+	Progression.Set(user_id)
+	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
+
+	local ok, msg = Scenes.LoadScene(player, sceneNumber)
+	if not ok then
+		warn ("Failed to load continue scene:", msg)
+	end
+end)
+-----------------------------------------------------------------------------------
+-- Section 3: End
+-----------------------------------------------------------------------------------
+
 
 -----------------------------------------------------------------------------------
 -- Section 4: On user disconnect
