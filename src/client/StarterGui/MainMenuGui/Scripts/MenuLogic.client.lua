@@ -42,12 +42,14 @@ local taskGui = playerGui:WaitForChild("Tasks", 5)
 local playerHasSaveData = false 
 local currentSavedScene = "Scene 1"
 
-local function updateContinueButton()
+local function updateContinueButton()   -- Only works when having access to DataStoreService (not possible in Roblox Studio).
     if playerHasSaveData then
         continueBtn.Active = true
+        continueBtn.Visible = true      -- Sets the button to visible.        
         continueBtn.TextTransparency = 0
     else
         continueBtn.Active = false
+        continueBtn.Visible = false     -- Sets the button invisible.
         continueBtn.TextTransparency = 0.6
     end
 end
@@ -166,6 +168,7 @@ continueBtn.MouseButton1Click:Connect(function()
     if playerHasSaveData then
         continueGame()
     else
+        -- In the event that save file detection fails and updateContinueButton fails, this debug message will show in the output instead.
         print("No save file detected. Click play.")
     end
 end)
