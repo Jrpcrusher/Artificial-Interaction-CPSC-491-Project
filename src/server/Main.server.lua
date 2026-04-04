@@ -107,8 +107,8 @@ SavaDataRequest.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 	local loadedScene = GameSaveManager.Load(user_id)
 
-	local hasSave = loadedScene ~= nil
-	local sceneNumber = loadedScene or 1
+	local hasSave = loadedScene ~= nil	-- Stores scene number or has value of nil if there is no save.
+	local sceneNumber = loadedScene or 1 -- Returns stored scene number or scene 1 if there is no save.
 
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
 end)
@@ -123,6 +123,8 @@ end)
 StartNewGame.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 
+	-- Deletes save and resets transcripts and progression regardless of whether the
+	-- player is playing for the first time or is starting a new game after a playthrough.
 	GameSaveManager.Delete(user_id)
 	TranscriptManager.Delete(user_id)
 	Progression.Reset()
@@ -139,7 +141,7 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 
 	local loadedScene = GameSaveManager.Load(user_id)
-	local sceneNumber = loadedScene or 1
+	local sceneNumber = loadedScene or 1	-- Scene Number is 1 if the retrieval of the saved scene number fails.
 
 	Progression.Set(user_id)
 	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
