@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskConfig = require(ReplicatedStorage.Shared.TaskConfig)
 local TaskUpdated = ReplicatedStorage.Shared:WaitForChild("TaskUpdated")
+local SceneDoorController = require(ReplicatedStorage.Shared.SceneDoorController)
 
 local InteractionHandler = {}
 
@@ -118,6 +119,12 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			if descendant:IsA("ProximityPrompt") then
 				descendant.Enabled = false
 			end
+		end
+
+		-- Trigger scene transition via SceneDoorController
+		local transitioned = SceneDoorController.TriggerSceneDoor(player)
+		if not transitioned then
+			warn("Scene door interaction failed to transition scene for player:", player.Name)
 		end
 	end
 end

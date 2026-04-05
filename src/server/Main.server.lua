@@ -144,6 +144,7 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	local sceneNumber = loadedScene or 1	-- Scene Number is 1 if the retrieval of the saved scene number fails.
 
 	Progression.Set(user_id)
+	player:SetAttribute("Scene", sceneNumber)	-- Sets the live state of the player's current save. Required for SceneDoorController.
 	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
 
 	local ok, msg = Scenes.LoadScene(player, sceneNumber)
