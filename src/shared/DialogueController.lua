@@ -1,23 +1,50 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Scene1 = require(ReplicatedStorage.Shared.Scenes.Scene1)
+local Scene2 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene3 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene4 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene5 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene6 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene7 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+local Scene8 = require(ReplicatedStorage.Shared.Scenes.Scene2)
+
 local DialogueController = {}
 
-DialogueController.Handler = nil
+local handler = nil
 
-function DialogueController.SetHandler(handler)
-	DialogueController.Handler = handler
+local DialogueRegistry = {
+	GuardIntro = {
+		tree = Scene1.DialogueTree,
+		startNode = "start",
+	},
+}
+
+function DialogueController.SetHandler(newHandler)
+	handler = newHandler
 end
 
 function DialogueController.Start(dialogueTree, startNode)
-	if not DialogueController.Handler then
+	if not handler then
 		warn("Dialogue handler has not been set yet.")
 		return
 	end
 
-	DialogueController.Handler:Start(dialogueTree, startNode or "start")
+	handler:Start(dialogueTree, startNode or "start")
+end
+
+function DialogueController.StartById(dialogueId, startNode)
+	local entry = DialogueRegistry[dialogueId]
+	if not entry then
+		warn("Unknown dialogue id:", dialogueId)
+		return
+	end
+	DialogueController.Start(entry.tree, startNode or entry.startNode or "start")
 end
 
 function DialogueController.Stop()
-	if DialogueController.Handler then
-		DialogueController.Handler:Stop()
+	if handler then
+		handler:Stop()
 	end
 end
 
