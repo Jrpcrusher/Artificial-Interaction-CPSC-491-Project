@@ -4,6 +4,8 @@ local TaskConfig = require(ReplicatedStorage.Shared.TaskConfig)
 local TaskUpdated = ReplicatedStorage.Shared:WaitForChild("TaskUpdated")
 local SceneDoorController = require(ReplicatedStorage.Shared.SceneDoorController)
 
+local StartDialogue = ReplicatedStorage.Shared.Remotes:WaitForChild("StartDialogue")
+
 local InteractionHandler = {}
 
 local FINAL_DOOR_TASK_ID = "go_to_door"
@@ -57,6 +59,13 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			completeTaskById(player, taskId)
 		end
 
+		local dialogueId = interactable:GetAttribute("DialogueId")
+		if dialogueId then
+			StartDialogue:FireClient(player, dialogueId, "start")
+		else
+			warn("NPC missing DialogueID attribute:", interactable.Name)
+		end
+		
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
