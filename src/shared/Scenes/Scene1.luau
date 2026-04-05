@@ -1,46 +1,46 @@
 local Scene1 = {}
 
-Scene1.DialogueTree = {
-	start = {
-		speaker = "Guard",
-		text = "Pay up, or I'll show you what we do with scum like you.",
+Scene1.DadDialogueTree = {
+	scene1Start = {
+		speaker = "Dad",
+		text = "You finally woke up.",
+		next = "scene1Reply"
+	},
+
+	scene1Reply = {
+		speaker = "You",
+		text = "Where am I?"
+	},
+
+	scene2Start = {
+		speaker = "Dad",
+		text = "We do not have much time.",
 		choices = {
 			{
-				text = "▸ I'll pay the fine.",
-				next = "payFine",
+				text = "▸ What is going on?",
+				next = "scene2Explain"
 			},
 			{
-				text = "▸ I accept my punishment.",
-				next = "acceptPunishment",
-			},
-			{
-				text = "▸ Let me go, or else.",
-				next = "threatenGuard",
-			},
-		},
+				text = "▸ I am ready.",
+				next = "scene2Ready"
+			}
+		}
 	},
-	payFine = {
-		speaker = "Guard",
-		text = "Smart choice. Hand it over and this ends here.",
-		next = "guardTakesMoney",
+
+	scene2Explain = {
+		speaker = "Dad",
+		text = "Then listen carefully."
 	},
-	guardTakesMoney = {
-		speaker = "You",
-		text = "...Fine. Take it.",
-		next = "guardResponse",
+
+	scene2Ready = {
+		speaker = "Dad",
+		text = "Good."
 	},
-	guardResponse = {
-		speaker = "Guard",
-		text = "Good. Now get out of my sight.",
-	},
-	acceptPunishment = {
-		speaker = "Guard",
-		text = "At least you know your place.",
-	},
-	threatenGuard = {
-		speaker = "Guard",
-		text = "Big words for someone standing alone.",
-	},
+
+	afterTaskStart = {
+		speaker = "Dad",
+		text = "You found it?"
+	}
 }
 
 function Scene1.Load()

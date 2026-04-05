@@ -14,9 +14,9 @@ local DialogueController = {}
 local handler = nil
 
 local DialogueRegistry = {
-	GuardIntro = {
-		tree = Scene1.DialogueTree,
-		startNode = "start",
+	Dad = {
+		tree = Scene1.DadDialogueTree,
+		startNode = "scene1Start",
 	},
 }
 

@@ -4,7 +4,7 @@ local TaskConfig = require(ReplicatedStorage.Shared.TaskConfig)
 local TaskUpdated = ReplicatedStorage.Shared:WaitForChild("TaskUpdated")
 local SceneDoorController = require(ReplicatedStorage.Shared.SceneDoorController)
 
-local StartDialogue = ReplicatedStorage.Shared.Remotes:WaitForChild("StartDialogue")
+local StartDialogue = ReplicatedStorage.Remotes:WaitForChild("StartDialogue")
 
 local InteractionHandler = {}
 
@@ -48,6 +48,19 @@ local function areRequiredTasksBeforeDoorComplete()
 	return true
 end
 
+local function resolveDialogueStartNode(player, interactable)
+	local dialogueId = interactable:getAttribute("DialogueId")
+	if dialogueId == "Dad" then
+		local current_scene = 1 -- TODO: THIS IS A PLACEHOLDER, REPLACE LATER!!!!!!!!!!!!!!!!!!!!!
+		if current_scene == 1 then
+			return "scene1Start"
+		elseif current_scene == 2 then
+			return "scene2Start"
+		end
+	end
+	return "start"
+end
+
 function InteractionHandler.HandleInteraction(player, interactable)
 	local interactionType = interactable:GetAttribute("InteractionType")
 
@@ -60,12 +73,14 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		end
 
 		local dialogueId = interactable:GetAttribute("DialogueId")
-		if dialogueId then
-			StartDialogue:FireClient(player, dialogueId, "start")
-		else
-			warn("NPC missing DialogueID attribute:", interactable.Name)
+		if not dialogueId then
+			warn("NPC missing DialogueId attribute:", interactable.Name)
+			return
 		end
-		
+
+		local startNode = resolveDialogueStartNode(player, interactable)
+		print("SERVER firing StartDialogue", player.Name, dialogueId, startNode)
+		StartDialogue:FireClient(player, dialogueId, startNode)
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
@@ -91,7 +106,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 				descendant.Enabled = false
 			end
 		end
-
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
