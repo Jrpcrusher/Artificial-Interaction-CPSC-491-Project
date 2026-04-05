@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskConfig = require(ReplicatedStorage.Shared.TaskConfig)
 local TaskUpdated = ReplicatedStorage.Shared:WaitForChild("TaskUpdated")
+local SceneDoorController = require(ReplicatedStorage.Shared.SceneDoorController)
 
 local InteractionHandler = {}
 
