@@ -8,8 +8,20 @@ local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 
 -- References to remote events in ReplicatedStorage.
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
-local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
+
+local function getOrCreateRemote(name: string)
+	local remote = Remotes:FindFirstChild(name) -- Checks if the remote event is in the Remotes folder of Replicated Storage.
+	if not remote then
+		remote = Instance.new("RemoteEvent")
+		remote.Name = name
+		remote.Parent = Remotes
+	end
+
+	return remote
+end
+
+local ChatbotRequest = getOrCreateRemote("ChatbotRequest")
+local ChatbotResponse = getOrCreateRemote("ChatbotResponse")
 
 -- Fired when a player sends a message from the UI.
 ChatbotRequest.OnServerEvent:Connect(function(player, message)
