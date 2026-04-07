@@ -1,6 +1,13 @@
+--[[Services]]
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
 --[[References to UI Elements]]
 local scriptsFolder = script.Parent
-local gui = scriptsFolder.Parent    -- References AIChatGui (ScreenGui)
+local gui = scriptsFolder.Parent
 
 local chatFrame = gui:WaitForChild("ChatWindow")
 local openButton = gui:WaitForChild("AIOpenButton")
@@ -14,87 +21,88 @@ local messageHistory = chatFrame:WaitForChild("MessageHistory")
 local playerMessageTemplate = chatFrame:WaitForChild("PlayerMessageTemplate")
 local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
 
-
---[[Services & Remotes]]
-local UserInputService = game:GetService("UserInputService")
-local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
-local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
-local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
-
+--[[Remotes]]
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local ChatRemotes = Remotes:WaitForChild("Chat")
+local ChatbotRequest = ChatRemotes:WaitForChild("ChatbotRequest")
+local ChatbotResponse = ChatRemotes:WaitForChild("ChatbotResponse")
 
 --[[Message Display]]
-local function addMessage(text, isPlayer)   
-    -- Chooses the correct row template to use based on message being sent/received.
-    local row = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
-    row.Visible = true
+local function addMessage(text, isPlayer)
+	local row = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
+	row.Visible = true
 
-    -- Bubble is the Textlabel (text message) inside the row.
-    local bubble = row:WaitForChild("Bubble")
-    bubble.Text = text
+	local bubble = row:WaitForChild("Bubble")
+	bubble.Text = tostring(text)
 
-    -- Add message (row) to scrolling frame.
-    row.Parent = messageHistory
+	row.Parent = messageHistory
 
-    -- Automatically moves to the most recent message in message history.
-    task.wait()
-    messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.Y)
+	task.wait()
+	messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.Y)
 end
-
 
 --[[Opening & Closing Chat Window]]
--- Opening with the GUI button.
 local function openChat()
-    chatFrame.Visible = true
-    openButton.Visible = false
-    task.wait(0.05)
-    input:CaptureFocus()
+	chatFrame.Visible = true
+	openButton.Visible = false
+
+	player.CameraMode = Enum.CameraMode.Classic
+	UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	UserInputService.MouseIconEnabled = true
+
+	task.wait(0.05)
+	input:CaptureFocus()
 end
 
--- Closing with the X button on the window.
 local function closeChat()
-    chatFrame.Visible = false
-    openButton.Visible = true
+	chatFrame.Visible = false
+	openButton.Visible = true
+
+	player.CameraMode = Enum.CameraMode.LockFirstPerson
+	UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
+	UserInputService.MouseIconEnabled = false
 end
 
-openButton.MouseButton1Click:Connect(openChat)    -- Mouse button input for the AI Chat button (right side labeled 'Charlie.AI').
-closeButton.MouseButton1Click:Connect(closeChat)  -- Mouse button input for the 'X' button for the AI Chat window.
+openButton.MouseButton1Click:Connect(openChat)
+closeButton.MouseButton1Click:Connect(closeChat)
 
--- Toggle chat with Q key. (Can be remapped to a different button later.)
 UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
-    if gameProcessed then return end
-    if inputObj.KeyCode == Enum.KeyCode.Q then
-        if chatFrame.Visible then
-            closeChat()
-        else
-            openChat()
-        end
-    end
-end)
+	if gameProcessed then
+		return
+	end
 
+	if inputObj.KeyCode == Enum.KeyCode.Q then
+		if chatFrame.Visible then
+			closeChat()
+		else
+			openChat()
+		end
+	end
+end)
 
 --[[Sending Player Message]]
 local function sendMessage()
-    local text = input.Text
-    if text == "" then return end
+	local text = input.Text
 
-    addMessage(text, true)  -- Adds the player's message to the message history.
-    input.Text = ""         -- Clears out input.
+	if not text or text:gsub("%s+", "") == "" then
+		return
+	end
 
-    -- Send to server
-    ChatbotRequest:FireServer(text)
+	addMessage(text, true)
+	input.Text = ""
+
+	ChatbotRequest:FireServer(text)
 end
 
-send.MouseButton1Click:Connect(sendMessage)     -- Mouse input for send button.
+send.MouseButton1Click:Connect(sendMessage)
 
--- Allows player to use the 'Enter' key to send the message.
 input.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        sendMessage()
-    end
+	if enterPressed then
+		sendMessage()
+	end
 end)
-
 
 --[[Receiving AI Response]]
 ChatbotResponse.OnClientEvent:Connect(function(response)
-    addMessage(response, false)
+	addMessage(response, false)
 end)
