@@ -31,22 +31,28 @@ gui.Enabled = false
 chatFrame.Visible = false
 openButton.Visible = false
 
---[[Remotes]]
-local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local ChatRemotes = Remotes:WaitForChild("Chat")
-local ChatbotRequest = ChatRemotes:WaitForChild("ChatbotRequest")
-local ChatbotResponse = ChatRemotes:WaitForChild("ChatbotResponse")
+--[[Services & Remotes]]
+local UserInputService = game:GetService("UserInputService")
+local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
+local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
+local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
+local LoadTranscript = Remotes:WaitForChild("LoadTranscript")
+
 
 --[[Message Display]]
 local function addMessage(text, isPlayer)
+	-- Chooses the correct row template to use based on message being sent/received.
 	local row = (isPlayer and playerMessageTemplate or aiMessageTemplate):Clone()
 	row.Visible = true
 
+	-- Bubble is the Textlabel (text message) inside the row.
 	local bubble = row:WaitForChild("Bubble")
-	bubble.Text = tostring(text)
+	bubble.Text = text
 
+	-- Add message (row) to scrolling frame.
 	row.Parent = messageHistory
 
+	-- Automatically moves to the most recent message in message history.
 	task.wait()
 	messageHistory.CanvasPosition = Vector2.new(0, messageHistory.AbsoluteCanvasSize.Y)
 end
@@ -81,6 +87,9 @@ openButton.MouseButton1Click:Connect(openChat)
 closeButton.MouseButton1Click:Connect(closeChat)
 
 UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
+	if gameProcessed then
+		return
+	end
 	if inputObj.KeyCode == Enum.KeyCode.Q then
 		if chatFrame.Visible then
 			closeChat()
@@ -93,18 +102,18 @@ end)
 --[[Sending Player Message]]
 local function sendMessage()
 	local text = input.Text
-
-	if not text or text:gsub("%s+", "") == "" then
+	if text == "" then
 		return
 	end
 
-	addMessage(text, true)
-	input.Text = ""
+	addMessage(text, true) -- Adds the player's message to the message history.
+	input.Text = "" -- Clears out input.
 
+	-- Send to server
 	ChatbotRequest:FireServer(text)
 end
 
-send.MouseButton1Click:Connect(sendMessage)
+send.MouseButton1Click:Connect(sendMessage) -- Mouse input for send button.
 
 input.FocusLost:Connect(function(enterPressed)
 	if enterPressed then
@@ -115,4 +124,34 @@ end)
 --[[Receiving AI Response]]
 ChatbotResponse.OnClientEvent:Connect(function(response)
 	addMessage(response, false)
+end)
+
+--[[Loading messages from Transcript.]]
+LoadTranscript.OnClientEvent:Connect(function(transcript)
+	if not transcript then
+		return
+	end
+
+	-- Sort messages by timestamp
+	local sorted = {}
+
+	for _, entry in ipairs(transcript) do
+		for timestamp, data in pairs(entry) do
+			table.insert(sorted, {
+				time = timestamp,
+				sender = data[1],
+				content = data[2],
+			})
+		end
+	end
+
+	table.sort(sorted, function(a, b)
+		return a.time < b.time
+	end)
+
+	-- Rebuild UI
+	for _, msg in ipairs(sorted) do
+		local isPlayer = msg.sender ~= 0
+		addMessage(msg.content, isPlayer)
+	end
 end)
