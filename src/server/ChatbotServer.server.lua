@@ -1,42 +1,41 @@
 print("ChatbotServer loaded.")
 
--- Reference to module script connecting AI chat bot to the game.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Query = require(ReplicatedStorage.Shared.Query)
-local MessageManager = require(ReplicatedStorage.Shared.MessageManager)
-local TranscriptManager = require(ReplicatedStorage.Shared.TranscriptManager)
 
--- References to remote events in ReplicatedStorage.
+local Query = require(ReplicatedStorage.Shared.Utils.Chat.Query)
+local MessageManager = require(ReplicatedStorage.Shared.Utils.Chat.MessageManager)
+local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
+
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local ChatRemotes = Remotes:WaitForChild("Chat")
+local ChatbotRequest = ChatRemotes:WaitForChild("ChatbotRequest")
+local ChatbotResponse = ChatRemotes:WaitForChild("ChatbotResponse")
 
-local function getOrCreateRemote(name: string)
-	local remote = Remotes:FindFirstChild(name) -- Checks if the remote event is in the Remotes folder of Replicated Storage.
-	if not remote then
-		remote = Instance.new("RemoteEvent")
-		remote.Name = name
-		remote.Parent = Remotes
+ChatbotRequest.OnServerEvent:Connect(function(player, message)
+	print("Server received chat message from", player.Name, message)
+
+	if typeof(message) ~= "string" then
+		ChatbotResponse:FireClient(player, "Invalid message.")
+		return
 	end
 
-	return remote
-end
+	message = message:gsub("^%s+", ""):gsub("%s+$", "")
+	if message == "" then
+		ChatbotResponse:FireClient(player, "Please type a message first.")
+		return
+	end
 
-local ChatbotRequest = getOrCreateRemote("ChatbotRequest")
-local ChatbotResponse = getOrCreateRemote("ChatbotResponse")
+	local timeValue = os.time()
+	TranscriptManager.Add(MessageManager.Create(player.UserId, timeValue, message))
 
--- Fired when a player sends a message from the UI.
-ChatbotRequest.OnServerEvent:Connect(function(player, message)
-	local time_value = os.time()
-	TranscriptManager.Add(MessageManager.Create(player.UserId, time_value, message))
-	-- Ask the AI model for a reply using message.
 	local reply = Query.AskAI(message)
-	time_value = os.time()
-	TranscriptManager.Add(MessageManager.Create(0, time_value, reply))
 
-	-- Fallback if the AI fails
-	if reply == -1 then
+	if reply == -1 or reply == nil then
 		reply = "Sorry, AI model is currently unreachable."
 	end
 
-	-- Send the AI's message response (or error message) back to the player.
+	timeValue = os.time()
+	TranscriptManager.Add(MessageManager.Create(0, timeValue, reply))
+
 	ChatbotResponse:FireClient(player, reply)
 end)

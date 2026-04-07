@@ -1,6 +1,17 @@
+--[[Services]]
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+
+--[[Required]]
+local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
+local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
+
+local player = Players.LocalPlayer
+
 --[[References to UI Elements]]
 local scriptsFolder = script.Parent
-local gui = scriptsFolder.Parent -- References AIChatGui (ScreenGui)
+local gui = scriptsFolder.Parent
 
 local chatFrame = gui:WaitForChild("ChatWindow")
 local openButton = gui:WaitForChild("AIOpenButton")
@@ -14,12 +25,19 @@ local messageHistory = chatFrame:WaitForChild("MessageHistory")
 local playerMessageTemplate = chatFrame:WaitForChild("PlayerMessageTemplate")
 local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
 
+-- STARTUP STATE:
+-- AI chat is unavailable until some scene/event enables it.
+gui.Enabled = false
+chatFrame.Visible = false
+openButton.Visible = false
+
 --[[Services & Remotes]]
 local UserInputService = game:GetService("UserInputService")
 local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
 local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
 local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
 local LoadTranscript = Remotes:WaitForChild("LoadTranscript")
+
 
 --[[Message Display]]
 local function addMessage(text, isPlayer)
@@ -40,24 +58,34 @@ local function addMessage(text, isPlayer)
 end
 
 --[[Opening & Closing Chat Window]]
--- Opening with the GUI button.
 local function openChat()
+	if not gui.Enabled then
+		return
+	end
+
 	chatFrame.Visible = true
 	openButton.Visible = false
+
+	GuiMouseManager.OpenGui()
+	GuiMovementManager.Lock()
+
 	task.wait(0.05)
 	input:CaptureFocus()
 end
 
--- Closing with the X button on the window.
 local function closeChat()
 	chatFrame.Visible = false
-	openButton.Visible = true
+
+	-- only show the open button if the whole AI gui is enabled
+	openButton.Visible = gui.Enabled
+
+	GuiMouseManager.CloseGui()
+	GuiMovementManager.Unlock()
 end
 
-openButton.MouseButton1Click:Connect(openChat) -- Mouse button input for the AI Chat button (right side labeled 'Charlie.AI').
-closeButton.MouseButton1Click:Connect(closeChat) -- Mouse button input for the 'X' button for the AI Chat window.
+openButton.MouseButton1Click:Connect(openChat)
+closeButton.MouseButton1Click:Connect(closeChat)
 
--- Toggle chat with Q key. (Can be remapped to a different button later.)
 UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
 	if gameProcessed then
 		return
@@ -87,7 +115,6 @@ end
 
 send.MouseButton1Click:Connect(sendMessage) -- Mouse input for send button.
 
--- Allows player to use the 'Enter' key to send the message.
 input.FocusLost:Connect(function(enterPressed)
 	if enterPressed then
 		sendMessage()
