@@ -35,6 +35,7 @@ local SavaDataRequest = getOrCreateRemote("SaveDataRequest")
 local SaveDataResponse = getOrCreateRemote("SaveDataResponse")
 local StartNewGame = getOrCreateRemote("StartNewGame")
 local ContinueGame = getOrCreateRemote("ContinueGame")
+local LoadTranscript = getOrCreateRemote("LoadTranscript") -- Used to load saved messages into the AI Chat GUI
 -----------------------------------------------------------------------------------
 -- Remotes Setup End
 -----------------------------------------------------------------------------------
@@ -107,7 +108,7 @@ SavaDataRequest.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 	local loadedScene = GameSaveManager.Load(user_id)
 
-	local hasSave = loadedScene ~= nil	-- Stores scene number or has value of nil if there is no save.
+	local hasSave = loadedScene ~= nil -- Stores scene number or has value of nil if there is no save.
 	local sceneNumber = loadedScene or 1 -- Returns stored scene number or scene 1 if there is no save.
 
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
@@ -131,7 +132,7 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	TranscriptManager.Create(user_id)
 
 	local ok, msg = Scenes.LoadScene(player, 1)
-	if not ok then 
+	if not ok then
 		warn("Failed to load new game scene:", msg)
 	end
 end)
@@ -141,21 +142,22 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	local user_id = player.UserId
 
 	local loadedScene = GameSaveManager.Load(user_id)
-	local sceneNumber = loadedScene or 1	-- Scene Number is 1 if the retrieval of the saved scene number fails.
+	local sceneNumber = loadedScene or 1 -- Scene Number is 1 if the retrieval of the saved scene number fails.
 
 	Progression.Set(user_id)
-	player:SetAttribute("Scene", sceneNumber)	-- Sets the live state of the player's current save. Required for SceneDoorController.
-	-- TO-DO: Load transcript which will be then be loaded onto AI Chat GUI.
+	player:SetAttribute("Scene", sceneNumber) -- Sets the live state of the player's current save. Required for SceneDoorController.
+
+	local transcript = TranscriptManager.Load(user_id)
+	LoadTranscript:FireClient(player, transcript) -- Notifies AI Chat GUI to load messages with the provided transcript.
 
 	local ok, msg = Scenes.LoadScene(player, sceneNumber)
 	if not ok then
-		warn ("Failed to load continue scene:", msg)
+		warn("Failed to load continue scene:", msg)
 	end
 end)
 -----------------------------------------------------------------------------------
 -- Section 3: End
 -----------------------------------------------------------------------------------
-
 
 -----------------------------------------------------------------------------------
 -- Section 4: On user disconnect
