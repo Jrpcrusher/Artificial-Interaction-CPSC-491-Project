@@ -3,6 +3,10 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
+--[[Required]]
+local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
+local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
+
 local player = Players.LocalPlayer
 
 --[[References to UI Elements]]
@@ -20,6 +24,12 @@ local send = inputBar:WaitForChild("SendButton")
 local messageHistory = chatFrame:WaitForChild("MessageHistory")
 local playerMessageTemplate = chatFrame:WaitForChild("PlayerMessageTemplate")
 local aiMessageTemplate = chatFrame:WaitForChild("AIMessageTemplate")
+
+-- STARTUP STATE:
+-- AI chat is unavailable until some scene/event enables it.
+gui.Enabled = false
+chatFrame.Visible = false
+openButton.Visible = false
 
 --[[Remotes]]
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -43,12 +53,15 @@ end
 
 --[[Opening & Closing Chat Window]]
 local function openChat()
+	if not gui.Enabled then
+		return
+	end
+
 	chatFrame.Visible = true
 	openButton.Visible = false
 
-	player.CameraMode = Enum.CameraMode.Classic
-	UserInputService.MouseBehavior = Enum.MouseBehavior.Default
-	UserInputService.MouseIconEnabled = true
+	GuiMouseManager.OpenGui()
+	GuiMovementManager.Lock()
 
 	task.wait(0.05)
 	input:CaptureFocus()
@@ -56,21 +69,18 @@ end
 
 local function closeChat()
 	chatFrame.Visible = false
-	openButton.Visible = true
 
-	player.CameraMode = Enum.CameraMode.LockFirstPerson
-	UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
-	UserInputService.MouseIconEnabled = false
+	-- only show the open button if the whole AI gui is enabled
+	openButton.Visible = gui.Enabled
+
+	GuiMouseManager.CloseGui()
+	GuiMovementManager.Unlock()
 end
 
 openButton.MouseButton1Click:Connect(openChat)
 closeButton.MouseButton1Click:Connect(closeChat)
 
 UserInputService.InputBegan:Connect(function(inputObj, gameProcessed)
-	if gameProcessed then
-		return
-	end
-
 	if inputObj.KeyCode == Enum.KeyCode.Q then
 		if chatFrame.Visible then
 			closeChat()

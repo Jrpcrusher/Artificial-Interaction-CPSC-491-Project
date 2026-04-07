@@ -3,6 +3,8 @@ local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
+
 local SaveRemotes = ReplicatedStorage.Remotes:WaitForChild("Save")
 local SaveDataRequest = SaveRemotes:WaitForChild("SaveDataRequest")
 local SaveDataResponse = SaveRemotes:WaitForChild("SaveDataResponse")
@@ -20,6 +22,8 @@ if not background then
 	return
 end
 
+GuiMouseManager.OpenGui()
+
 local buttonHolder = background:WaitForChild("ButtonHolder", 5)
 local playBtn = buttonHolder:WaitForChild("PlayButton", 5)
 local newGameBtn = buttonHolder:WaitForChild("NewGameButton", 5)
@@ -36,6 +40,15 @@ local warningText = warningFrame:WaitForChild("WarningText", 5)
 
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
 local taskGui = playerGui:WaitForChild("Tasks", 5)
+
+-- Main menu owns startup visibility
+if aiChatGui then
+	aiChatGui.Enabled = false
+end
+
+if taskGui then
+	taskGui.Enabled = false
+end
 
 local playerHasSaveData = false
 local currentSavedScene = "Scene 1"
@@ -108,30 +121,25 @@ local function transitionToGame()
 	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 	if humanoid then
 		humanoid.WalkSpeed = 16
-		humanoid.JumpPower = 50
+		humanoid.JumpPower = 0
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
-	end
-
-	if aiChatGui then
-		aiChatGui.Enabled = true
 	end
 
 	if taskGui then
 		taskGui.Enabled = true
 	end
 
+	GuiMouseManager.CloseGui()
 	menuGui:Destroy()
 end
 
 local function startNewGame()
-	print("Backend Alert: Wiping old save data.")
 	StartNewGame:FireServer()
 	transitionToGame()
 end
 
 local function continueGame()
-	print("Backend Alert: Loading existing save data.")
 	ContinueGameRemote:FireServer()
 	transitionToGame()
 end

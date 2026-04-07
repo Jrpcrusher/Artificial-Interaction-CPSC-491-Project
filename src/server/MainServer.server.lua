@@ -67,12 +67,28 @@ local function setupInteractionPrompts()
 	end)
 end
 
+local function removeForceField(character)
+	local forceField = character:FindFirstChildOfClass("ForceField")
+	if forceField then
+		forceField:Destroy()
+	end
+end
+
 setupInteractionPrompts()
 
 local function onPlayerAdded(player)
 	local userId = player.UserId
 	local _, message = TranscriptManager.Create(userId)
 	print(message)
+
+	player.CharacterAdded:Connect(function(character)
+		task.wait()
+		removeForceField(character)
+	end)
+
+	if player.Character then
+		removeForceField(player.Character)
+	end
 end
 
 Players.PlayerAdded:Connect(onPlayerAdded)
@@ -121,3 +137,4 @@ ContinueGame.OnServerEvent:Connect(function(player)
 		warn("Failed to load continue scene:", msg)
 	end
 end)
+

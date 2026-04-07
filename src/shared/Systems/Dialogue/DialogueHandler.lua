@@ -1,3 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
+local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
+
 local DialogueHandler = {}
 	DialogueHandler.__index = DialogueHandler
 
@@ -83,6 +87,8 @@ end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
 	self.currentTree = dialogueTree
+	GuiMouseManager.OpenGui()
+	GuiMovementManager.Lock()
 	self:_showNode(startNode or "start")
 end
 
@@ -93,6 +99,8 @@ function DialogueHandler:Stop() -- Stop the GUI
 	self.canAdvanceLinear = false
 	self.dialogueBar.Visible = false
 	self.choicesPanel.Visible = false
+	GuiMouseManager.CloseGui()
+	GuiMovementManager.Unlock()
 end
 
 function DialogueHandler:_choose(index) -- Function to handle when a user picks an option

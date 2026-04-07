@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -8,13 +9,22 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local TaskConfig = require(Shared.Systems.Tasks:WaitForChild("TaskConfig"))
+local GuiMouseManager = require(Shared.Systems.Input.GuiMouseManager)
+local GuiMovementManager = require(Shared.Systems.Input.GuiMovementManager)
+
 local TaskRemotes = Remotes:WaitForChild("Tasks")
 local TaskUpdated = TaskRemotes:WaitForChild("TaskUpdated")
 
 local tasksGui = playerGui:WaitForChild("Tasks")
 
--- Current scene
+local aiChatGui = playerGui:WaitForChild("AIChatGui")
+local dialogueGui = playerGui:WaitForChild("DialogueGui")
+
+local chatFrame = aiChatGui:WaitForChild("ChatWindow")
+local dialogueBar = dialogueGui:WaitForChild("DialogueBar")
+
 local currentScene = 1
+local selectedTask = nil
 
 -- Left pinned tracker
 local tasksOpenButton = tasksGui:WaitForChild("TasksOpenButton")
@@ -28,7 +38,7 @@ local taskBulletPointBullet = taskFrame:WaitForChild("BulletPointBullet")
 local finishedTaskObjectiveLabel = finishedTaskFrame:WaitForChild("TaskObjective")
 local finishedTaskBulletPoint = finishedTaskFrame:WaitForChild("BulletPoint")
 
--- Full menu
+-- Middle popup task menu
 local openTasks = tasksGui:WaitForChild("OpenTasks")
 local frameCanvas = openTasks:WaitForChild("FrameCanvas")
 local mainFrame = frameCanvas:WaitForChild("Main")
@@ -40,24 +50,36 @@ local completedTemplate = listFrame:WaitForChild("CompletedTemplate")
 
 template.Visible = false
 completedTemplate.Visible = false
-
-openTasks.Enabled = false
 tasksOpenButton.Visible = true
-
-local selectedTask = nil
+mainFrame.Visible = false
 
 local function getCurrentTasks()
 	return TaskConfig.GetTasksForScene(currentScene)
 end
 
+local function isTaskMenuOpen()
+	return mainFrame.Visible
+end
+
+local function setTaskMenuOpen(isOpen)
+	mainFrame.Visible = isOpen
+end
+
+local function isAnotherGuiOpen()
+	local chatIsOpen = aiChatGui.Enabled and chatFrame.Visible
+	local dialogueIsOpen = dialogueGui.Enabled and dialogueBar.Visible
+	return chatIsOpen or dialogueIsOpen
+end
+
 local function clearGeneratedEntries()
 	for _, child in ipairs(listFrame:GetChildren()) do
-		if child ~= template
+		if
+			child ~= template
 			and child ~= completedTemplate
 			and not child:IsA("UIListLayout")
 			and not child:IsA("UIPadding")
-			and not child:IsA("UICorner") then
-
+			and not child:IsA("UICorner")
+		then
 			if child:IsA("GuiObject") then
 				child:Destroy()
 			end
@@ -97,7 +119,6 @@ local function updatePinnedTracker(task)
 	if task.Completed then
 		taskFrame.Visible = false
 		finishedTaskFrame.Visible = true
-
 		finishedTaskObjectiveLabel.Text = "Completed"
 		finishedTaskObjectiveLabel.TextColor3 = Color3.fromRGB(85, 255, 127)
 
@@ -107,7 +128,6 @@ local function updatePinnedTracker(task)
 	else
 		taskFrame.Visible = true
 		finishedTaskFrame.Visible = false
-
 		taskObjectiveLabel.Text = task.Objective or "No objective."
 		taskStepsLabel.Text = task.Steps or "No steps."
 
@@ -115,6 +135,16 @@ local function updatePinnedTracker(task)
 			taskBulletPointBullet.Text = "□"
 		end
 	end
+end
+
+local function closeTaskMenu()
+	if not isTaskMenuOpen() then
+		return
+	end
+
+	setTaskMenuOpen(false)
+	GuiMouseManager.CloseGui()
+	GuiMovementManager.Unlock()
 end
 
 local function buildTaskEntry(task)
@@ -138,7 +168,7 @@ local function buildTaskEntry(task)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			selectedTask = task
 			updatePinnedTracker(task)
-			openTasks.Enabled = false
+			closeTaskMenu()
 		end
 	end)
 end
@@ -169,6 +199,20 @@ local function getDefaultTask()
 	return tasks[1]
 end
 
+local function openTaskMenu()
+	if isTaskMenuOpen() then
+		return
+	end
+
+	if isAnotherGuiOpen() then
+		return
+	end
+
+	setTaskMenuOpen(true)
+	GuiMouseManager.OpenGui()
+	GuiMovementManager.Lock()
+end
+
 local function refreshTaskUI()
 	populateTaskList()
 	selectedTask = getDefaultTask()
@@ -180,20 +224,8 @@ local function setScene(sceneNumber)
 	refreshTaskUI()
 end
 
-tasksOpenButton.MouseButton1Click:Connect(function()
-	openTasks.Enabled = true
-end)
-
-exitTaskMenu.MouseButton1Click:Connect(function()
-	openTasks.Enabled = false
-end)
-
-print("Tasks loaded for scene", currentScene)
-for _, task in ipairs(getCurrentTasks()) do
-	print(task.Title, task.Objective)
-end
-
-refreshTaskUI()
+tasksOpenButton.MouseButton1Click:Connect(openTaskMenu)
+exitTaskMenu.MouseButton1Click:Connect(closeTaskMenu)
 
 TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 	if sceneNumber and sceneNumber ~= currentScene then
@@ -209,7 +241,19 @@ TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 	refreshTaskUI()
 end)
 
--- Optional: expose scene switching if another script needs it
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+	-- Let the task key work even when normal input has been processed by other systems
+	if input.KeyCode == Enum.KeyCode.J then
+		if isTaskMenuOpen() then
+			closeTaskMenu()
+		else
+			openTaskMenu()
+		end
+	end
+end)
+
+refreshTaskUI()
+
 return {
 	SetScene = setScene,
 	Refresh = refreshTaskUI,
