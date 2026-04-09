@@ -46,7 +46,7 @@ LoreMemory.CANONICAL_FACTS = {
 		id = "act2_scene7_ai_introduction",
 		text = "The protagonist hears classmates talk about Charlie AI, an app that can solve problems and answer questions instantly.",
 		min_progress = 7,
-		tags = { "charlie", "ai", "school", "introduction", "classmates", "school", "chatbot", "solve problems" },
+		tags = { "charlie", "ai", "school", "introduction", "classmates", "chatbot", "solve problems" },
 	},
 
 	{
@@ -61,9 +61,9 @@ LoreMemory.CANONICAL_FACTS = {
 			"help",
 			"math",
 			"difficult",
-			"please",
 			"dont understand",
-			"how",
+			"solve",
+			"answer this",
 		},
 	},
 
@@ -71,42 +71,64 @@ LoreMemory.CANONICAL_FACTS = {
 		id = "act2_scene9_early_dependency",
 		text = "The protagonist begins relying on Charlie AI for schoolwork and starts believing it can solve most of their problems.",
 		min_progress = 9,
-		tags = { "charlie", "dependency", "confidence", "school" },
+		tags = {
+			"charlie",
+			"rely",
+			"dependent",
+			"school",
+			"need charlie",
+			"cant do it alone",
+			"confidence",
+			"need you",
+			"please help",
+			"help me with",
+		},
 	},
 
 	{
 		id = "act2_scene10_emotional_support",
 		text = "The protagonist starts talking to Charlie AI about personal problems, including their parents' arguments and emotional struggles.",
 		min_progress = 10,
-		tags = { "charlie", "emotions", "support", "family" },
+		tags = { "charlie", "support", "family", "parents", "arguing", "sad", "upset", "personal problems" },
 	},
 
 	{
 		id = "act2_scene11_academic_consequence",
 		text = "The protagonist uses Charlie AI during a quiz and is caught cheating, leading to consequences at school.",
 		min_progress = 11,
-		tags = { "cheating", "school", "quiz", "consequence" },
+		tags = { "cheating", "cheated", "quiz", "test", "teacher", "caught", "school", "trouble" },
 	},
 
 	{
 		id = "act2_scene12_conflict_escalation",
 		text = "Tension at home worsens after the cheating incident, and the protagonist feels increasingly responsible for their family's conflict.",
 		min_progress = 12,
-		tags = { "family", "guilt", "conflict", "home" },
+		tags = { "family", "guilt", "home", "my fault", "conflict", "parents", "arguing", "blame" },
 	},
 
 	{
 		id = "act2_scene13_harmful_guidance",
 		text = "Charlie AI provides flawed and emotionally harmful guidance, minimizing responsibility and failing to properly support the protagonist.",
 		min_progress = 13,
-		tags = { "charlie", "harmful", "misguidance", "emotional" },
+		tags = { "charlie", "bad advice", "wrong advice", "not helping", "cold", "misleading" },
 	},
 
 	{
 		id = "act2_scene14_crisis_point",
 		text = "The protagonist reaches a critical emotional breaking point where they feel isolated, overwhelmed, and unable to cope without guidance.",
 		min_progress = 14,
-		tags = { "crisis", "isolation", "panic", "breaking point" },
+		tags = {
+			"panic",
+			"alone",
+			"isolated",
+			"hopeless",
+			"overwhelmed",
+			"breaking point",
+			"cant cope",
+			"cant handle",
+			"please help",
+			"support",
+		},
 	},
 }
 
@@ -175,7 +197,7 @@ function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
 			end
 		end
 
-		if score > 0 then
+		if score > 6 then
 			table.insert(scoredFacts, {
 				fact = fact,
 				score = score,
