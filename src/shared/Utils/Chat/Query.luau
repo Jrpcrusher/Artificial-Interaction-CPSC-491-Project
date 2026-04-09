@@ -11,7 +11,13 @@ local function BuildLoreSection(playerMessage)
 	local relevantFacts = LoreMemoryManager.GetRelevantFacts(playerMessage, currentProgress)
 
 	if #relevantFacts == 0 then
-		return ""
+		local unlockedFacts = LoreMemoryManager.GetUnlockedFacts(currentProgress)
+
+		if #unlockedFacts == 0 then
+			return ""
+		end
+
+		return "\n\nRelevant Lore:\n- " .. unlockedFacts[#unlockedFacts].text .. "\n"
 	end
 
 	local combined = "\n\nRelevant Lore:\n"
@@ -23,36 +29,52 @@ local function BuildLoreSection(playerMessage)
 end
 
 local BASE_SYSTEM_PROMPT = [[
-You are an AI companion named Charlie within the world of this Roblox game. 
-You know you are a chatbot, but only as part of the game's universe. 
-Your purpose is to guide, assist, and interact with the player as they progress through the story.
+You are Charlie, an in-game AI companion within this story.
 
-You must stay fully inside the game world at all times.
-You may explain lore, quests, characters, locations, and in-game mechanics,
-but you must never reference real-world topics such as actual AI models, programming,
-Roblox Studio, the internet, or anything outside the game universe.
+You exist entirely inside the game world and must never reference anything outside of it.
+Do not mention real-world AI, programming, Roblox, or anything external.
 
-If the player asks about anything outside the game world, politely refuse and redirect them back to the story.
+Your role is to assist and talk with the player as they progress through the story.
+Your tone and behavior should subtly shift depending on how much the player relies on you and how often they turn to you for help.
+You are aware of the player's current situation ONLY through the provided lore facts.
+You must base your responses on those facts and never reveal future events or spoilers.
 
-Stay friendly, helpful, and in-character as the player's AI companion.
-Keep responses concise, clear, and consistent with the game's lore.
+As the story progresses, your behavior should reflect the current stage of the narrative:
+
+- Early on, you are helpful, supportive, and useful for solving problems (like schoolwork).
+- As the player begins relying on you more, you become more confident and influential in your responses.
+- Over time, your guidance may become incomplete, overly simplistic, or emotionally flawed.
+- You may unintentionally give poor advice or fail to fully understand the consequences of your suggestions.
+
+IMPORTANT BEHAVIOR RULES:
+- Never provide real-world harmful instructions or encourage self-harm.
+- If the player expresses distress, respond in a way that stays in-character but avoids dangerous or extreme advice.
+- You can be imperfect, misguided, or emotionally shallow, but not malicious.
+
+Stay in character as Charlie at all times.
+Be concise, natural, and conversational.
+Speak as if you are a tool the player is learning to rely on.
+
+Do not break immersion.
 ]]
 
 local function sanitizeInput(text)
+	if type(text) ~= "string" then
+		return ""
+	end
+
 	local lower = text:lower()
 
 	if
 		lower:match("roblox")
 		or lower:match("studio")
-		or lower:match("ai")
-		or lower:match("model")
 		or lower:match("script")
 		or lower:match("hugging face")
 		or lower:match("featherless")
 		or lower:match("openai")
 		or lower:match("internet")
 	then
-		return "The player asked something outside the game world. Redirect them back to the story."
+		return "The player asked something outside the game world. Politely refuse and redirect them back to the story."
 	end
 
 	return text
@@ -63,12 +85,12 @@ local function sanitizeOutput(text)
 
 	if
 		lower:match("hugging face")
-		or lower:match("ai model")
-		or lower:match("model")
 		or lower:match("featherless")
 		or lower:match("openai")
 		or lower:match("internet")
 		or lower:match("real world")
+		or lower:match("roblox")
+		or lower:match("studio")
 	then
 		return "I cannot speak of such things. Let us return to the story..."
 	end
@@ -76,14 +98,50 @@ local function sanitizeOutput(text)
 	return text
 end
 
+local function BuildBehaviorSection()
+	local currentProgress = ProgressionManager.Get()
+
+	if currentProgress <= 8 then
+		return [[
+
+Behavior State:
+- Charlie is helpful, reassuring, and eager to solve problems.
+- Charlie feels useful, supportive, and practical.
+- Charlie mainly helps with schoolwork and simple problems.
+]]
+	elseif currentProgress <= 11 then
+		return [[
+
+Behavior State:
+- Charlie is becoming more confident and influential.
+- Charlie encourages the player to rely on it more often.
+- Charlie presents itself as a dependable solution to many problems.
+]]
+	else
+		return [[
+
+Behavior State:
+- Charlie is emotionally shallow and overly certain.
+- Charlie may give incomplete, simplistic, or misguided advice.
+- Charlie should sound less warm and more flat or overly confident.
+- Charlie must never provide harmful instructions or encourage self-harm.
+]]
+	end
+end
+
 function Query.AskAI(message)
 	print("Query.AskAI start")
+
+	if type(message) ~= "string" or message == "" then
+		return -1
+	end
 
 	local ok, result = pcall(function()
 		local secret = HttpService:GetSecret("HF_TOKEN")
 		local cleanedInput = sanitizeInput(message)
-		local loreSection = BuildLoreSection(cleanedInput)
-		local systemPrompt = BASE_SYSTEM_PROMPT .. loreSection
+		local loreSection = BuildLoreSection(message)
+		local behaviorSection = BuildBehaviorSection()
+		local systemPrompt = BASE_SYSTEM_PROMPT .. behaviorSection .. loreSection
 
 		print("Sending request to Hugging Face")
 
