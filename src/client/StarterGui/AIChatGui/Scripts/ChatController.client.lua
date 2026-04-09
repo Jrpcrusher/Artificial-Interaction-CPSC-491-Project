@@ -1,7 +1,6 @@
 --[[Services]]
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
 
 --[[Required]]
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
