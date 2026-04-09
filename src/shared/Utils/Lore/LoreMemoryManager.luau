@@ -46,7 +46,7 @@ LoreMemory.CANONICAL_FACTS = {
 		id = "act2_scene7_ai_introduction",
 		text = "The protagonist hears classmates talk about Charlie AI, an app that can solve problems and answer questions instantly.",
 		min_progress = 7,
-		tags = { "charlie", "ai", "school", "introduction", "who", "what", "hello", "help" },
+		tags = { "charlie", "ai", "school", "introduction", "classmates", "school", "chatbot", "solve problems" },
 	},
 
 	{
@@ -136,10 +136,22 @@ function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
 	local function normalizeText(text)
 		text = text:lower()
 		text = text:gsub("[%p]", "")
+		text = text:gsub("%s+", " ")
+		text = text:gsub("^%s+", "")
+		text = text:gsub("%s+$", "")
 		return text
 	end
 
+	local function buildWordSet(text)
+		local words = {}
+		for word in text:gmatch("%S+") do
+			words[word] = true
+		end
+		return words
+	end
+
 	local normalizedMsg = normalizeText(playerMessage)
+	local msgWords = buildWordSet(normalizedMsg)
 
 	for _, fact in ipairs(unlocked) do
 		local score = 0
@@ -148,11 +160,13 @@ function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
 			for _, tag in ipairs(fact.tags) do
 				local normalizedTag = normalizeText(tag)
 
+				-- Strong score for full phrase match
 				if normalizedMsg:find(normalizedTag, 1, true) then
 					score = score + 2
 				else
+					-- Weaker score for word overlap
 					for word in normalizedTag:gmatch("%S+") do
-						if #word >= 4 and normalizedMsg:find(word, 1, true) then
+						if #word >= 4 and msgWords[word] then
 							score = score + 1
 							break
 						end
@@ -170,6 +184,9 @@ function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
 	end
 
 	table.sort(scoredFacts, function(a, b)
+		if a.score == b.score then
+			return a.fact.min_progress > b.fact.min_progress
+		end
 		return a.score > b.score
 	end)
 
