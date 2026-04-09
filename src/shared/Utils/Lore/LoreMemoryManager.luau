@@ -93,10 +93,63 @@ end
 -- Only returns lore the player has unlocked.
 function LoreMemory.GetRelevantFacts(playerMessage, currentProgress)
 	local unlocked = LoreMemory.GetUnlockedFacts(currentProgress)
+	local scoredFacts = {}
+
+	if not playerMessage or playerMessage == "" then
+		return {}
+	end
+
+	local function normalizeText(text)
+		text = text:lower()
+		text = text:gsub("[%p]", "")
+		return text
+	end
+
+	local normalizedMsg = normalizeText(playerMessage)
+
+	for _, fact in ipairs(unlocked) do
+		local score = 0
+
+		if fact.tags then
+			for _, tag in ipairs(fact.tags) do
+				local normalizedTag = normalizeText(tag)
+
+				if normalizedMsg:find(normalizedTag, 1, true) then
+					score = score + 2
+				else
+					for word in normalizedTag:gmatch("%S+") do
+						if #word >= 4 and normalizedMsg:find(word, 1, true) then
+							score = score + 1
+							break
+						end
+					end
+				end
+			end
+		end
+
+		if score > 0 then
+			table.insert(scoredFacts, {
+				fact = fact,
+				score = score,
+			})
+		end
+	end
+
+	table.sort(scoredFacts, function(a, b)
+		return a.score > b.score
+	end)
+
 	local results = {}
 
-	if playerMessage:lower():match("background") then
-		table.insert(results, unlocked[1])
+	for i = 1, math.min(3, #scoredFacts) do
+		table.insert(results, scoredFacts[i].fact)
+	end
+
+	-- Fallback if nothing matched
+	if #results == 0 then
+		for i = math.max(1, #unlocked - 1), #unlocked do
+			table.insert(results, unlocked[i])
+		end
 	end
 
 	return results
