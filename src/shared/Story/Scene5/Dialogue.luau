@@ -1,27 +1,27 @@
-local Scene5 = {}
-
-Scene5.DadDialogueTree = {
-
+local Dialogue = {
+    Start = {
+        "I woke up, but something feels wrong.",
+        "I'm so tired of this routine.",
+        "Everyday feels horrible, like a never ending loop.",
+        "Theres was no day I could wake up and feel any type of excitement.",
+        "I better get up before I get lectured by my parents again."
+    },
+    
+    Backpack = {
+        "I grabbed my backpack."
+    },
+    Calculator = {
+        "I grabbed my calculator."
+    },
+    Keys = {
+        "I grabbed my keys."
+    },
+    NotReady = {
+        "I should really grab everything before I leave."
+    },
+    Final = {
+        "Alright time to head out."
+    }
 }
 
-Scene5.MomDialogueTree = {
-
-}
-
-Scene5.SisterDialogueTree = {
-
-}
-
-Scene5.TeacherDialogueTree = {
-
-}
-
-Scene5.BullyDialogueTree = {
-
-}
-
-Scene5.MainCharacterDialogueTree = {
-
-}
-
-return Scene5
+return Dialogue
