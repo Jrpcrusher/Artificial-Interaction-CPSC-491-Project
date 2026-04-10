@@ -89,7 +89,7 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 		self.isFinalNode = true
 	end
 
-	self:_typewrite(node.text)
+	self:_typewrite(node)
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
@@ -182,13 +182,14 @@ function DialogueHandler:_addHoverHighlight(button)
 	end)
 end
 
-function DialogueHandler:_typewrite(text) -- Function that enables a typewriting effect of the NPC
+function DialogueHandler:_typewrite(node) -- Function that enables a typewriting effect of the NPC
 	local label = self.dialogueTextLabel
+	local text = node.text
 
 	self.isTyping = true
 	label.Text = text
 	label.MaxVisibleGraphemes = 0
-	local sound, pitch = self._chooseTalker(self.npcNameLabel.Text)
+	local sound, pitch = self:_chooseTalker(node.speaker)
 	for i = 1, #text do
 		if not self.isTyping then
 			label.MaxVisibleGraphemes = -1
