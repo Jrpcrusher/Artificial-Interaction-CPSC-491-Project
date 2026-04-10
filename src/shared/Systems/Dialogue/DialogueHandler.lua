@@ -1,9 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
 local DialogueHandler = {}
-	DialogueHandler.__index = DialogueHandler
+DialogueHandler.__index = DialogueHandler
+
+-- Sounds
+local MaleSound = SoundService:WaitForChild("MaleSound")
+local FemaleSound = SoundService:WaitForChild("FemaleSound")
 
 function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	local self = setmetatable({}, DialogueHandler)
@@ -19,9 +24,11 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self.choice3 = self.choicesPanel:WaitForChild("Choice3")
 
 	self.currentTree = nil -- Initially set up our current tree
-	self.currentNode = nil -- Set up which node is the starting node 
+	self.currentNode = nil -- Set up which node is the starting node
 	self.isFinalNode = false
 	self.canAdvanceLinear = false
+	self.isTyping = false
+	self.dialogueTextLabel.MaxVisibleGraphemes = -1
 
 	self.dialogueBar.Visible = false -- Initially keep this hidden
 	self.choicesPanel.Visible = false -- Initially keep the choices panel hidden as well
@@ -31,7 +38,7 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self:_addHoverHighlight(self.choice1) -- Make the buttons have a highlight
 	self:_addHoverHighlight(self.choice2)
 	self:_addHoverHighlight(self.choice3)
-	
+
 	return self
 end
 
@@ -61,8 +68,6 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 	self.choicesPanel.Visible = true
 
 	self.npcNameLabel.Text = node.speaker
-	self.dialogueTextLabel.Text = node.text
-
 	self:_hideAllChoices()
 
 	if node.choices then -- Depending on what we need, show appropriate choice panels
@@ -83,6 +88,8 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 		self.choicesPanel.Visible = false
 		self.isFinalNode = true
 	end
+
+	self:_typewrite(node.text)
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
@@ -104,12 +111,16 @@ function DialogueHandler:Stop() -- Stop the GUI
 end
 
 function DialogueHandler:_choose(index) -- Function to handle when a user picks an option
+	if self.isTyping then
+		self.isTyping = false
+		return
+	end
+
 	if not self.currentTree or not self.currentNode then -- Check if we have nothing
 		warn("Missing currentTree or currentNode")
 		return
-		
 	end
-	
+
 	local node = self.currentTree[self.currentNode] -- get the current node we are at
 	if node and node.choices and node.choices[index] then -- If we get a valid choice
 		self:_showNode(node.choices[index].next)
@@ -135,13 +146,18 @@ function DialogueHandler:_connectDialogueClick()
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
 			return
 		end
-		
+
 		if not self.currentTree or not self.currentNode then
 			return
 		end
 
 		local node = self.currentTree[self.currentNode]
 		if not node then
+			return
+		end
+
+		if self.isTyping then
+			self.isTyping = false
 			return
 		end
 
@@ -154,7 +170,7 @@ function DialogueHandler:_connectDialogueClick()
 end
 
 function DialogueHandler:_addHoverHighlight(button)
-	button.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	button.BackgroundTransparency = 1
 
 	button.MouseEnter:Connect(function()
@@ -162,8 +178,38 @@ function DialogueHandler:_addHoverHighlight(button)
 	end)
 
 	button.MouseLeave:Connect(function()
-	button.BackgroundTransparency = 1
+		button.BackgroundTransparency = 1
 	end)
+end
+
+function DialogueHandler:_typewrite(text, character_name) -- Function that enables a typewriting effect of the NPC
+	local label = self.dialogueTextLabel
+
+	self.isTyping = true
+	label.Text = text
+	label.MaxVisibleGraphemes = 0
+	local sound = self._chooseTalker()
+	for i = 1, #text do
+		sound:Play()
+		if not self.isTyping then
+			label.MaxVisibleGraphemes = -1
+			self.isTyping = false
+			return
+		end
+		label.MaxVisibleGraphemes = i
+		task.wait(0.02)
+	end
+
+	label.MaxVisibleGraphemes = -1
+	self.isTyping = false
+end
+
+function DialogueHandler:_chooseTalker()
+	if self.npcNameLabel == "Dad" or self.npcNameLabel == "Teacher" or self.npcNameLabel == "Bully" then
+		return MaleSound
+	else
+		return FemaleSound
+	end
 end
 
 return DialogueHandler
