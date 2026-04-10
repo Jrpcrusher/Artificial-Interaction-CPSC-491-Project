@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -41,7 +42,13 @@ local warningText = warningFrame:WaitForChild("WarningText", 5)
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
 local taskGui = playerGui:WaitForChild("Tasks", 5)
 
+local ButtonHover = SoundService:WaitForChild("ButtonHover")
+local ButtonClick = SoundService:WaitForChild("ButtonClick")
+local MainMenuSound = SoundService:WaitForChild("MainMenuSoundTrack")
+
 -- Main menu owns startup visibility
+MainMenuSound:Play() -- Play the main menu sound
+
 if aiChatGui then
 	aiChatGui.Enabled = false
 end
@@ -92,10 +99,12 @@ pcall(function()
 end)
 
 creditsBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = true
 end)
 
 closeCredBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = false
 end)
 
@@ -118,6 +127,7 @@ local function transitionToGame()
 			TweenService:Create(child, tweenInfo, { ImageTransparency = 1 }):Play()
 			task.wait(2)
 			TweenService:Create(child, linearTransition, { BackgroundTransparency = 1 }):Play()
+			TweenService:Create(MainMenuSound, linearTransition, { Volume = 0 }):Play()
 		end
 	end
 
@@ -149,7 +159,16 @@ local function continueGame()
 	transitionToGame()
 end
 
+for _, child in pairs(menuGui:GetDescendants()) do -- Play the butttonHover sound when our mouse goes into the button
+	if child:IsA("TextButton") then
+		child.MouseEnter:Connect(function()
+			ButtonHover:Play()
+		end)
+	end
+end
+
 newGameBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		warningText.Text = "Do you wish to override last save?\n(Current Progress: " .. currentSavedScene .. ")"
 		warningFrame.Visible = true
@@ -159,15 +178,18 @@ newGameBtn.MouseButton1Click:Connect(function()
 end)
 
 yesBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 	startNewGame()
 end)
 
 noBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 end)
 
 continueBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else
@@ -176,6 +198,7 @@ continueBtn.MouseButton1Click:Connect(function()
 end)
 
 playBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else
