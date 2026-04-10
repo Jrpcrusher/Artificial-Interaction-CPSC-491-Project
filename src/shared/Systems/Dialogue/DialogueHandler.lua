@@ -182,21 +182,23 @@ function DialogueHandler:_addHoverHighlight(button)
 	end)
 end
 
-function DialogueHandler:_typewrite(text, character_name) -- Function that enables a typewriting effect of the NPC
+function DialogueHandler:_typewrite(text) -- Function that enables a typewriting effect of the NPC
 	local label = self.dialogueTextLabel
 
 	self.isTyping = true
 	label.Text = text
 	label.MaxVisibleGraphemes = 0
-	local sound = self._chooseTalker()
+	local sound, pitch = self._chooseTalker(self.npcNameLabel.Text)
 	for i = 1, #text do
-		sound:Play()
 		if not self.isTyping then
 			label.MaxVisibleGraphemes = -1
 			self.isTyping = false
 			return
 		end
 		label.MaxVisibleGraphemes = i
+
+		sound.PlaybackSpeed = pitch
+		sound:Play()
 		task.wait(0.02)
 	end
 
@@ -204,11 +206,23 @@ function DialogueHandler:_typewrite(text, character_name) -- Function that enabl
 	self.isTyping = false
 end
 
-function DialogueHandler:_chooseTalker()
-	if self.npcNameLabel == "Dad" or self.npcNameLabel == "Teacher" or self.npcNameLabel == "Bully" then
-		return MaleSound
+function DialogueHandler:_chooseTalker(character)
+	if character == "Dad" then
+		print("dad dialogue sound")
+		return MaleSound, 0.9
+	elseif character == "Teacher" then
+		return MaleSound, 1
+	elseif character == "Bully" then
+		return MaleSound, 1.1
+	elseif character == "Mom" then
+		return FemaleSound, 0.8
+	elseif character == "Sister" then
+		return FemaleSound, 1.15
+	elseif character == "You" then
+		return FemaleSound, 1
 	else
-		return FemaleSound
+		print("other dialogue sound")
+		return MaleSound, 1
 	end
 end
 
