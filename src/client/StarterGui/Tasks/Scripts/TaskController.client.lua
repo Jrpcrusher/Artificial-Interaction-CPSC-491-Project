@@ -21,13 +21,19 @@ local tasksGui = playerGui:WaitForChild("Tasks")
 local aiChatGui = playerGui:WaitForChild("AIChatGui")
 local dialogueGui = playerGui:WaitForChild("DialogueGui")
 
-local chatFrame = aiChatGui:WaitForChild("ChatWindow")
-local dialogueBar = dialogueGui:WaitForChild("DialogueBar")
+local chatFrame = aiChatGui:FindFirstChild("ChatWindow")
+local dialogueBar = dialogueGui:FindFirstChild("DialogueBar")
 
+<<<<<<< HEAD
 local currentScene = 1
 local activeTaskIds = {}
 local completedTaskIds = {}
+=======
+local currentScene = player:GetAttribute("Scene") or 1
+>>>>>>> 00966d9 (working tasks, need to work on dialogue, fix ui, and scene transition)
 local selectedTask = nil
+
+print("TASK CONTROLLER RUNNING:", script:GetFullName())
 
 -- Left pinned tracker
 local tasksOpenButton = tasksGui:WaitForChild("TasksOpenButton")
@@ -92,8 +98,8 @@ local function setTaskMenuOpen(isOpen)
 end
 
 local function isAnotherGuiOpen()
-	local chatIsOpen = aiChatGui.Enabled and chatFrame.Visible
-	local dialogueIsOpen = dialogueGui.Enabled and dialogueBar.Visible
+	local chatIsOpen = aiChatGui.Enabled and chatFrame and chatFrame.Visible
+	local dialogueIsOpen = dialogueGui.Enabled and dialogueBar and dialogueBar.Visible
 	return chatIsOpen or dialogueIsOpen
 end
 
@@ -231,24 +237,39 @@ local function openTaskMenu()
 	end
 
 	if isAnotherGuiOpen() then
+		print("Task menu blocked because another GUI is open")
 		return
 	end
 
+	print("Opening task menu...")
+	print("mainFrame before:", mainFrame.Visible)
+
 	setTaskMenuOpen(true)
+
+	print("mainFrame after:", mainFrame.Visible)
+
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
 end
 
 local function refreshTaskUI()
+	local tasks = getCurrentTasks()
+
+	print("Refreshing task UI. Scene:", currentScene, "Task count:", #tasks)
+
 	populateTaskList()
 	selectedTask = getDefaultTask()
 	updatePinnedTracker(selectedTask)
 end
 
 local function setScene(sceneNumber)
+<<<<<<< HEAD
 	currentScene = sceneNumber
 	activeTaskIds = {}
 	completedTaskIds = {}
+=======
+	currentScene = sceneNumber or 1
+>>>>>>> 00966d9 (working tasks, need to work on dialogue, fix ui, and scene transition)
 	refreshTaskUI()
 end
 
@@ -285,6 +306,11 @@ TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 	refreshTaskUI()
 end)
 
+player:GetAttributeChangedSignal("Scene"):Connect(function()
+	currentScene = player:GetAttribute("Scene") or 1
+	refreshTaskUI()
+end)
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.J then
 		if isTaskMenuOpen() then
@@ -294,6 +320,11 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 		end
 	end
 end)
+
+task.wait()
+currentScene = player:GetAttribute("Scene") or 1
+tasksGui.Enabled = true
+tasksOpenButton.Visible = true
 
 refreshTaskUI()
 

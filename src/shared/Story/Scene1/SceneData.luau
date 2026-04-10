@@ -4,7 +4,7 @@ local SceneData = {
         "grab_backpack",
         "grab_calculator",
         "grab_keys",
-        "open_door",
+        "go_to_door",
     },
 
     Objects = {

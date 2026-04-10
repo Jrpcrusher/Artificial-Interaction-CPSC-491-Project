@@ -73,8 +73,17 @@ end
 
 local function connectPrompt(prompt) -- Connect dialogue to NPC
 	prompt.Triggered:Connect(function(player)
-		local interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
+		local interactable =
+			prompt:FindFirstAncestorWhichIsA("Accessory")
+			or prompt:FindFirstAncestorWhichIsA("Tool")
+			or prompt:FindFirstAncestorWhichIsA("Model")
+			or prompt.Parent
+
 		if interactable then
+			print("Resolved interactable:", interactable:GetFullName())
+			print("InteractionType:", interactable:GetAttribute("InteractionType"))
+			print("TaskId:", interactable:GetAttribute("TaskId"))
+
 			InteractionHandler.HandleInteraction(player, interactable)
 		end
 	end)

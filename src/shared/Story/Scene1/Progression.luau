@@ -47,9 +47,7 @@ local TasksModule = require(script.Parent.Tasks)
 local Dialogue = require(script.Parent.Dialogue)
 local SceneData = require(script.Parent.SceneData)
 
-local TaskConfig = require(ReplicatedStorage.Shared.Systems.Tasks.TaskConfig)
-
-local Scene1Progression = {}
+local currentTasks = {}
 
 local function playDialogue(player, lines)
 	if not lines then
@@ -68,15 +66,15 @@ local function playDialogue(player, lines)
 end
 
 local function completeTask(taskId)
-	-- for _, task in ipairs(TaskConfig.Tasks) do
-	-- 	if task.Id == taskId then
-	-- 		if not task.Completed then
-	-- 			task.Completed = true
-	-- 			print("Completed task:", taskId)
-	-- 		end
-	-- 		return true
-	-- 	end
-	-- end
+	for _, task in ipairs(currentTasks) do
+		if task.Id == taskId then
+			if not task.Completed then
+				task.Completed = true
+				print("Completed task:", taskId)
+			end
+			return true
+		end
+	end
 
 	warn("Task not found:", taskId)
 	return false
@@ -98,54 +96,45 @@ local function cloneTasks(tasks)
 	return copiedTasks
 end
 
-function Scene1Progression.Load(player)
+function Progression.Load(player)
 	print("Loading Scene 1 for", player.Name)
 
-	-- Reset and load Scene 1 tasks into the shared task config
-	-- TaskConfig.Tasks = cloneTasks(TasksModule)
+	currentTasks = cloneTasks(TasksModule)
 
-	-- Optional: enable interactables here later if needed
-	-- Optional: setup scene state here later if needed
-
-	-- Play opening inner dialogue
 	playDialogue(player, Dialogue.Start)
 end
 
-function Scene1Progression.CanLeaveRoom()
-	-- for _, task in ipairs(TaskConfig.Tasks) do
-	-- 	if task.Id ~= "open_bedroom_door" and not task.Completed then
-	-- 		return false
-	-- 	end
-	-- end
-
+function Progression.CanLeaveRoom()
+	for _, task in ipairs(currentTasks) do
+		if task.Id ~= "go_to_door" and not task.Completed then
+			return false
+		end
+	end
 	return true
 end
 
-function Scene1Progression.OnObjectInteracted(player, objectName)
+function Progression.OnObjectInteracted(player, objectName)
 	print(player.Name .. " interacted with " .. objectName)
 
-	if objectName == "Backpack" then
+	if objectName == SceneData.Objects.Backpack then
 		completeTask("grab_backpack")
 		return
 	end
 
-	if objectName == "Calculator" then
+	if objectName == SceneData.Objects.Calculator then
 		completeTask("grab_calculator")
 		return
 	end
 
-	if objectName == "Keys" then
+	if objectName == SceneData.Objects.Keys then
 		completeTask("grab_keys")
 		return
 	end
 
-	if objectName == "BedroomDoor" then
-		if Scene1Progression.CanLeaveRoom() then
+	if objectName == SceneData.Objects.BedroomDoor then
+		if Progression.CanLeaveRoom() then
 			completeTask("open_bedroom_door")
 			print("Player can leave the room now.")
-
-			-- You can add door-opening logic here later
-			-- Example: animate door, disable collision, etc.
 		else
 			playDialogue(player, Dialogue.NotReady)
 		end
@@ -156,7 +145,7 @@ function Scene1Progression.OnObjectInteracted(player, objectName)
 	warn("Unhandled object interaction in Scene 1:", objectName)
 end
 
-function Scene1Progression.OnTriggerEntered(player, triggerName)
+function Progression.OnTriggerEntered(player, triggerName)
 	print(player.Name .. " entered trigger " .. triggerName)
 
 	if triggerName == "StairsTrigger" then
@@ -168,26 +157,19 @@ function Scene1Progression.OnTriggerEntered(player, triggerName)
 
 		task.wait(2)
 
-		Scene1Progression.Unload(player)
+		Progression.Unload(player)
 
 		print("Scene 1 complete. Ready to load Scene 2.")
-		-- Hook your scene manager here later:
-		-- local SceneManager = require(ReplicatedStorage.Shared.Story.SceneManager)
-		-- SceneManager.LoadScene(player, "Scene2")
 		return
 	end
 
 	warn("Unhandled trigger in Scene 1:", triggerName)
 end
 
-function Scene1Progression.Unload(player)
+function Progression.Unload(player)
 	print("Unloading Scene 1 for", player.Name)
 
-	-- Optional cleanup goes here
-	-- Example:
-	-- clear scene-specific state
-	-- disable triggers
-	-- remove temporary assets
+	currentTasks = {}
 end
 
-return Scene1Progression
+return Progression
