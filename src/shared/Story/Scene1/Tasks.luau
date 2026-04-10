@@ -21,7 +21,7 @@ return {
         Completed = false,
     },
     {
-        Id = "open_bedroom_door",
+        Id = "go_to_door",
         Title = "Open door",
         Objective = "Leave your room",
         Type = "Required",

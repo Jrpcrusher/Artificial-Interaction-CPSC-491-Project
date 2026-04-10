@@ -55,7 +55,7 @@ function TaskConfig.IsDoorTaskEnabled(sceneNumber)
 		return false
 	end
 
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete() and not doorTask.Completed
+	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber) and not doorTask.Completed
 end
 
 function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
