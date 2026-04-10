@@ -1,9 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
 local DialogueHandler = {}
 DialogueHandler.__index = DialogueHandler
+<<<<<<< HEAD
+=======
+
+-- Sounds
+local MaleSound = SoundService:WaitForChild("MaleSound")
+local FemaleSound = SoundService:WaitForChild("FemaleSound")
+>>>>>>> 8cc2e3d (AI-165 Added visual for text appearing letter per letter on dialogue interaction. Removed old files.)
 
 function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	local self = setmetatable({}, DialogueHandler)
@@ -22,6 +30,8 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self.currentNode = nil -- Set up which node is the starting node
 	self.isFinalNode = false
 	self.canAdvanceLinear = false
+	self.isTyping = false
+	self.dialogueTextLabel.MaxVisibleGraphemes = -1
 
 	self.dialogueBar.Visible = false -- Initially keep this hidden
 	self.choicesPanel.Visible = false -- Initially keep the choices panel hidden as well
@@ -62,8 +72,6 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 	self.choicesPanel.Visible = true
 
 	self.npcNameLabel.Text = node.speaker
-	self.dialogueTextLabel.Text = node.text
-
 	self:_hideAllChoices()
 
 	if node.choices then -- Depending on what we need, show appropriate choice panels
@@ -84,6 +92,8 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 		self.choicesPanel.Visible = false
 		self.isFinalNode = true
 	end
+
+	self:_typewrite(node.text)
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
@@ -120,6 +130,11 @@ function DialogueHandler:Stop() -- Stop the GUI
 end
 
 function DialogueHandler:_choose(index) -- Function to handle when a user picks an option
+	if self.isTyping then
+		self.isTyping = false
+		return
+	end
+
 	if not self.currentTree or not self.currentNode then -- Check if we have nothing
 		warn("Missing currentTree or currentNode")
 		return
@@ -160,6 +175,11 @@ function DialogueHandler:_connectDialogueClick()
 			return
 		end
 
+		if self.isTyping then
+			self.isTyping = false
+			return
+		end
+
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
@@ -181,4 +201,37 @@ function DialogueHandler:_addHoverHighlight(button)
 	end)
 end
 
+<<<<<<< HEAD
+=======
+function DialogueHandler:_typewrite(text, character_name) -- Function that enables a typewriting effect of the NPC
+	local label = self.dialogueTextLabel
+
+	self.isTyping = true
+	label.Text = text
+	label.MaxVisibleGraphemes = 0
+	local sound = self._chooseTalker()
+	for i = 1, #text do
+		sound:Play()
+		if not self.isTyping then
+			label.MaxVisibleGraphemes = -1
+			self.isTyping = false
+			return
+		end
+		label.MaxVisibleGraphemes = i
+		task.wait(0.02)
+	end
+
+	label.MaxVisibleGraphemes = -1
+	self.isTyping = false
+end
+
+function DialogueHandler:_chooseTalker()
+	if self.npcNameLabel == "Dad" or self.npcNameLabel == "Teacher" or self.npcNameLabel == "Bully" then
+		return MaleSound
+	else
+		return FemaleSound
+	end
+end
+
+>>>>>>> 8cc2e3d (AI-165 Added visual for text appearing letter per letter on dialogue interaction. Removed old files.)
 return DialogueHandler
