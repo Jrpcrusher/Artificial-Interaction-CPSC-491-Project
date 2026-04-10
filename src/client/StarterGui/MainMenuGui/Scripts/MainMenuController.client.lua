@@ -159,9 +159,14 @@ local function continueGame()
 	transitionToGame()
 end
 
-for _, child in pairs(menuGui:GetDescendants()) do -- Play the butttonHover sound when our mouse goes into the button
+for _, child in pairs(menuGui:GetDescendants()) do -- Logic for what happens when a user's cursor hovers over a button
 	if child:IsA("TextButton") then
 		child.MouseEnter:Connect(function()
+			child.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+			ButtonHover:Play()
+		end)
+		child.MouseLeave:Connect(function()
+			child.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 			ButtonHover:Play()
 		end)
 	end
