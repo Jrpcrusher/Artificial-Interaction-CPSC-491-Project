@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -44,7 +45,13 @@ local warningText = warningFrame:WaitForChild("WarningText", 5)
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
 local taskGui = playerGui:WaitForChild("Tasks", 5)
 
+local ButtonHover = SoundService:WaitForChild("ButtonHover")
+local ButtonClick = SoundService:WaitForChild("ButtonClick")
+local MainMenuSound = SoundService:WaitForChild("MainMenuSoundTrack")
+
 -- Main menu owns startup visibility
+MainMenuSound:Play() -- Play the main menu sound
+
 if aiChatGui then
 	aiChatGui.Enabled = false
 end
@@ -95,10 +102,12 @@ pcall(function()
 end)
 
 creditsBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = true
 end)
 
 closeCredBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = false
 end)
 
@@ -109,17 +118,31 @@ local function transitionToGame()
 	creditsBtn.Active = false
 
 	local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+	local linearTransition = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+
 	TweenService:Create(background, tweenInfo, { BackgroundTransparency = 1 }):Play()
 
 	for _, child in pairs(background:GetDescendants()) do
 		if child:IsA("TextLabel") or child:IsA("TextButton") then
-			TweenService:Create(child, tweenInfo, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
+			TweenService:Create(child, tweenInfo, {
+				TextTransparency = 1,
+				BackgroundTransparency = 1,
+			}):Play()
 		elseif child:IsA("Frame") and child.Name ~= "CreditsFrame" and child.Name ~= "OverwriteWarningFrame" then
-			TweenService:Create(child, tweenInfo, { BackgroundTransparency = 1 }):Play()
+			TweenService:Create(child, tweenInfo, {
+				BackgroundTransparency = 1,
+			}):Play()
+		elseif child:IsA("ImageLabel") then
+			TweenService:Create(child, tweenInfo, {
+				ImageTransparency = 1,
+				BackgroundTransparency = 1,
+			}):Play()
 		end
 	end
 
-	task.wait(1)
+	TweenService:Create(MainMenuSound, linearTransition, { Volume = 0 }):Play()
+
+	task.wait(1.2)
 
 	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 	if humanoid then
@@ -147,7 +170,16 @@ local function continueGame()
 	transitionToGame()
 end
 
+for _, child in pairs(menuGui:GetDescendants()) do -- Play the butttonHover sound when our mouse goes into the button
+	if child:IsA("TextButton") then
+		child.MouseEnter:Connect(function()
+			ButtonHover:Play()
+		end)
+	end
+end
+
 newGameBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		warningText.Text = "Do you wish to override last save?\n(Current Progress: " .. currentSavedScene .. ")"
 		warningFrame.Visible = true
@@ -157,15 +189,18 @@ newGameBtn.MouseButton1Click:Connect(function()
 end)
 
 yesBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 	startNewGame()
 end)
 
 noBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 end)
 
 continueBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else
@@ -174,6 +209,7 @@ continueBtn.MouseButton1Click:Connect(function()
 end)
 
 playBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else
