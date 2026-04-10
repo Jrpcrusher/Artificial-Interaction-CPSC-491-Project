@@ -106,6 +106,7 @@ local function transitionToGame()
 	creditsBtn.Active = false
 
 	local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+	local linearTransition = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
 	TweenService:Create(background, tweenInfo, { BackgroundTransparency = 1 }):Play()
 
 	for _, child in pairs(background:GetDescendants()) do
@@ -113,6 +114,10 @@ local function transitionToGame()
 			TweenService:Create(child, tweenInfo, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
 		elseif child:IsA("Frame") and child.Name ~= "CreditsFrame" and child.Name ~= "OverwriteWarningFrame" then
 			TweenService:Create(child, tweenInfo, { BackgroundTransparency = 1 }):Play()
+		elseif child:IsA("ImageLabel") then
+			TweenService:Create(child, tweenInfo, { ImageTransparency = 1 }):Play()
+			task.wait(2)
+			TweenService:Create(child, linearTransition, { BackgroundTransparency = 1 }):Play()
 		end
 	end
 
