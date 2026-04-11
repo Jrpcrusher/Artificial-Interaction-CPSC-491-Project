@@ -23,5 +23,26 @@ Example output:
 ["curious", "asks many questions", "emotionally reserved"]
 ]]
 
+-- Converts the transcript table into a readable text block.
+local function FlattenTranscript(userId)
+    local transcript = TranscriptManager.Get(userId)
+    if not transcript or #transcript == 0 then
+        return nil
+    end
+
+    local lines = {}
+
+    for _, entry in ipairs(transcript) do
+        for timestamp, data in pairs(entry) do
+            local sender = data[1] == 0 and "AI" or "Player"
+            local content = data[2]
+            table.insert(lines, sender .. ": " .. content)
+        end
+    end
+
+    return table.concat(lines, "\n")
+end
+
+
 
 return TraitAnalyzer
