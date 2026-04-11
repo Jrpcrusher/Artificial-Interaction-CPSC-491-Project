@@ -37,7 +37,6 @@ local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
 local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
 local LoadTranscript = Remotes:WaitForChild("LoadTranscript")
 
-
 --[[Message Display]]
 local function addMessage(text, isPlayer)
 	-- Chooses the correct row template to use based on message being sent/received.

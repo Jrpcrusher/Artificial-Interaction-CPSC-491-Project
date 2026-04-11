@@ -1,6 +1,5 @@
-print("ChatbotServer loaded.")
-
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Query = require(ReplicatedStorage.Shared.Utils.Chat.Query)
 local MessageManager = require(ReplicatedStorage.Shared.Utils.Chat.MessageManager)
@@ -10,6 +9,9 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local ChatRemotes = Remotes:WaitForChild("Chat")
 local ChatbotRequest = ChatRemotes:WaitForChild("ChatbotRequest")
 local ChatbotResponse = ChatRemotes:WaitForChild("ChatbotResponse")
+
+local SendMessage = SoundService:WaitForChild("SendMessage")
+local Reply = SoundService:WaitForChild("ReplyMessage")
 
 ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	print("Server received chat message from", player.Name, message)
@@ -26,9 +28,16 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	end
 
 	local timeValue = os.time()
+<<<<<<< HEAD
 	TranscriptManager.Add(player.UserId, MessageManager.Create(player.UserId, timeValue, message))
 
 	local reply = Query.AskAI(player, message)
+=======
+	TranscriptManager.Add(MessageManager.Create(player.UserId, timeValue, message))
+	SendMessage:Play()
+	local reply = Query.AskAI(message)
+	Reply:Play()
+>>>>>>> cf0c221 (Fixed task complete playing even after task marked as complete. Added sound for AI message sent and received)
 
 	if reply == -1 or reply == nil then
 		reply = "Sorry, AI model is currently unreachable."
