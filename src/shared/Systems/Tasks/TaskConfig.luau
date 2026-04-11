@@ -1,4 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+
+local TaskComplete = SoundService:WaitForChild("TaskComplete")
 
 local Story = ReplicatedStorage.Shared.Story
 
@@ -18,7 +21,7 @@ local SceneTasks = {
 	[13] = require(Story.Scene13.Tasks),
 	[14] = require(Story.Scene14.Tasks),
 	[15] = require(Story.Scene15.Tasks),
-	[16] = require(Story.Scene16.Tasks)
+	[16] = require(Story.Scene16.Tasks),
 }
 local TaskConfig = {}
 
@@ -62,6 +65,7 @@ function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
 	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
 	if task then
 		task.Completed = true
+		TaskComplete:Play()
 		return true
 	end
 	return false
