@@ -61,6 +61,39 @@ function TraitAnalyzer.ExtractTraits(userId)
         return {}
     end
 
+    local responseOk, response = pcall(function()
+        return HttpService:RequestAsync({
+            Url = "https://router.huggingface.co/v1/chat/completions",
+            Method = "POST",
+            Headers = {
+                ["authorization"] = resultSecret:AddPrefix("Bearer "),
+                ["content-type"] = "application/json",
+            },
+            Body = HttpService:JSONEncode({
+                model = "Qwen/Qwen2-7B-Instruct:featherless-ai",
+                messages = {
+                    { role = "system", content = TRAIT_SYSTEM_PROMPT },
+                    { role = "user", content = transcriptText },
+                },
+            }),
+        })
+    end)
+
+    if not responseOk or not response.Success then
+        warn("TraitAnalyzer: API request failed:", responseOk, response and response.StatusCode, response and response.Body)
+        return {}
+    end
+
+    local data
+    local okDecode, decodeResult = pcall(function()
+        return HttpService:JSONDecode(response.Body)
+    end)
+
+    if not okDecode then
+        warn("TraitAnalyzer: Failed to decode API response JSON:", decodeResult)
+        return {}
+    end
+
 
 end
 
