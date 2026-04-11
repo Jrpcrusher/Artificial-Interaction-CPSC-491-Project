@@ -43,6 +43,25 @@ local function FlattenTranscript(userId)
     return table.concat(lines, "\n")
 end
 
+-- Main extraction function
+function TraitAnalyzer.ExtractTraits(userId)
+    local transcriptText = FlattenTranscript(userId)
+    if not transcriptText then
+        warn("TraitAnalyzer: No transcript found for userId", userId)
+        return {}
+    end
 
+    local secret
+    local okSecret, resultSecret = pcall(function()
+        return HttpService:GetSecret("HF_TOKEN")
+    end)
+
+    if not okSecret then
+        warn("TraitAnalyzer: Failed to retrieve HF_TOKEN:", resultSecret)
+        return {}
+    end
+
+
+end
 
 return TraitAnalyzer
