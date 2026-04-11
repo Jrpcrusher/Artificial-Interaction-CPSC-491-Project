@@ -63,6 +63,10 @@ end
 
 function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
 	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
+	if task.Completed then -- Skip if task is already completed and marked as such
+		return
+	end
+	
 	if task then
 		task.Completed = true
 		TaskComplete:Play()
