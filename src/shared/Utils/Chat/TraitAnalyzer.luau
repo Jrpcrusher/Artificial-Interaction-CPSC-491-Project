@@ -33,7 +33,7 @@ local function FlattenTranscript(userId)
     local lines = {}
 
     for _, entry in ipairs(transcript) do
-        for timestamp, data in pairs(entry) do
+        for _, data in pairs(entry) do
             local sender = data[1] == 0 and "AI" or "Player"
             local content = data[2]
             table.insert(lines, sender .. ": " .. content)
@@ -123,7 +123,6 @@ function TraitAnalyzer.ExtractTraits(userId)
     end
 
     return final
-
 end
 
 return TraitAnalyzer
