@@ -30,4 +30,14 @@ function TraitStore.Get(userId)
     return store[userId] or {}
 end
 
+-- Clearing of traits for a player (e.g., new playthrough)
+function TraitStore.Clear(userId)
+    store[userId] = nil
+end
+
+-- Clear all traits in the store table (e.g., server shutdown or debug)
+function TraitStore.ClearAll()
+    table.clear(store)
+end
+
 return TraitStore
