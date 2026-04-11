@@ -20,4 +20,14 @@ function TraitStore.Set(userId, traits)
     store[userId] = traits
 end
 
+-- Retrieve traits for a player.
+function TraitStore.Get(userId)
+    if typeof(userId) ~= "number" then
+        warn("TraitStore:Get: invalid userId", userId)
+        return {}
+    end
+
+    return store[userId] or {}
+end
+
 return TraitStore
