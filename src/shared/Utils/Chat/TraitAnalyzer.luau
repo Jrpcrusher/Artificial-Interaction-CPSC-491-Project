@@ -51,7 +51,6 @@ function TraitAnalyzer.ExtractTraits(userId)
         return {}
     end
 
-    local secret
     local okSecret, resultSecret = pcall(function()
         return HttpService:GetSecret("HF_TOKEN")
     end)
@@ -84,7 +83,6 @@ function TraitAnalyzer.ExtractTraits(userId)
         return {}
     end
 
-    local data
     local okDecode, decodeResult = pcall(function()
         return HttpService:JSONDecode(response.Body)
     end)
@@ -94,6 +92,37 @@ function TraitAnalyzer.ExtractTraits(userId)
         return {}
     end
 
+    local content = decodeResult
+        and decodeResult.choices
+        and decodeResult.choices[1]
+        and decodeResult.choices[1].message
+        and decodeResult.choices[1].message.content
+
+    if not content or content == "" then
+        warn("TraitAnalyzer: Missing content in AI response")
+        return {}
+    end
+
+    -- Parse the JSON array returned by the model
+    local traits
+    local okTraits, traitsResult = pcall(function()
+        return HttpService:JSONDecode(content)
+    end)
+
+    if not okTraits or typeof(traitsResult) ~= "table" then
+        warn("TraitAnalyzer: Failed to parse traits JSON:", traitsResult)
+        return {}
+    end
+
+    traits = traitsResult
+
+    -- Enforce maximum trait count
+    local final = {}
+    for i = 1, math.min(MAX_TRAITS, #traits) do
+        table.insert(final, traits[i])
+    end
+
+    return final
 
 end
 
