@@ -8,8 +8,6 @@ local Text = MainFrame.TextLabel
 local LoadingBar = MainFrame.LoadingBar
 local Phone = MainFrame.Phone
 local JrpGfxImage = MainFrame.JrpGfxImage
-local WarningText = LoadingGui.WarningText
-
 
 local sineStyle = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 local elasticStyle = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
