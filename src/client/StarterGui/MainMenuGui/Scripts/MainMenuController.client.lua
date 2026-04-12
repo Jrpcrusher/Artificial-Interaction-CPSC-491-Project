@@ -36,7 +36,8 @@ local credFrame = background:WaitForChild("CreditsFrame", 5)
 local closeCredBtn = credFrame:WaitForChild("CloseCredits", 5)
 
 local warningFrame = background:WaitForChild("OverwriteWarningFrame", 5)
-local lightObj = background:WaitForChild("LightGlow")
+local backgroundImage = background:WaitForChild("ImageLabel")
+local lightObj = backgroundImage:WaitForChild("LightGlow")
 local yesBtn = warningFrame:WaitForChild("YesButton", 5)
 local noBtn = warningFrame:WaitForChild("NoButton", 5)
 local warningText = warningFrame:WaitForChild("WarningText", 5)
@@ -126,18 +127,16 @@ local function transitionToGame()
 		if child:IsA("TextLabel") or child:IsA("TextButton") then
 			TweenService:Create(child, tweenInfo, {
 				TextTransparency = 1,
-				BackgroundTransparency = 1
+				BackgroundTransparency = 1,
 			}):Play()
-
 		elseif child:IsA("Frame") and child.Name ~= "CreditsFrame" and child.Name ~= "OverwriteWarningFrame" then
 			TweenService:Create(child, tweenInfo, {
-				BackgroundTransparency = 1
+				BackgroundTransparency = 1,
 			}):Play()
-
 		elseif child:IsA("ImageLabel") then
 			TweenService:Create(child, tweenInfo, {
 				ImageTransparency = 1,
-				BackgroundTransparency = 1
+				BackgroundTransparency = 1,
 			}):Play()
 		end
 	end
@@ -182,15 +181,19 @@ local function flickerLight(lightObj)
 
 			local sizeOffset = math.random(-2, 2)
 			lightObj.Size = UDim2.new(
-				baseSize.X.Scale, baseSize.X.Offset + sizeOffset,
-				baseSize.Y.Scale, baseSize.Y.Offset + sizeOffset
+				baseSize.X.Scale,
+				baseSize.X.Offset + sizeOffset,
+				baseSize.Y.Scale,
+				baseSize.Y.Offset + sizeOffset
 			)
 
 			local posOffsetX = math.random(-1, 1)
 			local posOffsetY = math.random(-1, 1)
 			lightObj.Position = UDim2.new(
-				basePos.X.Scale, basePos.X.Offset + posOffsetX,
-				basePos.Y.Scale, basePos.Y.Offset + posOffsetY
+				basePos.X.Scale,
+				basePos.X.Offset + posOffsetX,
+				basePos.Y.Scale,
+				basePos.Y.Offset + posOffsetY
 			)
 
 			task.wait(math.random(4, 10) / 100)
