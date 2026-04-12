@@ -11,6 +11,9 @@ local SaveDataResponse = SaveRemotes:WaitForChild("SaveDataResponse")
 local StartNewGame = SaveRemotes:WaitForChild("StartNewGame")
 local ContinueGameRemote = SaveRemotes:WaitForChild("ContinueGame")
 
+local EndingRemotes = ReplicatedStorage.Remotes:WaitForChild("Ending")
+local ShowMainMenu = EndingRemotes:WaitForChild("ShowMainMenu")
+
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local scriptsFolder = script.Parent
@@ -131,7 +134,7 @@ local function transitionToGame()
 	end
 
 	GuiMouseManager.CloseGui()
-	menuGui:Destroy()
+	menuGui.Enabled = false
 end
 
 local function startNewGame()
@@ -176,4 +179,46 @@ playBtn.MouseButton1Click:Connect(function()
 	else
 		startNewGame()
 	end
+end)
+
+ShowMainMenu.OnClientEvent:Connect(function()
+    -- Re-enable the main menu GUI
+    menuGui.Enabled = true
+
+    -- Restore menu visibility state
+    background.BackgroundTransparency = 0
+    for _, child in pairs(background:GetDescendants()) do
+        if child:IsA("TextLabel") or child:IsA("TextButton") then
+            child.TextTransparency = 0
+            child.BackgroundTransparency = 0
+        elseif child:IsA("Frame") and child.Name ~= "CreditsFrame" and child.Name ~= "OverwriteWarningFrame" then
+            child.BackgroundTransparency = 0
+        end
+    end
+
+    -- Disable gameplay UI
+    if aiChatGui then
+		aiChatGui.Enabled = false
+	end
+    
+	if taskGui then
+		taskGui.Enabled = false
+	end
+
+    -- Freeze player again
+    if player.Character then
+        local humanoid = player.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = 0
+            humanoid.JumpPower = 0
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+        end
+    end
+
+    -- Re-enable mouse GUI mode
+    GuiMouseManager.OpenGui()
+
+    -- Refresh save data
+    SaveDataRequest:FireServer()
 end)
