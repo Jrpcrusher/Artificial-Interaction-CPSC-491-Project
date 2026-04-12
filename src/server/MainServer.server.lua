@@ -34,6 +34,7 @@ local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
 local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
+local ReturnToMenu = getOrCreateRemote(EndingFolder, "ReturnToMenu")
 
 local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
@@ -157,3 +158,11 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	end
 end)
 
+ReturnToMenu.OnServerEvent:Connect(function(player) 
+	print("Player requested return to main menu:", player.Name)
+
+	-- TO-DO: Add scene 16 unload logic.
+	-- TO-DO: Load main menu here.
+
+	-- For now, just print until scene logic is implemented.
+end)
