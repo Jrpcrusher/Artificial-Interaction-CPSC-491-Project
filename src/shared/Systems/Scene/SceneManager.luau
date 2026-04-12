@@ -45,6 +45,25 @@ function SceneManager.LoadScene(player, sceneNumber: number)
 	return true, string.format("Scene loaded: %d", sceneNumber)
 end
 
+-- Direct scene unload helper function to be used for Ending Screen logic (i.e., GUI for showing traits)
+function SceneManager.UnloadScene(player, sceneNumber: number)
+	local scene = SceneModules[sceneNumber]
+	if not scene then
+		return false, string.format("Invalid scene number: %d", sceneNumber)
+	end
+
+	local success, message = pcall(function()
+		scene.Unload()
+	end)
+
+	if not success then
+		return false, string.format("Error unloading scene %d: %s", sceneNumber, message)
+	end
+
+	player:SetAttribute("Scene", 1)	-- Resets live state of saved scene number to 1 until the player interacts with the main menu.
+	return true, string.format("Scene unloaded: %d", sceneNumber)
+end
+
 -- Takes in player object to be used by GameSaveManager.
 function SceneManager.ChangeScene(player, state: number)
 	-- Given the state, load the appropriate assets
