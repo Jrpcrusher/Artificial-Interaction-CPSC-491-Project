@@ -106,9 +106,18 @@ end
 
 setupInteractionPrompts()
 
-local function onPlayerAdded(player)
+local function onPlayerAdded(player) -- Function to handle when a player joins the game
 	local userId = player.UserId
-	local _, message = TranscriptManager.Create(userId)
+	local message = ""
+
+	local success, transcript = TranscriptManager.Load(userId)
+
+    if success and transcript ~= nil then
+        message = "Transcript loaded"
+	elseif success then
+        TranscriptManager.Create(userId)
+        message = "Created new transcript"
+    end
 	print(message)
 
 	player.CharacterAdded:Connect(function(character)
