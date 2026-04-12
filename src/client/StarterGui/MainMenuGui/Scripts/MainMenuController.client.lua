@@ -16,6 +16,7 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local scriptsFolder = script.Parent
 local menuGui = scriptsFolder.Parent
+local flickerActive = true
 
 local background = menuGui:WaitForChild("BackgroundFrame", 5)
 if not background then
@@ -110,6 +111,7 @@ closeCredBtn.MouseButton1Click:Connect(function()
 end)
 
 local function transitionToGame()
+	flickerActive = false
 	playBtn.Active = false
 	newGameBtn.Active = false
 	continueBtn.Active = false
@@ -175,7 +177,7 @@ local function flickerLight(lightObj)
 	local basePos = lightObj.Position
 
 	task.spawn(function()
-		while lightObj and lightObj.Parent do
+		while flickerActive and lightObj and lightObj.Parent do
 			lightObj.ImageTransparency = 0.35 + math.random() * 0.2
 
 			local sizeOffset = math.random(-2, 2)
@@ -193,6 +195,9 @@ local function flickerLight(lightObj)
 
 			task.wait(math.random(4, 10) / 100)
 		end
+
+		lightObj.Size = baseSize
+		lightObj.Position = basePos
 	end)
 end
 

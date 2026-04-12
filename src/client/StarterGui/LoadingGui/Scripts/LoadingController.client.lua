@@ -98,7 +98,7 @@ function fadeInJrpGfxLogo()
 	textTween:Play()
 
 	imageTween.Completed:Wait()
-	task.wait(2)
+	task.wait(.75)
 	LoadingGui.Enabled = false
 end
 
