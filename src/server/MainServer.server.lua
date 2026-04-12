@@ -159,9 +159,20 @@ ContinueGame.OnServerEvent:Connect(function(player)
 end)
 
 ReturnToMenu.OnServerEvent:Connect(function(player) 
-	print("Player requested return to main menu:", player.Name)
+	local userId = player.UserId
+	local currentScene = player:GetAttribute("Scene")
 
-	-- TO-DO: Add scene 16 unload logic.
+	-- Check if player is on final scene and unload.
+	if currentScene == FINAL_PROGRESS then
+		local ok, msg = Scenes.UnloadScene(player, currentScene)
+		if not ok then
+			warn("Failed to unload scene:", msg)
+		end
+	end
+
+	-- Reset player scene attribute
+	player:SetAttribute("Scene", nil)
+
 	-- TO-DO: Load main menu here.
 
 	-- For now, just print until scene logic is implemented.
