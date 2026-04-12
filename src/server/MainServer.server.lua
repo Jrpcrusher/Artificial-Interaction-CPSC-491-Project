@@ -87,7 +87,10 @@ local function onPlayerAdded(player) -- Function to handle when a player joins t
 	elseif success then
         TranscriptManager.Create(userId)
         message = "Created new transcript"
-    end
+    else
+		message = "Failed to load transcript"
+		warn(message)
+	end
 	print(message)
 
 	player.CharacterAdded:Connect(function(character)
