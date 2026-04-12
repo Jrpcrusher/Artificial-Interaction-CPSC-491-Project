@@ -18,3 +18,24 @@ local returnButton = background:WaitForChild("ReturnButton", 5)
 
 -- Hide UI initially.
 gui.Enabled = false
+
+-- Clear old trait labels (if trait labels are there from previous playthrough)
+local function clearTraits()
+	for _, child in ipairs(traitList:GetChildren()) do
+		if child:IsA("TextLabel") and child ~= template then
+			child:Destroy()
+		end
+	end
+end
+
+-- Populate trait list
+local function populateTraits(traits)
+	clearTraits()
+
+	for _, trait in ipairs(traits) do
+		local label = template:Clone()
+		label.Visible = true
+		label.Text = "- " .. trait
+		label.Parent = traitList
+	end
+end
