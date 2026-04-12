@@ -3,6 +3,7 @@ local SoundService = game:GetService("SoundService")
 
 local LoadingGui = script.Parent.Parent
 local MainFrame = LoadingGui.Frame
+local MainMenu = script.Parent.Parent.Parent.MainMenuGui
 
 local Text = MainFrame.TextLabel
 local LoadingBar = MainFrame.LoadingBar
@@ -21,6 +22,7 @@ local fadeIn = TweenService:Create(Text, textFade, { TextTransparency = 0 })
 local loadingSound = SoundService.FemaleSound
 
 function playLoadingScreen() -- Play the loading screen
+	MainMenu.Enabled = false -- Initialize main menu enabled to be false
 	local i = 0
 	task.wait(0.5)
 	while i < 4 do
@@ -99,6 +101,7 @@ function fadeInJrpGfxLogo()
 
 	imageTween.Completed:Wait()
 	task.wait(0.75)
+	MainMenu.Enabled = true -- Initialize main menu enabled to be false
 	LoadingGui.Enabled = false
 end
 
