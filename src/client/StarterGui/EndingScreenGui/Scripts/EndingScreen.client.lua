@@ -13,7 +13,7 @@ local scriptsFolder = script.Parent
 local gui = scriptsFolder.Parent
 
 local background = gui:WaitForChild("BackgroundFrame", 5)
-local traitList = gui:WaitForChild("TraitListFrame", 5)
+local traitList = background:WaitForChild("TraitListFrame", 5)
 local template = traitList:WaitForChild("TraitTemplate", 5)
 local returnButton = background:WaitForChild("ReturnButton", 5)
 
