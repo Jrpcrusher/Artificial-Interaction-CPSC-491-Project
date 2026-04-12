@@ -28,16 +28,10 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	end
 
 	local timeValue = os.time()
-<<<<<<< HEAD
 	TranscriptManager.Add(player.UserId, MessageManager.Create(player.UserId, timeValue, message))
-
-	local reply = Query.AskAI(player, message)
-=======
-	TranscriptManager.Add(MessageManager.Create(player.UserId, timeValue, message))
 	SendMessage:Play()
 	local reply = Query.AskAI(message)
 	Reply:Play()
->>>>>>> cf0c221 (Fixed task complete playing even after task marked as complete. Added sound for AI message sent and received)
 
 	if reply == -1 or reply == nil then
 		reply = "Sorry, AI model is currently unreachable."
