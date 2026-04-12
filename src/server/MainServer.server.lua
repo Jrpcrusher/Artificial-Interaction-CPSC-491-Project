@@ -27,11 +27,13 @@ local SaveFolder = getOrCreateFolder(Remotes, "Save")
 local TaskFolder = getOrCreateFolder(Remotes, "Tasks")
 local DialogueFolder = getOrCreateFolder(Remotes, "Dialogue")
 local ChatFolder = getOrCreateFolder(Remotes, "Chat")
+local EndingFolder = getOrCreateFolder(Remotes, "Ending")
 
 local SaveDataRequest = getOrCreateRemote(SaveFolder, "SaveDataRequest")
 local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
+local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
 
 local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
@@ -43,6 +45,23 @@ local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.Tran
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
+local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
+
+local FINAL_PROGRESS = 16  -- Used to check if the player has reached the final scene before showing them their traits.
+
+local function handleStoryCompletion(player)
+    local userId = player.UserId
+
+    -- Extract traits once at the end of the story
+    local traits = TraitAnalyzer.ExtractTraits(userId)
+    TraitStore.Set(userId, traits)
+
+    -- Fire the ending UI to the client
+    ShowEndingTraits:FireClient(player, traits)
+
+    print("Story completed for", player.Name, "Traits generated:", #traits)
+end
 
 local function connectPrompt(prompt)
 	prompt.Triggered:Connect(function(player)
