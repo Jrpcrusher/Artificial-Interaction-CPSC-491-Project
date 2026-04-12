@@ -83,20 +83,6 @@ end)
 updateContinueButton()
 SaveDataRequest:FireServer()
 
-local function freezePlayer(character)
-	local humanoid = character:WaitForChild("Humanoid")
-	humanoid.WalkSpeed = 0
-	humanoid.JumpPower = 0
-	humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-	humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
-end
-
-if player.Character then
-	freezePlayer(player.Character)
-end
-
-player.CharacterAdded:Connect(freezePlayer)
-
 pcall(function()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 end)

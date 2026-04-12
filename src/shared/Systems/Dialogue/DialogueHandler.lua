@@ -93,6 +93,12 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
+	if self.isActive then
+		return
+	end
+
+	self.isActive = true
+
 	self.currentTree = dialogueTree
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
@@ -100,6 +106,12 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 end
 
 function DialogueHandler:Stop() -- Stop the GUI
+	if not self.isActive then
+		return
+	end
+
+	self.isActive = false
+	
 	self.currentTree = nil
 	self.currentNode = nil
 	self.isFinalNode = false
