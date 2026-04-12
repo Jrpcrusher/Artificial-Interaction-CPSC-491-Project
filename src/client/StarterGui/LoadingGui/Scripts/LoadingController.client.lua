@@ -1,22 +1,26 @@
 local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
 
-local Text = script.Parent.Parent.Frame.TextLabel
-local LoadingBar = script.Parent.Parent.Frame.LoadingBar
-local Phone = script.Parent.Parent.Frame.Phone
-local MainFrame = script.Parent.Parent.Frame
-local JrpGfxImage = script.Parent.Parent.Frame.JrpGfxImage
-local LoadingGui = script.Parent.Parent.Parent.LoadingGui
+local LoadingGui = script.Parent.Parent
+local MainFrame = LoadingGui.Frame
+
+local Text = MainFrame.TextLabel
+local LoadingBar = MainFrame.LoadingBar
+local Phone = MainFrame.Phone
+local JrpGfxImage = MainFrame.JrpGfxImage
+local WarningText = LoadingGui.WarningText
+
 
 local sineStyle = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 local elasticStyle = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 local textFade = TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+local logoFade = TweenInfo.new(4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 
 local goal = { Rotation = 360 }
 local fadeOut = TweenService:Create(Text, textFade, { TextTransparency = 1 })
 local fadeIn = TweenService:Create(Text, textFade, { TextTransparency = 0 })
 
-local loadingSound = SoundService.LoadingSound
+local loadingSound = SoundService.FemaleSound
 
 function playLoadingScreen() -- Play the loading screen
 	local i = 0
@@ -87,10 +91,16 @@ end
 
 function fadeInJrpGfxLogo()
 	task.wait(3)
-	TweenService:Create(JrpGfxImage, textFade, { ImageTransparency = 0 }):Play()
 	Text.Text = "Presents . . ."
-	fadeIn:Play()
-	task.wait(3)
+
+	local imageTween = TweenService:Create(JrpGfxImage, logoFade, { ImageTransparency = 0 })
+	local textTween = TweenService:Create(Text, logoFade, { TextTransparency = 0 })
+
+	imageTween:Play()
+	textTween:Play()
+
+	imageTween.Completed:Wait()
+	task.wait(2)
 	LoadingGui.Enabled = false
 end
 
