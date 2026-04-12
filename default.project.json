@@ -58,6 +58,14 @@
           "$path": "src/client/StarterGui/DialogueGui/Scripts",
           "$className": "Folder"
         }
+      },
+
+      "LoadingGui": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/LoadingGui/Scripts",
+          "$className": "Folder"
+        }
       }
     }
   }
