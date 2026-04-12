@@ -78,7 +78,7 @@ function fadeLoadingScreen() -- Will fade out the loading screen
 				TextTransparency = 1,
 				BackgroundTransparency = 1,
 			}):Play()
-		elseif obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+		elseif obj:IsA("ImageLabel") then
 			TweenService:Create(obj, textFade, {
 				ImageTransparency = 1,
 				BackgroundTransparency = 1,
@@ -98,7 +98,7 @@ function fadeInJrpGfxLogo()
 	textTween:Play()
 
 	imageTween.Completed:Wait()
-	task.wait(.75)
+	task.wait(0.75)
 	LoadingGui.Enabled = false
 end
 
