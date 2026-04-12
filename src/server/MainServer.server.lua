@@ -33,8 +33,10 @@ local SaveDataRequest = getOrCreateRemote(SaveFolder, "SaveDataRequest")
 local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
+
 local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
 local ReturnToMenu = getOrCreateRemote(EndingFolder, "ReturnToMenu")
+local ShowMainMenu = getOrCreateRemote(EndingFolder, "ShowMainMenu")
 
 local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
@@ -173,7 +175,6 @@ ReturnToMenu.OnServerEvent:Connect(function(player)
 	-- Reset player scene attribute
 	player:SetAttribute("Scene", nil)
 
-	-- TO-DO: Load main menu here.
-
-	-- For now, just print until scene logic is implemented.
+	-- Tell the client to show the main menu again.
+	ShowMainMenu:FireClient(player)
 end)
