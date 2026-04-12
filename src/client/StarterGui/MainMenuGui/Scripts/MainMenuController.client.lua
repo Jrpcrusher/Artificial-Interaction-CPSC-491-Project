@@ -22,10 +22,6 @@ local menuGui = scriptsFolder.Parent
 local flickerActive = true
 
 local background = menuGui:WaitForChild("BackgroundFrame", 5)
-if not background then
-	warn("CRITICAL ERROR: 'BackgroundFrame' is missing.")
-	return
-end
 
 GuiMouseManager.OpenGui()
 
@@ -55,17 +51,15 @@ local MainMenuSound = SoundService:WaitForChild("MainMenuSoundTrack")
 -- Main menu owns startup visibility
 MainMenuSound:Play() -- Play the main menu sound
 
+-- Setup logic for player joining
 if aiChatGui then
 	aiChatGui.Enabled = false
 end
-
 if taskGui then
 	taskGui.Enabled = false
 end
-
 local playerHasSaveData = false
 local currentSavedScene = "Scene 1"
-
 local function updateContinueButton()
 	continueBtn.Visible = true
 	if playerHasSaveData then
@@ -76,15 +70,33 @@ local function updateContinueButton()
 		continueBtn.TextTransparency = 0.9
 	end
 end
-
 SaveDataResponse.OnClientEvent:Connect(function(hasSave, sceneNumber)
 	playerHasSaveData = hasSave
 	currentSavedScene = "Scene " .. tostring(sceneNumber)
 	updateContinueButton()
 end)
-
 updateContinueButton()
 SaveDataRequest:FireServer()
+
+-- Freeze the player
+local function disableControls()
+	local playerScripts = player:WaitForChild("PlayerScripts")
+	local playerModule = require(playerScripts:WaitForChild("PlayerModule")) :: any
+	local controls = playerModule:GetControls()
+
+	controls:Disable()
+end
+disableControls()
+
+local function enableControls()
+	local playerScripts = player:WaitForChild("PlayerScripts")
+	local playerModule = require(playerScripts:WaitForChild("PlayerModule")) :: any
+	local controls = playerModule:GetControls()
+
+	controls:Enable()
+end
+
+-- End of setup for user
 
 pcall(function()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
@@ -148,6 +160,8 @@ local function transitionToGame()
 
 	GuiMouseManager.CloseGui()
 	menuGui.Enabled = false
+	enableControls() -- allow the user to start walking again
+	player.CameraMode = Enum.CameraMode.LockFirstPerson
 end
 
 local function startNewGame()
