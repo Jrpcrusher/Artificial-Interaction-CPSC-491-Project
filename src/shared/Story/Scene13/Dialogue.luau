@@ -38,6 +38,17 @@ Scene13.BullyDialogueTree = {
 		text = "What, what are you talking about? My grandpa who passed away last year gave this jacket to me. This jacket is special to me you jerk!",
 		next = "scene13Reply3",
 	},
+
+	scene13Reply3 = {
+		speaker = "You",
+		text = "And that haircut, what is with the way you style it, its literally the most abominable thing I've seen!",
+		next = "scene13Response3",
+	},
+
+	scene13Response3 = {
+		speaker = "Bully",
+		text = "Not laughing now are you!",
+	},
 }
 
 Scene13.MainCharacterDialogueTree = {}
