@@ -1,7 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local SoundService = game:GetService("SoundService")
-
-local TaskComplete = SoundService:WaitForChild("TaskComplete")
 
 local Story = ReplicatedStorage.Shared.Story
 
@@ -37,42 +34,6 @@ function TaskConfig.GetTaskById(taskId, sceneNumber)
 		end
 	end
 	return nil
-end
-
-function TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber)
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
-
-	for _, task in ipairs(tasks) do
-		if task.Type == "Required" and task.Id ~= "go_to_door" then
-			if not task.Completed then
-				return false
-			end
-		end
-	end
-	return true
-end
-
-function TaskConfig.IsDoorTaskEnabled(sceneNumber)
-	local doorTask = TaskConfig.GetTaskById("go_to_door", sceneNumber)
-	if not doorTask then
-		return false
-	end
-
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete() and not doorTask.Completed
-end
-
-function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
-	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
-	if task.Completed then -- Skip if task is already completed and marked as such
-		return
-	end
-	
-	if task then
-		task.Completed = true
-		TaskComplete:Play()
-		return true
-	end
-	return false
 end
 
 return TaskConfig

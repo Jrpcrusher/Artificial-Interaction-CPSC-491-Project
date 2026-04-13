@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
+local Players = game:GetService("Players")
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
@@ -136,6 +137,11 @@ function DialogueHandler:Stop() -- Stop the GUI
 	self.choicesPanel.Visible = false
 	GuiMouseManager.CloseGui()
 	GuiMovementManager.Unlock()
+
+	local player = Players.LocalPlayer
+	if player then
+		player.CameraMode = Enum.CameraMode.LockFirstPerson
+	end
 end
 
 function DialogueHandler:_choose(index) -- Function to handle when a user picks an option
