@@ -6,7 +6,24 @@ Scene13.MomDialogueTree = {}
 
 Scene13.SisterDialogueTree = {}
 
-Scene13.TeacherDialogueTree = {}
+Scene13.TeacherDialogueTree = {
+	start = {
+		speaker = "Teacher",
+		text = "What is the matter here?",
+		next = "Bully1",
+	},
+
+	Bully1 = {
+		speaker = "Bully",
+		text = "<Username> made fun of my jacket and haircut so I punched him one!",
+		next = "Teacher2",
+	},
+
+	Teacher2 = {
+		speaker = "Teacher",
+		text = "That is enough! Both of you to the principal's office now!",
+	},
+}
 
 Scene13.BullyDialogueTree = {
 	scene13Start = {
