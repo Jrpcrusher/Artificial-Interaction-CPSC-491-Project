@@ -34,6 +34,7 @@ local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
 
+local StoryCompleted = getOrCreateRemote(EndingFolder, "StoryCompleted")
 local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
 local ReturnToMenu = getOrCreateRemote(EndingFolder, "ReturnToMenu")
 local ShowMainMenu = getOrCreateRemote(EndingFolder, "ShowMainMenu")
@@ -158,6 +159,10 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	if not ok then
 		warn("Failed to load continue scene:", msg)
 	end
+end)
+
+StoryCompleted.OnServerEvent:Connect(function(player)
+	handleStoryCompletion(player)
 end)
 
 ReturnToMenu.OnServerEvent:Connect(function(player) 
