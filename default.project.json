@@ -60,17 +60,15 @@
         }
       },
 
-<<<<<<< HEAD
       "EndingScreenGui": {
         "$className": "ScreenGui",
         "Scripts": {
           "$path": "src/client/StarterGui/EndingScreenGui/Scripts",
-=======
+
       "LoadingGui": {
         "$className": "ScreenGui",
         "Scripts": {
           "$path": "src/client/StarterGui/LoadingGui/Scripts",
->>>>>>> 231ceeb (AI-165 Adding visual loading screen GUI for beginning of game)
           "$className": "Folder"
         }
       }

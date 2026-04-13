@@ -224,8 +224,8 @@ function DialogueHandler:_typewrite(node) -- Function that enables a typewriting
 			self.isTyping = false
 			return
 		end
-
 		label.MaxVisibleGraphemes = i
+
 		sound.PlaybackSpeed = pitch
 		sound:Play()
 		task.wait(0.02)
@@ -254,3 +254,5 @@ function DialogueHandler:_chooseTalker(character)
 		return MaleSound, 1
 	end
 end
+
+return DialogueHandler
