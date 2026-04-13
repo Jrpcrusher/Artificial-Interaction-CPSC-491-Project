@@ -27,11 +27,17 @@ local SaveFolder = getOrCreateFolder(Remotes, "Save")
 local TaskFolder = getOrCreateFolder(Remotes, "Tasks")
 local DialogueFolder = getOrCreateFolder(Remotes, "Dialogue")
 local ChatFolder = getOrCreateFolder(Remotes, "Chat")
+local EndingFolder = getOrCreateFolder(Remotes, "Ending")
 
 local SaveDataRequest = getOrCreateRemote(SaveFolder, "SaveDataRequest")
 local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
+
+local StoryCompleted = getOrCreateRemote(EndingFolder, "StoryCompleted")
+local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
+local ReturnToMenu = getOrCreateRemote(EndingFolder, "ReturnToMenu")
+local ShowMainMenu = getOrCreateRemote(EndingFolder, "ShowMainMenu")
 
 local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
@@ -43,6 +49,30 @@ local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.Tran
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
+local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
+
+local FINAL_PROGRESS = 16  -- Used to check if the player has reached the final scene before showing them their traits.
+
+local function handleStoryCompletion(player)
+    local userId = player.UserId
+
+	-- If player already has stored traits (e.g., loading into an already-completed game)
+	local storedTraits = TraitStore.Get(userId)
+	if storedTraits and #storedTraits > 0 then
+		ShowEndingTraits:FireClient(player, storedTraits)
+		return
+	end
+
+    -- Extract traits once at the end of the story
+    local traits = TraitAnalyzer.ExtractTraits(userId)
+    TraitStore.Set(userId, traits)
+
+    -- Fire the ending UI to the client
+    ShowEndingTraits:FireClient(player, traits)
+
+    print("Story completed for", player.Name, "Traits generated:", #traits)
+end
 
 local function connectPrompt(prompt)
 	prompt.Triggered:Connect(function(player)
@@ -114,6 +144,7 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	TranscriptManager.Delete(userId)
 	Progression.Reset()
 	TranscriptManager.Create(userId)
+	TraitStore.Clear(userId)
 
 	player:SetAttribute("Scene", 1)
 
@@ -138,3 +169,24 @@ ContinueGame.OnServerEvent:Connect(function(player)
 	end
 end)
 
+StoryCompleted.OnServerEvent:Connect(function(player)
+	handleStoryCompletion(player)
+end)
+
+ReturnToMenu.OnServerEvent:Connect(function(player)
+	local currentScene = player:GetAttribute("Scene")
+
+	-- Check if player is on final scene and unload.
+	if currentScene == FINAL_PROGRESS then
+		local ok, msg = Scenes.UnloadScene(player, currentScene)
+		if not ok then
+			warn("Failed to unload scene:", msg)
+		end
+	end
+
+	-- Reset player scene attribute
+	player:SetAttribute("Scene", nil)
+
+	-- Tell the client to show the main menu again.
+	ShowMainMenu:FireClient(player)
+end)
