@@ -26,7 +26,7 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	end
 
 	local timeValue = os.time()
-	TranscriptManager.Add(MessageManager.Create(player.UserId, timeValue, message))
+	TranscriptManager.Add(player.UserId, MessageManager.Create(player.UserId, timeValue, message))
 
 	local reply = Query.AskAI(message)
 
@@ -35,7 +35,7 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	end
 
 	timeValue = os.time()
-	TranscriptManager.Add(MessageManager.Create(0, timeValue, reply))
+	TranscriptManager.Add(player.UserId, MessageManager.Create(0, timeValue, reply))
 
 	ChatbotResponse:FireClient(player, reply)
 end)
