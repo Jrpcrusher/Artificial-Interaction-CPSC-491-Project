@@ -165,8 +165,7 @@ StoryCompleted.OnServerEvent:Connect(function(player)
 	handleStoryCompletion(player)
 end)
 
-ReturnToMenu.OnServerEvent:Connect(function(player) 
-	local userId = player.UserId
+ReturnToMenu.OnServerEvent:Connect(function(player)
 	local currentScene = player:GetAttribute("Scene")
 
 	-- Check if player is on final scene and unload.
