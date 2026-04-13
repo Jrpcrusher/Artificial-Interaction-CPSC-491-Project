@@ -137,6 +137,7 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	TranscriptManager.Delete(userId)
 	Progression.Reset()
 	TranscriptManager.Create(userId)
+	TraitStore.Clear(userId)
 
 	player:SetAttribute("Scene", 1)
 
