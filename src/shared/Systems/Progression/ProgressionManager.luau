@@ -20,12 +20,10 @@ function Progression.Increment() -- Simple function to increment where we are in
 end
 
 function Progression.Get() -- Get the current state of the game, can be used to save
-	print("State gotten")
 	return current_state
 end
 
 function Progression.Reset() -- Reset the state on start of new game, useful for starting new save
-	print("State reset to 1")
 	current_state = 1
 	return current_state
 end
@@ -36,9 +34,9 @@ function Progression.Set(user_id) -- Sets the current state from retrieving stat
 		return current_state
 	end
 
-	local loaded = GameSaveManager.Load(user_id)
-	if loaded then
-		current_state = loaded
+	local state = GameSaveManager.Load(user_id)
+	if state then
+		current_state = state
 	end
 
 	return current_state
