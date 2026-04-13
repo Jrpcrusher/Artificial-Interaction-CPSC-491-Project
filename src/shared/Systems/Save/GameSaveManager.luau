@@ -26,9 +26,14 @@ end
 -- Save the player's game state.
 function GameSaveManager.Save(user_id, scene_number)
 	-- Attempts to save data using SetAsync using the attempt helper function.
-	return attempt(function()
+	local success, result = attempt(function()
 		return save_datastore:SetAsync(user_id, scene_number)
 	end)
+
+	if not success then
+		return false, result
+	end
+	return true
 end
 
 -- Loads the player's game state and returns the scene number they were at.
@@ -36,9 +41,8 @@ function GameSaveManager.Load(user_id)
 	local success, result = attempt(function()
 		return save_datastore:GetAsync(user_id)
 	end)
-	if success and result then
-		-- If the save data exists, then return the saved scene value from the saved table.
-		return result.Scene
+	if success then
+		return result
 	end
 	-- If no data exists or loading failed, return nil.
 	return nil

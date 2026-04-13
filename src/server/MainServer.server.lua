@@ -44,7 +44,7 @@ local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.In
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
-local function connectPrompt(prompt)
+local function connectPrompt(prompt) -- Connect dialogue to NPC
 	prompt.Triggered:Connect(function(player)
 		local interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
 		if interactable then
@@ -53,7 +53,7 @@ local function connectPrompt(prompt)
 	end)
 end
 
-local function setupInteractionPrompts()
+local function setupInteractionPrompts() -- setup NPC interactions
 	for _, obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("ProximityPrompt") then
 			connectPrompt(obj)
@@ -67,7 +67,7 @@ local function setupInteractionPrompts()
 	end)
 end
 
-local function removeForceField(character)
+local function removeForceField(character) -- Simple function to remove forcefield
 	local forceField = character:FindFirstChildOfClass("ForceField")
 	if forceField then
 		forceField:Destroy()
@@ -80,38 +80,40 @@ local function onPlayerAdded(player) -- Function to handle when a player joins t
 	local userId = player.UserId
 	local message = ""
 
+	-- Get the transcript
 	local success, transcript = TranscriptManager.Load(userId)
 
-    if success and transcript ~= nil then
+    if success and transcript ~= nil then -- Check if transcript loaded
         message = "Transcript loaded"
-	elseif success then
+	elseif success then -- If success, but no transcript, then create new one
         TranscriptManager.Create(userId)
         message = "Created new transcript"
-    else
+    else -- Otherwise we didnt get a transcript
 		message = "Failed to load transcript"
 		warn(message)
 	end
+
 	print(message)
 
-	player.CharacterAdded:Connect(function(character)
+	player.CharacterAdded:Connect(function(character) -- Remove player forcefield
 		task.wait()
 		removeForceField(character)
 	end)
 
-	if player.Character then
+	if player.Character then  -- Remove player forcefield
 		removeForceField(player.Character)
 	end
 end
 
-Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerAdded:Connect(onPlayerAdded) -- Call onPlayerAdded
 
-for _, player in ipairs(Players:GetPlayers()) do
+for _, player in ipairs(Players:GetPlayers()) do -- Get all the players
 	onPlayerAdded(player)
 end
 
-SaveDataRequest.OnServerEvent:Connect(function(player)
+SaveDataRequest.OnServerEvent:Connect(function(player) -- RemoteEvent savedatarequest fired
 	local userId = player.UserId
-	local loadedScene = GameSaveManager.Load(userId)
+	local loadedScene = GameSaveManager.Load(userId) -- Call game save to load
 
 	local hasSave = loadedScene ~= nil
 	local sceneNumber = loadedScene or 1
@@ -119,7 +121,7 @@ SaveDataRequest.OnServerEvent:Connect(function(player)
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
 end)
 
-StartNewGame.OnServerEvent:Connect(function(player)
+StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete everything and reset
 	local userId = player.UserId
 
 	GameSaveManager.Delete(userId)
@@ -135,16 +137,16 @@ StartNewGame.OnServerEvent:Connect(function(player)
 	end
 end)
 
-ContinueGame.OnServerEvent:Connect(function(player)
+ContinueGame.OnServerEvent:Connect(function(player) -- On continue game, load the correct scene
 	local userId = player.UserId
 
 	local loadedScene = GameSaveManager.Load(userId)
-	local sceneNumber = loadedScene or 1
+	local sceneNumber = loadedScene or 1 -- if none found, simply load scene 1
 
-	Progression.Set(userId)
-	player:SetAttribute("Scene", sceneNumber)
+	Progression.Set(userId) -- Set the progression given what we know from GameSaveManager
+	player:SetAttribute("Scene", sceneNumber) -- Set attribute to track
 
-	local ok, msg = Scenes.LoadScene(player, sceneNumber)
+	local ok, msg = Scenes.LoadScene(player, sceneNumber) -- Load the scene for the user
 	if not ok then
 		warn("Failed to load continue scene:", msg)
 	end
