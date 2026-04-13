@@ -57,6 +57,13 @@ local FINAL_PROGRESS = 16  -- Used to check if the player has reached the final 
 local function handleStoryCompletion(player)
     local userId = player.UserId
 
+	-- If player already has stored traits (e.g., loading into an already-completed game)
+	local storedTraits = TraitStore.Get(userId)
+	if storedTraits and #storedTraits > 0 then
+		ShowEndingTraits:FireClient(player, storedTraits)
+		return
+	end
+
     -- Extract traits once at the end of the story
     local traits = TraitAnalyzer.ExtractTraits(userId)
     TraitStore.Set(userId, traits)
