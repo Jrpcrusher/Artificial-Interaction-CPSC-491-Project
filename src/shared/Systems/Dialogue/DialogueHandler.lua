@@ -3,7 +3,7 @@ local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseM
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
 local DialogueHandler = {}
-	DialogueHandler.__index = DialogueHandler
+DialogueHandler.__index = DialogueHandler
 
 function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	local self = setmetatable({}, DialogueHandler)
@@ -19,7 +19,7 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self.choice3 = self.choicesPanel:WaitForChild("Choice3")
 
 	self.currentTree = nil -- Initially set up our current tree
-	self.currentNode = nil -- Set up which node is the starting node 
+	self.currentNode = nil -- Set up which node is the starting node
 	self.isFinalNode = false
 	self.canAdvanceLinear = false
 
@@ -31,7 +31,7 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self:_addHoverHighlight(self.choice1) -- Make the buttons have a highlight
 	self:_addHoverHighlight(self.choice2)
 	self:_addHoverHighlight(self.choice3)
-	
+
 	return self
 end
 
@@ -50,6 +50,7 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 	local node = self.currentTree[nodeName]
 	if not node then
 		warn("Dialogue node not found:", nodeName)
+		self:Stop()
 		return
 	end
 
@@ -86,10 +87,25 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
+	if self.currentTree then
+		self:Stop()
+	end
+
+	if not dialogueTree then
+		warn("DialogueHandler:Start called with nil dialogueTree")
+		return
+	end
+
+	local initialNode = startNode or "start"
+	if not dialogueTree[initialNode] then
+		warn("Start node not found:", initialNode)
+		return
+	end
+
 	self.currentTree = dialogueTree
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
-	self:_showNode(startNode or "start")
+	self:_showNode(initialNode)
 end
 
 function DialogueHandler:Stop() -- Stop the GUI
@@ -107,9 +123,8 @@ function DialogueHandler:_choose(index) -- Function to handle when a user picks 
 	if not self.currentTree or not self.currentNode then -- Check if we have nothing
 		warn("Missing currentTree or currentNode")
 		return
-		
 	end
-	
+
 	local node = self.currentTree[self.currentNode] -- get the current node we are at
 	if node and node.choices and node.choices[index] then -- If we get a valid choice
 		self:_showNode(node.choices[index].next)
@@ -135,7 +150,7 @@ function DialogueHandler:_connectDialogueClick()
 		if input.UserInputType ~= Enum.UserInputType.MouseButton1 then
 			return
 		end
-		
+
 		if not self.currentTree or not self.currentNode then
 			return
 		end
@@ -154,7 +169,7 @@ function DialogueHandler:_connectDialogueClick()
 end
 
 function DialogueHandler:_addHoverHighlight(button)
-	button.BackgroundColor3 = Color3.fromRGB(0,0,0)
+	button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	button.BackgroundTransparency = 1
 
 	button.MouseEnter:Connect(function()
@@ -162,7 +177,7 @@ function DialogueHandler:_addHoverHighlight(button)
 	end)
 
 	button.MouseLeave:Connect(function()
-	button.BackgroundTransparency = 1
+		button.BackgroundTransparency = 1
 	end)
 end
 

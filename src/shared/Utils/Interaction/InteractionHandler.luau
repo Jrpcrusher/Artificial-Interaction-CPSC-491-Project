@@ -41,9 +41,9 @@ local function areRequiredTasksBeforeDoorComplete(sceneNumber)
 end
 
 local function resolveDialogueStartNode(player, interactable, sceneNumber)
-	local dialogueId = interactable:GetAttribute("DialogueId")
+	local NpcId = interactable:GetAttribute("NpcId")
 
-	if dialogueId == "Dad" then
+	if NpcId == "Dad" then
 		if sceneNumber == 1 then
 			return "scene1Start"
 		elseif sceneNumber == 2 then
@@ -66,15 +66,15 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			completeTaskById(player, taskId, sceneNumber)
 		end
 
-		local dialogueId = interactable:GetAttribute("DialogueId")
-		if not dialogueId then
-			warn("NPC missing DialogueId attribute:", interactable.Name)
+		local NpcId = interactable:GetAttribute("NpcId")
+		if not NpcId then
+			warn("NPC missing NpcId attribute:", interactable.Name)
 			return
 		end
 
 		local startNode = resolveDialogueStartNode(player, interactable, sceneNumber)
-		print("SERVER firing StartDialogue", player.Name, dialogueId, startNode)
-		StartDialogue:FireClient(player, dialogueId, startNode)
+		print("SERVER firing StartDialogue", player.Name, NpcId, startNode)
+		StartDialogue:FireClient(player, NpcId, startNode)
 
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
