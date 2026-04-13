@@ -4,10 +4,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
 local LoreMemoryManager = require(ReplicatedStorage.Shared.Utils.Lore.LoreMemoryManager)
-local ProgressionManager = require(ReplicatedStorage.Shared.Systems.Progression.ProgressionManager)
+local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
-local function BuildLoreSection(playerMessage)
-	local currentProgress = ProgressionManager.Get()
+local function BuildLoreSection(player, playerMessage)
+	local currentProgress = SceneManager.GetCurrentScene(player)
 	local relevantFacts = LoreMemoryManager.GetRelevantFacts(playerMessage, currentProgress)
 
 	if #relevantFacts == 0 then
@@ -98,8 +98,8 @@ local function sanitizeOutput(text)
 	return text
 end
 
-local function BuildBehaviorSection()
-	local currentProgress = ProgressionManager.Get()
+local function BuildBehaviorSection(player)
+	local currentProgress = SceneManager.GetCurrentScene(player)
 
 	if currentProgress <= 8 then
 		return [[
@@ -129,9 +129,7 @@ Behavior State:
 	end
 end
 
-function Query.AskAI(message)
-	print("Query.AskAI start")
-
+function Query.AskAI(player, message)
 	if type(message) ~= "string" or message == "" then
 		return -1
 	end
@@ -139,8 +137,8 @@ function Query.AskAI(message)
 	local ok, result = pcall(function()
 		local secret = HttpService:GetSecret("HF_TOKEN")
 		local cleanedInput = sanitizeInput(message)
-		local loreSection = BuildLoreSection(message)
-		local behaviorSection = BuildBehaviorSection()
+		local loreSection = BuildLoreSection(player, message)
+		local behaviorSection = BuildBehaviorSection(player)
 		local systemPrompt = BASE_SYSTEM_PROMPT .. behaviorSection .. loreSection
 
 		print("Sending request to Hugging Face")

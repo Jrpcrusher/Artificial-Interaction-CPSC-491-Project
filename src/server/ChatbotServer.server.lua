@@ -28,7 +28,7 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	local timeValue = os.time()
 	TranscriptManager.Add(player.UserId, MessageManager.Create(player.UserId, timeValue, message))
 
-	local reply = Query.AskAI(message)
+	local reply = Query.AskAI(player, message)
 
 	if reply == -1 or reply == nil then
 		reply = "Sorry, AI model is currently unreachable."

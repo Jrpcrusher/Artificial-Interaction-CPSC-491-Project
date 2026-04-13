@@ -44,7 +44,6 @@ local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
 local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
 local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
 
-local Progression = require(ReplicatedStorage.Shared.Systems.Progression.ProgressionManager)
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
@@ -154,7 +153,6 @@ StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete
 
 	GameSaveManager.Delete(userId)
 	TranscriptManager.Delete(userId)
-	Progression.Reset()
 	TranscriptManager.Create(userId)
 	TraitStore.Clear(userId)
 
@@ -165,9 +163,6 @@ StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete
 end)
 
 ContinueGame.OnServerEvent:Connect(function(player) -- On continue game, load the correct scene
-	local userId = player.UserId
-	Progression.Set(userId) -- Set the progression given what we know from GameSaveManager
-
 	local ok, msg = Scenes.ContinueFromSave(player) -- Load the scene for the user
 	if not ok then
 		warn("Failed to load continue scene:", msg)
