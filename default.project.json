@@ -64,9 +64,10 @@
         "$className": "ScreenGui",
         "Scripts": {
           "$path": "src/client/StarterGui/EndingScreenGui/Scripts",
+          "$className": "Folder"
         }
       },
-      
+
       "LoadingGui": {
         "$className": "ScreenGui",
         "Scripts": {
