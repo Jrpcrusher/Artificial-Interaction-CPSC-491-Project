@@ -52,8 +52,6 @@ local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
 local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
 
-local FINAL_PROGRESS = 16  -- Used to check if the player has reached the final scene before showing them their traits.
-
 local function handleStoryCompletion(player)
     local userId = player.UserId
 
@@ -160,9 +158,7 @@ StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete
 	TranscriptManager.Create(userId)
 	TraitStore.Clear(userId)
 
-	player:SetAttribute("Scene", 1)
-
-	local ok, msg = Scenes.LoadScene(player, 1)
+	local ok, msg = Scenes.LoadSceneNumber(player, 1)
 	if not ok then
 		warn("Failed to load new game scene:", msg)
 	end
@@ -170,14 +166,9 @@ end)
 
 ContinueGame.OnServerEvent:Connect(function(player) -- On continue game, load the correct scene
 	local userId = player.UserId
-
-	local loadedScene = GameSaveManager.Load(userId)
-	local sceneNumber = loadedScene or 1 -- if none found, simply load scene 1
-
 	Progression.Set(userId) -- Set the progression given what we know from GameSaveManager
-	player:SetAttribute("Scene", sceneNumber) -- Set attribute to track
 
-	local ok, msg = Scenes.LoadScene(player, sceneNumber) -- Load the scene for the user
+	local ok, msg = Scenes.ContinueFromSave(player) -- Load the scene for the user
 	if not ok then
 		warn("Failed to load continue scene:", msg)
 	end
@@ -188,19 +179,7 @@ StoryCompleted.OnServerEvent:Connect(function(player)
 end)
 
 ReturnToMenu.OnServerEvent:Connect(function(player)
-	local currentScene = player:GetAttribute("Scene")
-
-	-- Check if player is on final scene and unload.
-	if currentScene == FINAL_PROGRESS then
-		local ok, msg = Scenes.UnloadScene(player, currentScene)
-		if not ok then
-			warn("Failed to unload scene:", msg)
-		end
-	end
-
-	-- Reset player scene attribute
 	player:SetAttribute("Scene", nil)
-
-	-- Tell the client to show the main menu again.
+	player:SetAttribute("IsSceneTransitioning", false)
 	ShowMainMenu:FireClient(player)
 end)
