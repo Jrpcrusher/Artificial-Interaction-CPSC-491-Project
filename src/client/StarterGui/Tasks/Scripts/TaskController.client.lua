@@ -24,6 +24,8 @@ local chatFrame = aiChatGui:WaitForChild("ChatWindow")
 local dialogueBar = dialogueGui:WaitForChild("DialogueBar")
 
 local currentScene = 1
+local activeStage = 1
+local completedTaskIds = {}
 local selectedTask = nil
 
 -- Left pinned tracker
@@ -53,8 +55,25 @@ completedTemplate.Visible = false
 tasksOpenButton.Visible = true
 mainFrame.Visible = false
 
+local function isTaskCompleted(taskId)
+	return completedTaskIds[taskId] == true
+end
+
+local function buildRuntimeTask(taskDefinition)
+	local task = table.clone(taskDefinition)
+	task.Completed = isTaskCompleted(task.Id)
+	return task
+end
+
 local function getCurrentTasks()
-	return TaskConfig.GetTasksForScene(currentScene)
+	local stageTasks = TaskConfig.GetTasksForStage(currentScene, activeStage)
+	local runtimeTasks = {}
+
+	for _, taskDefinition in ipairs(stageTasks) do
+		table.insert(runtimeTasks, buildRuntimeTask(taskDefinition))
+	end
+
+	return runtimeTasks
 end
 
 local function isTaskMenuOpen()
@@ -213,6 +232,29 @@ local function openTaskMenu()
 	GuiMovementManager.Lock()
 end
 
+local function areAllRequiredTasksInActiveStageComplete()
+	local tasks = getCurrentTasks()
+
+	for _, task in ipairs(tasks) do
+		if task.Type == "Required" and not task.Completed then
+			return false
+		end
+	end
+
+	return true
+end
+
+local function advanceStageIfReady()
+	if not areAllRequiredTasksInActiveStageComplete() then
+		return
+	end
+
+	local maxStage = TaskConfig.GetMaxStage(currentScene)
+	if activeStage < maxStage then
+		activeStage += 1
+	end
+end
+
 local function refreshTaskUI()
 	populateTaskList()
 	selectedTask = getDefaultTask()
@@ -221,6 +263,8 @@ end
 
 local function setScene(sceneNumber)
 	currentScene = sceneNumber
+	activeStage = 1
+	completedTaskIds = {}
 	refreshTaskUI()
 end
 
@@ -232,17 +276,18 @@ TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 		return
 	end
 
-	local success = TaskConfig.MarkTaskComplete(taskId, currentScene)
-	if not success then
+	local taskDefinition = TaskConfig.GetTaskById(taskId, currentScene)
+	if not taskDefinition then
 		warn("Task not found for current scene:", taskId, currentScene)
 		return
 	end
 
+	completedTaskIds[taskId] = true
+	advanceStageIfReady()
 	refreshTaskUI()
 end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	-- Let the task key work even when normal input has been processed by other systems
 	if input.KeyCode == Enum.KeyCode.J then
 		if isTaskMenuOpen() then
 			closeTaskMenu()

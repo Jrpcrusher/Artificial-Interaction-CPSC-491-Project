@@ -22,12 +22,12 @@ local SceneTasks = {
 }
 local TaskConfig = {}
 
-function TaskConfig.GetTasksForScene(sceneNumber)
+function TaskConfig.GetTasksForScene(sceneNumber) -- Handle getting the tasks from the task file
 	return SceneTasks[sceneNumber] or {}
 end
 
-function TaskConfig.GetTaskById(taskId, sceneNumber)
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
+function TaskConfig.GetTaskById(taskId, sceneNumber) -- Get tasks by their id
+	local tasks = TaskConfig.GetTasksForScene(sceneNumber) -- get the tasks from gettaskforscene
 	for _, task in ipairs(tasks) do
 		if task.Id == taskId then
 			return task
@@ -36,35 +36,31 @@ function TaskConfig.GetTaskById(taskId, sceneNumber)
 	return nil
 end
 
-function TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber)
+function TaskConfig.GetTasksForStage(sceneNumber, stage) -- Get all the tasks for the stage
 	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
+	local stageTasks = {}
 
 	for _, task in ipairs(tasks) do
-		if task.Type == "Required" and task.Id ~= "go_to_door" then
-			if not task.Completed then
-				return false
-			end
+		if (task.Stage or 1) == stage then
+			table.insert(stageTasks, task)
 		end
 	end
-	return true
+
+	return stageTasks
 end
 
-function TaskConfig.IsDoorTaskEnabled(sceneNumber)
-	local doorTask = TaskConfig.GetTaskById("go_to_door", sceneNumber)
-	if not doorTask then
-		return false
+function TaskConfig.GetMaxStage(scene_number) -- Get the maximum amount of tasks for that stage
+	local tasks = TaskConfig.GetTasksForScene(scene_number)
+	local maxStage = 1
+
+	for _, task in ipairs(tasks) do
+		local stage = task.Stage or 1
+		if stage > maxStage then
+			maxStage = stage
+		end
 	end
 
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete() and not doorTask.Completed
-end
-
-function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
-	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
-	if task then
-		task.Completed = true
-		return true
-	end
-	return false
+	return maxStage
 end
 
 return TaskConfig

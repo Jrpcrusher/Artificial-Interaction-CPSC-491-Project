@@ -4,6 +4,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local TaskConfig = require(Shared.Systems.Tasks.TaskConfig)
+local TaskState = require(Shared.Systems.Tasks.TaskState)
 local SceneDoorController = require(Shared.Systems.Scene.SceneDoorController)
 
 local TaskUpdated = Remotes.Tasks:WaitForChild("TaskUpdated")
@@ -21,29 +22,58 @@ local function getTaskById(taskId, sceneNumber)
 	return TaskConfig.GetTaskById(taskId, sceneNumber)
 end
 
+local function getTasksForActiveStage(player, sceneNumber)
+	local activeStage = TaskState.GetActiveStage(player)
+	return TaskConfig.GetTasksForStage(sceneNumber, activeStage)
+end
+
+local function areAllRequiredTasksInActiveStageComplete(player, sceneNumber)
+	local tasks = getTasksForActiveStage(player, sceneNumber)
+
+	for _, task in ipairs(tasks) do
+		if task.Type == "Required" and not TaskState.IsTaskCompleted(player, task.Id) then
+			return false
+		end
+	end
+
+	return true
+end
+
+local function advanceStageIfReady(player, sceneNumber)
+	if not areAllRequiredTasksInActiveStageComplete(player, sceneNumber) then
+		return
+	end
+
+	local maxStage = TaskConfig.GetMaxStage(sceneNumber)
+	local activeStage = TaskState.GetActiveStage(player)
+
+	if activeStage < maxStage then
+		TaskState.AdvanceStage(player)
+	end
+end
+
 local function completeTaskById(player, taskId, sceneNumber)
-	local success = TaskConfig.MarkTaskComplete(taskId, sceneNumber)
-	if not success then
+	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
+	if not task then
 		warn("Task not found:", taskId, "scene:", sceneNumber)
 		return
 	end
 
-	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
-	if task then
-		print("Completed task:", task.Title)
+	if TaskState.IsTaskCompleted(player, taskId) then
+		return
 	end
 
+	TaskState.MarkTaskComplete(player, taskId)
+	print("Completed task:", task.Title)
+
+	advanceStageIfReady(player, sceneNumber)
 	TaskUpdated:FireClient(player, taskId, sceneNumber)
 end
 
-local function areRequiredTasksBeforeDoorComplete(sceneNumber)
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber)
-end
+local function resolveDialogueStartNode(interactable, sceneNumber)
+	local npcId = interactable:GetAttribute("NpcId")
 
-local function resolveDialogueStartNode(player, interactable, sceneNumber)
-	local NpcId = interactable:GetAttribute("NpcId")
-
-	if NpcId == "Dad" then
+	if npcId == "Dad" then
 		if sceneNumber == 1 then
 			return "scene1Start"
 		elseif sceneNumber == 2 then
@@ -52,6 +82,15 @@ local function resolveDialogueStartNode(player, interactable, sceneNumber)
 	end
 
 	return "start"
+end
+
+local function isDoorStageActive(player, sceneNumber)
+	local doorTask = TaskConfig.GetTaskById(FINAL_DOOR_TASK_ID, sceneNumber)
+	if not doorTask then
+		return false
+	end
+
+	return TaskState.GetActiveStage(player) == (doorTask.Stage or 1)
 end
 
 function InteractionHandler.HandleInteraction(player, interactable)
@@ -66,16 +105,15 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			completeTaskById(player, taskId, sceneNumber)
 		end
 
-		local NpcId = interactable:GetAttribute("NpcId")
-		if not NpcId then
+		local npcId = interactable:GetAttribute("NpcId")
+		if not npcId then
 			warn("NPC missing NpcId attribute:", interactable.Name)
 			return
 		end
 
-		local startNode = resolveDialogueStartNode(player, interactable, sceneNumber)
-		print("SERVER firing StartDialogue", player.Name, NpcId, startNode)
-		StartDialogue:FireClient(player, NpcId, startNode)
-
+		local startNode = resolveDialogueStartNode(interactable, sceneNumber)
+		print("SERVER firing StartDialogue", player.Name, npcId, startNode)
+		StartDialogue:FireClient(player, npcId, startNode)
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
@@ -101,7 +139,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 				descendant.Enabled = false
 			end
 		end
-
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
@@ -111,13 +148,13 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			return
 		end
 
-		if not areRequiredTasksBeforeDoorComplete(sceneNumber) then
+		if not isDoorStageActive(player, sceneNumber) then
 			print("There is more to do.")
 			return
 		end
 
-		if not doorTask.Completed then
-			doorTask.Completed = true
+		if not TaskState.IsTaskCompleted(player, FINAL_DOOR_TASK_ID) then
+			TaskState.MarkTaskComplete(player, FINAL_DOOR_TASK_ID)
 			TaskUpdated:FireClient(player, FINAL_DOOR_TASK_ID, sceneNumber)
 			print("Door task completed:", doorTask.Title)
 		end
