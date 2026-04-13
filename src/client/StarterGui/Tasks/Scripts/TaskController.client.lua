@@ -14,6 +14,7 @@ local GuiMovementManager = require(Shared.Systems.Input.GuiMovementManager)
 
 local TaskRemotes = Remotes:WaitForChild("Tasks")
 local TaskUpdated = TaskRemotes:WaitForChild("TaskUpdated")
+local TaskSync = TaskRemotes:WaitForChild("TaskSync")
 
 local tasksGui = playerGui:WaitForChild("Tasks")
 
@@ -24,6 +25,8 @@ local chatFrame = aiChatGui:WaitForChild("ChatWindow")
 local dialogueBar = dialogueGui:WaitForChild("DialogueBar")
 
 local currentScene = 1
+local activeTaskIds = {}
+local completedTaskIds = {}
 local selectedTask = nil
 
 -- Left pinned tracker
@@ -53,8 +56,31 @@ completedTemplate.Visible = false
 tasksOpenButton.Visible = true
 mainFrame.Visible = false
 
+local function isTaskActive(taskId)
+	return activeTaskIds[taskId] == true
+end
+
+local function isTaskCompleted(taskId)
+	return completedTaskIds[taskId] == true
+end
+
+local function buildRuntimeTask(taskDefinition)
+	local task = table.clone(taskDefinition)
+	task.Completed = isTaskCompleted(task.Id)
+	return task
+end
+
 local function getCurrentTasks()
-	return TaskConfig.GetTasksForScene(currentScene)
+	local allTasks = TaskConfig.GetTasksForScene(currentScene)
+	local runtimeTasks = {}
+
+	for _, taskDefinition in ipairs(allTasks) do
+		if isTaskActive(taskDefinition.Id) then
+			table.insert(runtimeTasks, buildRuntimeTask(taskDefinition))
+		end
+	end
+
+	return runtimeTasks
 end
 
 local function isTaskMenuOpen()
@@ -221,28 +247,45 @@ end
 
 local function setScene(sceneNumber)
 	currentScene = sceneNumber
+	activeTaskIds = {}
+	completedTaskIds = {}
 	refreshTaskUI()
+end
+
+local function replaceSet(targetTable, values)
+	table.clear(targetTable)
+
+	for _, value in ipairs(values) do
+		targetTable[value] = true
+	end
 end
 
 tasksOpenButton.MouseButton1Click:Connect(openTaskMenu)
 exitTaskMenu.MouseButton1Click:Connect(closeTaskMenu)
+
+TaskSync.OnClientEvent:Connect(function(sceneNumber, activeTaskIdList, completedTaskIdList)
+	currentScene = sceneNumber or currentScene
+
+	replaceSet(activeTaskIds, activeTaskIdList or {})
+	replaceSet(completedTaskIds, completedTaskIdList or {})
+
+	refreshTaskUI()
+end)
 
 TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 	if sceneNumber and sceneNumber ~= currentScene then
 		return
 	end
 
-	local success = TaskConfig.MarkTaskComplete(taskId, currentScene)
-	if not success then
-		warn("Task not found for current scene:", taskId, currentScene)
+	if not taskId or not isTaskActive(taskId) then
 		return
 	end
 
+	completedTaskIds[taskId] = true
 	refreshTaskUI()
 end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	-- Let the task key work even when normal input has been processed by other systems
 	if input.KeyCode == Enum.KeyCode.J then
 		if isTaskMenuOpen() then
 			closeTaskMenu()

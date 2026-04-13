@@ -4,9 +4,9 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local TaskConfig = require(Shared.Systems.Tasks.TaskConfig)
+local TaskService = require(Shared.Systems.Tasks.TaskService)
 local SceneDoorController = require(Shared.Systems.Scene.SceneDoorController)
 
-local TaskUpdated = Remotes.Tasks:WaitForChild("TaskUpdated")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local InteractionHandler = {}
@@ -17,33 +17,10 @@ local function getCurrentSceneNumber(player)
 	return player:GetAttribute("Scene") or 1
 end
 
-local function getTaskById(taskId, sceneNumber)
-	return TaskConfig.GetTaskById(taskId, sceneNumber)
-end
+local function resolveDialogueStartNode(interactable, sceneNumber)
+	local npcId = interactable:GetAttribute("NpcId")
 
-local function completeTaskById(player, taskId, sceneNumber)
-	local success = TaskConfig.MarkTaskComplete(taskId, sceneNumber)
-	if not success then
-		warn("Task not found:", taskId, "scene:", sceneNumber)
-		return
-	end
-
-	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
-	if task then
-		print("Completed task:", task.Title)
-	end
-
-	TaskUpdated:FireClient(player, taskId, sceneNumber)
-end
-
-local function areRequiredTasksBeforeDoorComplete(sceneNumber)
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber)
-end
-
-local function resolveDialogueStartNode(player, interactable, sceneNumber)
-	local dialogueId = interactable:GetAttribute("DialogueId")
-
-	if dialogueId == "Dad" then
+	if npcId == "Dad" then
 		if sceneNumber == 1 then
 			return "scene1Start"
 		elseif sceneNumber == 2 then
@@ -54,6 +31,20 @@ local function resolveDialogueStartNode(player, interactable, sceneNumber)
 	return "start"
 end
 
+local function completeTaskIfActive(player, taskId, sceneNumber)
+	if not taskId then
+		return
+	end
+
+	local completed = TaskService.CompleteTask(player, sceneNumber, taskId)
+	if completed then
+		local task = TaskConfig.GetTaskById(taskId, sceneNumber)
+		if task then
+			print("Completed task:", task.Title)
+		end
+	end
+end
+
 function InteractionHandler.HandleInteraction(player, interactable)
 	local interactionType = interactable:GetAttribute("InteractionType")
 	local sceneNumber = getCurrentSceneNumber(player)
@@ -62,27 +53,22 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		print("Start dialogue with", interactable.Name)
 
 		local taskId = interactable:GetAttribute("TaskId")
-		if taskId then
-			completeTaskById(player, taskId, sceneNumber)
-		end
+		completeTaskIfActive(player, taskId, sceneNumber)
 
-		local dialogueId = interactable:GetAttribute("DialogueId")
-		if not dialogueId then
-			warn("NPC missing DialogueId attribute:", interactable.Name)
+		local npcId = interactable:GetAttribute("NpcId")
+		if not npcId then
+			warn("NPC missing NpcId attribute:", interactable.Name)
 			return
 		end
 
-		local startNode = resolveDialogueStartNode(player, interactable, sceneNumber)
-		print("SERVER firing StartDialogue", player.Name, dialogueId, startNode)
-		StartDialogue:FireClient(player, dialogueId, startNode)
+		local startNode = resolveDialogueStartNode(interactable, sceneNumber)
+		StartDialogue:FireClient(player, npcId, startNode)
 
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
 		local taskId = interactable:GetAttribute("TaskId")
-		if taskId then
-			completeTaskById(player, taskId, sceneNumber)
-		end
+		completeTaskIfActive(player, taskId, sceneNumber)
 
 		if interactable:IsA("BasePart") then
 			interactable.Transparency = 1
@@ -105,33 +91,17 @@ function InteractionHandler.HandleInteraction(player, interactable)
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
-		local doorTask = getTaskById(FINAL_DOOR_TASK_ID, sceneNumber)
-		if not doorTask then
-			warn("Final door task not found:", FINAL_DOOR_TASK_ID, "scene:", sceneNumber)
-			return
-		end
-
-		if not areRequiredTasksBeforeDoorComplete(sceneNumber) then
+		if not TaskService.IsTaskActive(player, FINAL_DOOR_TASK_ID) then
 			print("There is more to do.")
 			return
 		end
 
-		if not doorTask.Completed then
-			doorTask.Completed = true
-			TaskUpdated:FireClient(player, FINAL_DOOR_TASK_ID, sceneNumber)
-			print("Door task completed:", doorTask.Title)
-		end
-
-		print("Door unlocked. Walking through.")
+		completeTaskIfActive(player, FINAL_DOOR_TASK_ID, sceneNumber)
 
 		for _, descendant in ipairs(interactable:GetDescendants()) do
 			if descendant:IsA("BasePart") then
 				descendant.CanCollide = false
-			end
-		end
-
-		for _, descendant in ipairs(interactable:GetDescendants()) do
-			if descendant:IsA("ProximityPrompt") then
+			elseif descendant:IsA("ProximityPrompt") then
 				descendant.Enabled = false
 			end
 		end

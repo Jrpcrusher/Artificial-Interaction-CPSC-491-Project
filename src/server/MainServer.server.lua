@@ -44,15 +44,12 @@ local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
 local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
 local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
 
-local Progression = require(ReplicatedStorage.Shared.Systems.Progression.ProgressionManager)
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
 local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
-
-local FINAL_PROGRESS = 16  -- Used to check if the player has reached the final scene before showing them their traits.
 
 local function handleStoryCompletion(player)
     local userId = player.UserId
@@ -74,7 +71,7 @@ local function handleStoryCompletion(player)
     print("Story completed for", player.Name, "Traits generated:", #traits)
 end
 
-local function connectPrompt(prompt)
+local function connectPrompt(prompt) -- Connect dialogue to NPC
 	prompt.Triggered:Connect(function(player)
 		local interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
 		if interactable then
@@ -83,7 +80,7 @@ local function connectPrompt(prompt)
 	end)
 end
 
-local function setupInteractionPrompts()
+local function setupInteractionPrompts() -- setup NPC interactions
 	for _, obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("ProximityPrompt") then
 			connectPrompt(obj)
@@ -97,7 +94,7 @@ local function setupInteractionPrompts()
 	end)
 end
 
-local function removeForceField(character)
+local function removeForceField(character) -- Simple function to remove forcefield
 	local forceField = character:FindFirstChildOfClass("ForceField")
 	if forceField then
 		forceField:Destroy()
@@ -106,30 +103,44 @@ end
 
 setupInteractionPrompts()
 
-local function onPlayerAdded(player)
+local function onPlayerAdded(player) -- Function to handle when a player joins the game
 	local userId = player.UserId
-	local _, message = TranscriptManager.Create(userId)
+	local message = ""
+
+	-- Get the transcript
+	local success, transcript = TranscriptManager.Load(userId)
+
+    if success and transcript ~= nil then -- Check if transcript loaded
+        message = "Transcript loaded"
+	elseif success then -- If success, but no transcript, then create new one
+        TranscriptManager.Create(userId)
+        message = "Created new transcript"
+    else -- Otherwise we didnt get a transcript
+		message = "Failed to load transcript"
+		warn(message)
+	end
+
 	print(message)
 
-	player.CharacterAdded:Connect(function(character)
+	player.CharacterAdded:Connect(function(character) -- Remove player forcefield
 		task.wait()
 		removeForceField(character)
 	end)
 
-	if player.Character then
+	if player.Character then  -- Remove player forcefield
 		removeForceField(player.Character)
 	end
 end
 
-Players.PlayerAdded:Connect(onPlayerAdded)
+Players.PlayerAdded:Connect(onPlayerAdded) -- Call onPlayerAdded
 
-for _, player in ipairs(Players:GetPlayers()) do
+for _, player in ipairs(Players:GetPlayers()) do -- Get all the players
 	onPlayerAdded(player)
 end
 
-SaveDataRequest.OnServerEvent:Connect(function(player)
+SaveDataRequest.OnServerEvent:Connect(function(player) -- RemoteEvent savedatarequest fired
 	local userId = player.UserId
-	local loadedScene = GameSaveManager.Load(userId)
+	local loadedScene = GameSaveManager.Load(userId) -- Call game save to load
 
 	local hasSave = loadedScene ~= nil
 	local sceneNumber = loadedScene or 1
@@ -137,33 +148,22 @@ SaveDataRequest.OnServerEvent:Connect(function(player)
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
 end)
 
-StartNewGame.OnServerEvent:Connect(function(player)
+StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete everything and reset
 	local userId = player.UserId
 
 	GameSaveManager.Delete(userId)
 	TranscriptManager.Delete(userId)
-	Progression.Reset()
 	TranscriptManager.Create(userId)
 	TraitStore.Clear(userId)
 
-	player:SetAttribute("Scene", 1)
-
-	local ok, msg = Scenes.LoadScene(player, 1)
+	local ok, msg = Scenes.LoadSceneNumber(player, 1)
 	if not ok then
 		warn("Failed to load new game scene:", msg)
 	end
 end)
 
-ContinueGame.OnServerEvent:Connect(function(player)
-	local userId = player.UserId
-
-	local loadedScene = GameSaveManager.Load(userId)
-	local sceneNumber = loadedScene or 1
-
-	Progression.Set(userId)
-	player:SetAttribute("Scene", sceneNumber)
-
-	local ok, msg = Scenes.LoadScene(player, sceneNumber)
+ContinueGame.OnServerEvent:Connect(function(player) -- On continue game, load the correct scene
+	local ok, msg = Scenes.ContinueFromSave(player) -- Load the scene for the user
 	if not ok then
 		warn("Failed to load continue scene:", msg)
 	end
@@ -174,19 +174,7 @@ StoryCompleted.OnServerEvent:Connect(function(player)
 end)
 
 ReturnToMenu.OnServerEvent:Connect(function(player)
-	local currentScene = player:GetAttribute("Scene")
-
-	-- Check if player is on final scene and unload.
-	if currentScene == FINAL_PROGRESS then
-		local ok, msg = Scenes.UnloadScene(player, currentScene)
-		if not ok then
-			warn("Failed to unload scene:", msg)
-		end
-	end
-
-	-- Reset player scene attribute
 	player:SetAttribute("Scene", nil)
-
-	-- Tell the client to show the main menu again.
+	player:SetAttribute("IsSceneTransitioning", false)
 	ShowMainMenu:FireClient(player)
 end)

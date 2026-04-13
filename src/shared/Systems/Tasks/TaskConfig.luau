@@ -18,8 +18,9 @@ local SceneTasks = {
 	[13] = require(Story.Scene13.Tasks),
 	[14] = require(Story.Scene14.Tasks),
 	[15] = require(Story.Scene15.Tasks),
-	[16] = require(Story.Scene16.Tasks)
+	[16] = require(Story.Scene16.Tasks),
 }
+
 local TaskConfig = {}
 
 function TaskConfig.GetTasksForScene(sceneNumber)
@@ -27,44 +28,12 @@ function TaskConfig.GetTasksForScene(sceneNumber)
 end
 
 function TaskConfig.GetTaskById(taskId, sceneNumber)
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
-	for _, task in ipairs(tasks) do
+	for _, task in ipairs(TaskConfig.GetTasksForScene(sceneNumber)) do
 		if task.Id == taskId then
 			return task
 		end
 	end
 	return nil
-end
-
-function TaskConfig.AreAllRequiredTasksBeforeDoorComplete(sceneNumber)
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
-
-	for _, task in ipairs(tasks) do
-		if task.Type == "Required" and task.Id ~= "go_to_door" then
-			if not task.Completed then
-				return false
-			end
-		end
-	end
-	return true
-end
-
-function TaskConfig.IsDoorTaskEnabled(sceneNumber)
-	local doorTask = TaskConfig.GetTaskById("go_to_door", sceneNumber)
-	if not doorTask then
-		return false
-	end
-
-	return TaskConfig.AreAllRequiredTasksBeforeDoorComplete() and not doorTask.Completed
-end
-
-function TaskConfig.MarkTaskComplete(taskId, sceneNumber)
-	local task = TaskConfig.GetTaskById(taskId, sceneNumber)
-	if task then
-		task.Completed = true
-		return true
-	end
-	return false
 end
 
 return TaskConfig
