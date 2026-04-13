@@ -18,49 +18,22 @@ local SceneTasks = {
 	[13] = require(Story.Scene13.Tasks),
 	[14] = require(Story.Scene14.Tasks),
 	[15] = require(Story.Scene15.Tasks),
-	[16] = require(Story.Scene16.Tasks)
+	[16] = require(Story.Scene16.Tasks),
 }
+
 local TaskConfig = {}
 
-function TaskConfig.GetTasksForScene(sceneNumber) -- Handle getting the tasks from the task file
+function TaskConfig.GetTasksForScene(sceneNumber)
 	return SceneTasks[sceneNumber] or {}
 end
 
-function TaskConfig.GetTaskById(taskId, sceneNumber) -- Get tasks by their id
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber) -- get the tasks from gettaskforscene
-	for _, task in ipairs(tasks) do
+function TaskConfig.GetTaskById(taskId, sceneNumber)
+	for _, task in ipairs(TaskConfig.GetTasksForScene(sceneNumber)) do
 		if task.Id == taskId then
 			return task
 		end
 	end
 	return nil
-end
-
-function TaskConfig.GetTasksForStage(sceneNumber, stage) -- Get all the tasks for the stage
-	local tasks = TaskConfig.GetTasksForScene(sceneNumber)
-	local stageTasks = {}
-
-	for _, task in ipairs(tasks) do
-		if (task.Stage or 1) == stage then
-			table.insert(stageTasks, task)
-		end
-	end
-
-	return stageTasks
-end
-
-function TaskConfig.GetMaxStage(scene_number) -- Get the maximum amount of tasks for that stage
-	local tasks = TaskConfig.GetTasksForScene(scene_number)
-	local maxStage = 1
-
-	for _, task in ipairs(tasks) do
-		local stage = task.Stage or 1
-		if stage > maxStage then
-			maxStage = stage
-		end
-	end
-
-	return maxStage
 end
 
 return TaskConfig

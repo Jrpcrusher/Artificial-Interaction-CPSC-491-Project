@@ -5,7 +5,6 @@ return {
 		Objective = "Look around the room for the Apple.",
 		Steps = "Search the floor next to Spawn.",
 		Type = "Required",
-		Stage = 1,
 	},
 	{
 		Id = "talk_to_dad",
@@ -13,7 +12,6 @@ return {
 		Objective = "Speak with Dad.",
 		Steps = "Walk over to Dad and press E.",
 		Type = "Required",
-		Stage = 2,
 	},
 	{
 		Id = "talk_to_mom",
@@ -21,7 +19,6 @@ return {
 		Objective = "Speak with Mom.",
 		Steps = "Walk over to Mom and press E.",
 		Type = "Required",
-		Stage = 2,
 	},
 	{
 		Id = "go_to_door",
@@ -29,6 +26,5 @@ return {
 		Objective = "Head to the door and leave.",
 		Steps = "Walk to the door and press interact.",
 		Type = "Required",
-		Stage = 3,
 	},
 }

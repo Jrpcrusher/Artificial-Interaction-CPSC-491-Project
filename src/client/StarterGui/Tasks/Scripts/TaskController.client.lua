@@ -14,6 +14,7 @@ local GuiMovementManager = require(Shared.Systems.Input.GuiMovementManager)
 
 local TaskRemotes = Remotes:WaitForChild("Tasks")
 local TaskUpdated = TaskRemotes:WaitForChild("TaskUpdated")
+local TaskSync = TaskRemotes:WaitForChild("TaskSync")
 
 local tasksGui = playerGui:WaitForChild("Tasks")
 
@@ -24,7 +25,7 @@ local chatFrame = aiChatGui:WaitForChild("ChatWindow")
 local dialogueBar = dialogueGui:WaitForChild("DialogueBar")
 
 local currentScene = 1
-local activeStage = 1
+local activeTaskIds = {}
 local completedTaskIds = {}
 local selectedTask = nil
 
@@ -55,6 +56,10 @@ completedTemplate.Visible = false
 tasksOpenButton.Visible = true
 mainFrame.Visible = false
 
+local function isTaskActive(taskId)
+	return activeTaskIds[taskId] == true
+end
+
 local function isTaskCompleted(taskId)
 	return completedTaskIds[taskId] == true
 end
@@ -66,11 +71,13 @@ local function buildRuntimeTask(taskDefinition)
 end
 
 local function getCurrentTasks()
-	local stageTasks = TaskConfig.GetTasksForStage(currentScene, activeStage)
+	local allTasks = TaskConfig.GetTasksForScene(currentScene)
 	local runtimeTasks = {}
 
-	for _, taskDefinition in ipairs(stageTasks) do
-		table.insert(runtimeTasks, buildRuntimeTask(taskDefinition))
+	for _, taskDefinition in ipairs(allTasks) do
+		if isTaskActive(taskDefinition.Id) then
+			table.insert(runtimeTasks, buildRuntimeTask(taskDefinition))
+		end
 	end
 
 	return runtimeTasks
@@ -232,29 +239,6 @@ local function openTaskMenu()
 	GuiMovementManager.Lock()
 end
 
-local function areAllRequiredTasksInActiveStageComplete()
-	local tasks = getCurrentTasks()
-
-	for _, task in ipairs(tasks) do
-		if task.Type == "Required" and not task.Completed then
-			return false
-		end
-	end
-
-	return true
-end
-
-local function advanceStageIfReady()
-	if not areAllRequiredTasksInActiveStageComplete() then
-		return
-	end
-
-	local maxStage = TaskConfig.GetMaxStage(currentScene)
-	if activeStage < maxStage then
-		activeStage += 1
-	end
-end
-
 local function refreshTaskUI()
 	populateTaskList()
 	selectedTask = getDefaultTask()
@@ -263,27 +247,41 @@ end
 
 local function setScene(sceneNumber)
 	currentScene = sceneNumber
-	activeStage = 1
+	activeTaskIds = {}
 	completedTaskIds = {}
 	refreshTaskUI()
 end
 
+local function replaceSet(targetTable, values)
+	table.clear(targetTable)
+
+	for _, value in ipairs(values) do
+		targetTable[value] = true
+	end
+end
+
 tasksOpenButton.MouseButton1Click:Connect(openTaskMenu)
 exitTaskMenu.MouseButton1Click:Connect(closeTaskMenu)
+
+TaskSync.OnClientEvent:Connect(function(sceneNumber, activeTaskIdList, completedTaskIdList)
+	currentScene = sceneNumber or currentScene
+
+	replaceSet(activeTaskIds, activeTaskIdList or {})
+	replaceSet(completedTaskIds, completedTaskIdList or {})
+
+	refreshTaskUI()
+end)
 
 TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 	if sceneNumber and sceneNumber ~= currentScene then
 		return
 	end
 
-	local taskDefinition = TaskConfig.GetTaskById(taskId, currentScene)
-	if not taskDefinition then
-		warn("Task not found for current scene:", taskId, currentScene)
+	if not taskId or not isTaskActive(taskId) then
 		return
 	end
 
 	completedTaskIds[taskId] = true
-	advanceStageIfReady()
 	refreshTaskUI()
 end)
 

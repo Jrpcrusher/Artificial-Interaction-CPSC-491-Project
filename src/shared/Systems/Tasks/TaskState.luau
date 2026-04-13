@@ -8,7 +8,7 @@ local function getPlayerState(player)
 	if not stateByUserId[userId] then
 		stateByUserId[userId] = {
 			sceneNumber = 1,
-			activeStage = 1,
+			activeTaskIds = {},
 			completedTaskIds = {},
 		}
 	end
@@ -16,17 +16,10 @@ local function getPlayerState(player)
 	return stateByUserId[userId]
 end
 
-function TaskState.ResetPlayer(player, sceneNumber)
-	local state = getPlayerState(player)
-	state.sceneNumber = sceneNumber or 1
-	state.activeStage = 1
-	state.completedTaskIds = {}
-end
-
 function TaskState.SetScene(player, sceneNumber)
 	local state = getPlayerState(player)
 	state.sceneNumber = sceneNumber
-	state.activeStage = 1
+	state.activeTaskIds = {}
 	state.completedTaskIds = {}
 end
 
@@ -34,26 +27,33 @@ function TaskState.GetScene(player)
 	return getPlayerState(player).sceneNumber
 end
 
-function TaskState.GetActiveStage(player)
-	return getPlayerState(player).activeStage
+function TaskState.SetActiveTasks(player, taskIds)
+	local state = getPlayerState(player)
+	state.activeTaskIds = {}
+
+	for _, taskId in ipairs(taskIds) do
+		state.activeTaskIds[taskId] = true
+	end
+end
+
+function TaskState.GetActiveTaskIds(player)
+	return getPlayerState(player).activeTaskIds
+end
+
+function TaskState.IsTaskActive(player, taskId)
+	return getPlayerState(player).activeTaskIds[taskId] == true
+end
+
+function TaskState.MarkTaskComplete(player, taskId)
+	getPlayerState(player).completedTaskIds[taskId] = true
 end
 
 function TaskState.IsTaskCompleted(player, taskId)
 	return getPlayerState(player).completedTaskIds[taskId] == true
 end
 
-function TaskState.MarkTaskComplete(player, taskId)
-	local state = getPlayerState(player)
-	state.completedTaskIds[taskId] = true
-end
-
 function TaskState.GetCompletedTaskIds(player)
 	return getPlayerState(player).completedTaskIds
-end
-
-function TaskState.AdvanceStage(player)
-	local state = getPlayerState(player)
-	state.activeStage += 1
 end
 
 function TaskState.ClearPlayer(player)
