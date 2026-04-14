@@ -12,5 +12,5 @@ return {
         Objective = "Walk out of the school to go home.",
         Steps = "Walk to the door that leads to the front of the school and press interact.",
         Type = "Required",
-    }
+    },
 }
