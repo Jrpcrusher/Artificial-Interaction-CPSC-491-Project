@@ -1,11 +1,5 @@
 local Scene13 = {}
 
-Scene13.DadDialogueTree = {}
-
-Scene13.MomDialogueTree = {}
-
-Scene13.SisterDialogueTree = {}
-
 Scene13.TeacherDialogueTree = {
 	start = {
 		speaker = "Teacher",
@@ -26,9 +20,9 @@ Scene13.TeacherDialogueTree = {
 }
 
 Scene13.BullyDialogueTree = {
-	scene13Start = {
+	scene13Task1Start = {
 		speaker = "Bully",
-		text = "",
+		text = "...",
 		next = "scene13Reply1",
 	},
 
@@ -71,21 +65,6 @@ Scene13.BullyDialogueTree = {
 Scene13.MainCharacterDialogueTree = {}
 
 Scene13.Registry = {
-	Dad = {
-		tree = Scene13.DadDialogueTree,
-		defaultStartNode = "start",
-	},
-
-	Mom = {
-		tree = Scene13.MomDialogueTree,
-		defaultStartNode = "start",
-	},
-
-	Sister = {
-		tree = Scene13.SisterDialogueTree,
-		defaultStartNode = "start",
-	},
-
 	Teacher = {
 		tree = Scene13.TeacherDialogueTree,
 		defaultStartNode = "start",
@@ -93,7 +72,7 @@ Scene13.Registry = {
 
 	Bully = {
 		tree = Scene13.BullyDialogueTree,
-		defaultStartNode = "scene13Start",
+		defaultStartNode = "scene13Task1Start",
 	},
 
 	MainCharacter = {
