@@ -1,24 +1,25 @@
-return {
-    {
-        Id = "eat_food",
-        Title = "Eat Something",
-        Objective = "Choose something to eat",
-        Type = "Required",
-        Completed = false,
-    },
-    {
-		Id = "grab_coat",
-		Title = "Grab Coat",
-		Objective = "Pick up your coat",
+local Tasks = {
+	{
+		Id = "eat_something",
+		Title = "Eat Something",
+		Description = "Find something to eat in the kitchen.",
 		Type = "Required",
 		Completed = false,
 	},
 	{
-		Id = "open_door",
-		Title = "Open Door",
-		Objective = "Leave the house",
+		Id = "grab_coat",
+		Title = "Grab Coat",
+		Description = "Pick up your coat before leaving.",
 		Type = "Required",
 		Completed = false,
-	}
-    
+	},
+	{
+		Id = "go_to_door",
+		Title = "Open Door",
+		Description = "Leave the house.",
+		Type = "Required",
+		Completed = false,
+	},
 }
+
+return Tasks

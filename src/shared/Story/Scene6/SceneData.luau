@@ -1,20 +1,24 @@
 local SceneData = {
 	SceneId = "Scene6",
+	RequiredTasks = {
+		"eat_something",
+		"grab_coat",
+		"go_to_door",
+	},
 	Objects = {
-		Window = "Window",
-		PictureFrame = "PictureFrame",
 		Mom = "Mom",
-
 		Fruit = "Fruit",
 		Milk = "Milk",
 		Cereal = "Cereal",
 		OrangeJuice = "OrangeJuice",
 		Toast = "Toast",
-
 		Coat = "Coat",
-		Door = "Door",
+		FrontDoor = "FrontDoor",
 	},
-	EndTrigger = "Scene6EndTrigger"
+	DialogueIds = {
+		IntroThought = "start",
+		OutroThought = "start",
+	},
 }
 
 return SceneData
