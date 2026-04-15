@@ -9,7 +9,7 @@ Scene3.Player = {
 
 	friend_intro = {
 		speaker = "Friend",
-		text = "Hey <username>, what are you doing today?",
+		text = "Hey, what are you doing today?",
 		next = "friend_notice",
 	},
 
