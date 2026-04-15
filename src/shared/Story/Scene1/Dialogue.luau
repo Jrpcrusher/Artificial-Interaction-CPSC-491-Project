@@ -6,16 +6,16 @@ local Dialogue = {
 		"Was it raining...? Was it just overcast?",
 		"Is it raining...?",
 		"I couldn't tell from the glint of light coming through the window alone.",
-		"There was no time to worry about that. I had to get my belongings.",
+		"There was no time to worry about that. I had to get my belongings."
 	},
 
 	NotReady = {
-		"I should get everything I need before heading downstairs.",
+		"I should get everything I need before heading downstairs."
 	},
 
 	Stairs = {
 		"As I walked down the stairs, I could hear the faint talking of my parents and sister.",
-		"I could almost make out what they were saying.",
+		"I could almost make out what they were saying."
 	},
 
 	Final = {
@@ -27,8 +27,8 @@ local Dialogue = {
 		"I understand he's busy, but my mom tends to think otherwise.",
 		"Their fighting and arguing sometimes gets to me, despite how much I try to ignore it.",
 		"It takes a mental toll handling things like that at home.",
-		"Sometimes that's why I can't wait to go to school, to get away from it all.",
-	},
+		"Sometimes that's why I can't wait to go to school, to get away from it all."
+	}
 }
 
 return Dialogue
@@ -66,6 +66,9 @@ despite how much I try to ignore it.
 It takes a mental toll handling such events at home.
 Its sometimes why I can’t wait to go to school, get away from it all.
 ]]
+
+
+
 
 -- FOR REFERENCE:
 --[[ local Scene1 = {}

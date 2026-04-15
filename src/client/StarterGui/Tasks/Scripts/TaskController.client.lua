@@ -303,6 +303,11 @@ player:GetAttributeChangedSignal("Scene"):Connect(function()
 	refreshTaskUI()
 end)
 
+player:GetAttributeChangedSignal("Scene"):Connect(function()
+	currentScene = player:GetAttribute("Scene") or 1
+	refreshTaskUI()
+end)
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == Enum.KeyCode.J then
 		if isTaskMenuOpen() then
