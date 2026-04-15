@@ -12,7 +12,9 @@ function Progression.Start()
 		local player = Players:GetPlayers()[1]
 
 		TaskService.ResetForScene(player, 1)
+		-- print("before")
 		StartDialogue:FireClient(player, "Player", "start")
+		-- print("after")
 
 		-- Phase 1
 		TaskService.LoadTasks(player, 1, {
