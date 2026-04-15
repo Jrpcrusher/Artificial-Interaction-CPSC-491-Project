@@ -24,13 +24,9 @@ local dialogueGui = playerGui:WaitForChild("DialogueGui")
 local chatFrame = aiChatGui:FindFirstChild("ChatWindow")
 local dialogueBar = dialogueGui:FindFirstChild("DialogueBar")
 
-<<<<<<< HEAD
 local currentScene = 1
 local activeTaskIds = {}
 local completedTaskIds = {}
-=======
-local currentScene = player:GetAttribute("Scene") or 1
->>>>>>> 00966d9 (working tasks, need to work on dialogue, fix ui, and scene transition)
 local selectedTask = nil
 
 print("TASK CONTROLLER RUNNING:", script:GetFullName())
@@ -263,13 +259,9 @@ local function refreshTaskUI()
 end
 
 local function setScene(sceneNumber)
-<<<<<<< HEAD
 	currentScene = sceneNumber
 	activeTaskIds = {}
 	completedTaskIds = {}
-=======
-	currentScene = sceneNumber or 1
->>>>>>> 00966d9 (working tasks, need to work on dialogue, fix ui, and scene transition)
 	refreshTaskUI()
 end
 
