@@ -1,5 +1,4 @@
 local Scene5 = {}
-
 Scene5.Player = {
 	start = {
 		speaker = "You",
