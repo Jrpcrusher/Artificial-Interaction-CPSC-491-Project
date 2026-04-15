@@ -32,6 +32,11 @@ function Progression.Start()
 		TaskService.LoadTasks(player, 1, {
 			"go_to_door",
 		})
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"go_to_door",
+		})
 	end)
 end
 
