@@ -98,14 +98,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 
 		completeTaskIfActive(player, FINAL_DOOR_TASK_ID, sceneNumber)
 
-		for _, descendant in ipairs(interactable:GetDescendants()) do
-			if descendant:IsA("BasePart") then
-				descendant.CanCollide = false
-			elseif descendant:IsA("ProximityPrompt") then
-				descendant.Enabled = false
-			end
-		end
-
 		local transitioned = SceneDoorController.TriggerSceneDoor(player)
 		if not transitioned then
 			warn("Scene door interaction failed to transition scene for player:", player.Name)
