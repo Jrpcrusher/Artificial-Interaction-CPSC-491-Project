@@ -69,6 +69,16 @@ function Progression.Start(player)
 				DialogueTrigger1:Destroy()
 			end
 		end)
+
+        TaskService.LoadTasks(player, 3, {
+			"put_stuff_away",
+		})
+
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"put_stuff_away",
+		})
 	end)
 end
 

@@ -2,7 +2,7 @@ return {
 	{
 		Id = "put_stuff_away",
 		Title = "Go to Locker",
-		Objective = "Put your stuff in your locker.",
+		Objective = "Put your stuff in the locker.",
 		Type = "Required",
 	},
 	{
