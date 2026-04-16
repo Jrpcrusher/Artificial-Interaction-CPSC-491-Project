@@ -1,6 +1,6 @@
 local Scene15 = {}
 
-Scene15.SisterDialogueTree = {
+Scene15.Sister = {
 	scene15Start = {
 		speaker = "Sister",
 		text = "I could hear mom was furious from my room, it was hard to hear but I knew this wasn't okay. I knew my older sibling wasn't going to take this well.",
@@ -16,7 +16,9 @@ Scene15.SisterDialogueTree = {
 		speaker = "Sister",
 		text = "WHAT ARE YOU DOING?!",
 	},
+}
 
+Scene15.Player = {
 	scene15Task2Response = {
 		speaker = "Sister",
 		text = "Why in the world would you do such a thing?",
@@ -41,17 +43,15 @@ Scene15.SisterDialogueTree = {
 	},
 }
 
-Scene15.MainCharacterDialogueTree = {}
-
 Scene15.Registry = {
 	Sister = {
-		tree = Scene15.SisterDialogueTree,
+		tree = Scene15.Sister,
 		defaultStartNode = "scene15Start",
 	},
 
-	MainCharacter = {
-		tree = Scene15.MainCharacterDialogueTree,
-		defaultStartNode = "start",
+	Player = {
+		tree = Scene15.Player,
+		defaultStartNode = "scene15Task2Response",
 	},
 }
 
