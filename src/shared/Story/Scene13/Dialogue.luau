@@ -3,7 +3,7 @@ local Scene13 = {}
 
 local player = Players:GetPlayers()[1]
 
-Scene13.TeacherDialogueTree = {
+Scene13.Teacher = {
 	start = {
 		speaker = "Teacher",
 		text = "What is the matter here?",
@@ -22,7 +22,7 @@ Scene13.TeacherDialogueTree = {
 	},
 }
 
-Scene13.BullyDialogueTree = {
+Scene13.Bully = {
 	scene13Task1Start = {
 		speaker = "Bully",
 		text = "...",
@@ -65,7 +65,7 @@ Scene13.BullyDialogueTree = {
 	},
 }
 
-Scene13.MainCharacterDialogueTree = {
+Scene13.Player = {
 	scene13IntroMonologue = {
 		speaker = "You",
 		text = "Charlie has given me some excellent suggestions. I could finally give my friend a taste of his own judgmental self.",
@@ -97,17 +97,17 @@ Scene13.MainCharacterDialogueTree = {
 
 Scene13.Registry = {
 	Teacher = {
-		tree = Scene13.TeacherDialogueTree,
+		tree = Scene13.Teacher,
 		defaultStartNode = "start",
 	},
 
 	Bully = {
-		tree = Scene13.BullyDialogueTree,
+		tree = Scene13.Bully,
 		defaultStartNode = "scene13Task1Start",
 	},
 
-	MainCharacter = {
-		tree = Scene13.MainCharacterDialogueTree,
+	Player = {
+		tree = Scene13.Player,
 		defaultStartNode = "scene13intro",
 	},
 }
