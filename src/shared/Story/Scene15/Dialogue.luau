@@ -1,27 +1,19 @@
 local Scene15 = {}
 
-Scene15.DadDialogueTree = {
+Scene15.SisterDialogueTree = {}
 
-}
+Scene15.MainCharacterDialogueTree = {}
 
-Scene15.MomDialogueTree = {
+Scene15.Registry = {
+	Sister = {
+		tree = Scene15.SisterDialogueTree,
+		defaultStartNode = "scene15Start",
+	},
 
-}
-
-Scene15.SisterDialogueTree = {
-
-}
-
-Scene15.TeacherDialogueTree = {
-
-}
-
-Scene15.BullyDialogueTree = {
-
-}
-
-Scene15.MainCharacterDialogueTree = {
-
+	MainCharacter = {
+		tree = Scene15.MainCharacterDialogueTree,
+		defaultStartNode = "start",
+	},
 }
 
 return Scene15
