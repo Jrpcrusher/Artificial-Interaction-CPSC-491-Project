@@ -44,7 +44,6 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"go_to_door",
 		})
-
 	end)
 end
 

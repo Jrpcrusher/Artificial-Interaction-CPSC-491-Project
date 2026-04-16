@@ -1,6 +1,8 @@
 local Scene2 = {}
 
--- Dad dialogue for scene 2
+-- 4 dialogue trees
+
+-- Internal dialogue for scene 2
 Scene2.Player = {
 	start = {
 		speaker = "Sister",
@@ -14,7 +16,7 @@ Scene2.Player = {
 	},
 	internal_dialogue1 = {
 		speaker = "You",
-		text = "(Internal) Please don't start ana rgument now. This is supposed to be a happy moment...",
+		text = "(Internal) Please don't start an argument now. This is supposed to be a happy moment...",
 		next = "dad_response",
 	},
 	dad_response = {
