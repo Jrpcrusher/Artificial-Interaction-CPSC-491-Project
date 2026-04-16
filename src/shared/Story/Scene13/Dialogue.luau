@@ -1,4 +1,7 @@
+local Players = game:GetService("Players")
 local Scene13 = {}
+
+local player = Players:GetPlayers()[1]
 
 Scene13.TeacherDialogueTree = {
 	start = {
@@ -9,7 +12,7 @@ Scene13.TeacherDialogueTree = {
 
 	Bully1 = {
 		speaker = "Bully",
-		text = "<Username> made fun of my jacket and haircut so I punched him one!",
+		text = player.DisplayName .. " made fun of my jacket and haircut so I punched him one!",
 		next = "Teacher2",
 	},
 
