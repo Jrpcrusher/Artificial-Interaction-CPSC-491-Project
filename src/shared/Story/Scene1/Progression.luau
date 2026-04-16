@@ -39,6 +39,11 @@ function Progression.Start()
 		until TaskService.AreTasksComplete(player, {
 			"go_to_door",
 		})
+		local character = player.Character or player.CharacterAdded:Wait()
+		local hrp = character:WaitForChild("HumanoidRootPart")
+		hrp.CFrame = CFrame.new(155, 17, -108)
+		player:SetAttribute("Scene", 2)
+		
 	end)
 end
 
