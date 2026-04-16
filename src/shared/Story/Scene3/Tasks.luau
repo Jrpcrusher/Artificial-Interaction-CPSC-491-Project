@@ -8,7 +8,7 @@ return {
 	{
 		Id = "sit_down",
 		Title = "Sit Down",
-		Objective = "Sit down in your classroom.",
+		Objective = "Sit down in classroom 102.",
 		Type = "Required",
 	},
 	{

@@ -32,14 +32,14 @@ function Progression.Start(player)
 			end
 		end)
 
-		TaskService.LoadTasks(player, 2, {
-			"eat_something",
-		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"eat_something",
-		})
+		-- TaskService.LoadTasks(player, 2, {
+		-- 	"eat_something",
+		-- })
+		-- repeat
+		-- 	task.wait()
+		-- until TaskService.AreTasksComplete(player, {
+		-- 	"eat_something",
+		-- })
 		-- Phase 1: choose breakfast
 		TaskService.LoadTasks(player, 2, {
 			"grab_apple",
