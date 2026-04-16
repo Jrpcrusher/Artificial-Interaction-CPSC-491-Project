@@ -18,20 +18,6 @@ local function getCurrentSceneNumber(player)
 	return player:GetAttribute("Scene") or 1
 end
 
-local function resolveDialogueStartNode(interactable, sceneNumber)
-	local npcId = interactable:GetAttribute("NpcId")
-
-	if npcId == "Dad" then
-		if sceneNumber == 1 then
-			return "scene1Start"
-		elseif sceneNumber == 2 then
-			return "scene2Start"
-		end
-	end
-
-	return "start"
-end
-
 local function completeTaskIfActive(player, taskId, sceneNumber)
 	if not taskId then
 		return
@@ -64,8 +50,7 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			return
 		end
 
-		local startNode = resolveDialogueStartNode(interactable, sceneNumber)
-		StartDialogue:FireClient(player, npcId, startNode)
+		StartDialogue:FireClient(player, npcId)
 
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
