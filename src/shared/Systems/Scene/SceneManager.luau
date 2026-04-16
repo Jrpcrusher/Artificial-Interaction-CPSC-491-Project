@@ -56,7 +56,7 @@ function SceneManager.Transition(player) -- Main function to transition between 
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", next_scene) -- Set player's attribute to the new scene value
 
-		nextModule.Start() -- Start the next scene
+		nextModule.Start(player) -- Start the next scene
 		GameSaveManager.Save(player.UserId, next_scene) -- Save the game's state
 		TranscriptManager.Save(player.UserId) -- save the user's messages with the AI so far
 	end)
@@ -91,7 +91,7 @@ function SceneManager.ContinueFromSave(player) -- For continuing from a game sav
 	local ok, err = pcall(function() -- Try to start the scene
 		player:SetAttribute("Scene", scene_number)
 
-		targetModule.Start() -- Play the scene
+		targetModule.Start(player) -- Play the scene
 		GameSaveManager.Save(player.UserId, scene_number) -- Save the scene they are at
 		TranscriptManager.Save(player.UserId) -- Save the transcript
 	end)
@@ -126,7 +126,7 @@ function SceneManager.LoadSceneNumber(player, scene_number) -- For continuing fr
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", scene_number)
 
-		targetModule.Start()
+		targetModule.Start(player)
 		GameSaveManager.Save(player.UserId, scene_number)
 		TranscriptManager.Save(player.UserId)
 	end)
