@@ -51,7 +51,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		end
 
 		StartDialogue:FireClient(player, npcId)
-
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
@@ -78,10 +77,9 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			elseif descendant:IsA("ProximityPrompt") then
 				descendant.Enabled = false
 			elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-			descendant.Transparency = 1 -- for cereal decals
+				descendant.Transparency = 1 -- for cereal decals
 			end
 		end
-
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
@@ -96,8 +94,8 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			print("There is more to do.")
 			return
 		end
-=======
-		completeTaskIfActive(player, FINAL_DOOR_TASK_ID, sceneNumber)
+
+		completeTaskIfActive(player, doorTaskId, sceneNumber)
 
 		local transitioned = SceneDoorController.TriggerSceneDoor(player)
 		if not transitioned then

@@ -53,7 +53,6 @@ local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
 
 local function handleStoryCompletion(player)
 	local userId = player.UserId
-	local userId = player.UserId
 
 	-- If player already has stored traits (e.g., loading into an already-completed game)
 	local storedTraits = TraitStore.Get(userId)
@@ -65,16 +64,10 @@ local function handleStoryCompletion(player)
 	-- Extract traits once at the end of the story
 	local traits = TraitAnalyzer.ExtractTraits(userId)
 	TraitStore.Set(userId, traits)
-	-- Extract traits once at the end of the story
-	local traits = TraitAnalyzer.ExtractTraits(userId)
-	TraitStore.Set(userId, traits)
 
 	-- Fire the ending UI to the client
 	ShowEndingTraits:FireClient(player, traits)
-	-- Fire the ending UI to the client
-	ShowEndingTraits:FireClient(player, traits)
 
-	print("Story completed for", player.Name, "Traits generated:", #traits)
 	print("Story completed for", player.Name, "Traits generated:", #traits)
 end
 
@@ -92,16 +85,14 @@ local function findDoorAncestor(instance)
 	return nil
 end
 
-local function connectPrompt(prompt) -- Connect interactable assets to appropriate interaction
+-- Updated: Connect interactable Models, Accessories, and Tools to appropriate interaction
+local function connectPrompt(prompt)
 	prompt.Triggered:Connect(function(player)
-		local doorModel = findDoorAncestor(prompt)
-
-		local interactable
-		if doorModel then
-			interactable = doorModel
-		else
-			interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
-		end
+		local interactable = findDoorAncestor(prompt)
+			or prompt:FindFirstAncestorWhichIsA("Accessory")
+			or prompt:FindFirstAncestorWhichIsA("Tool")
+			or prompt:FindFirstAncestorOfClass("Model")
+			or prompt.Parent
 
 		if interactable then
 			InteractionHandler.HandleInteraction(player, interactable)
@@ -141,12 +132,7 @@ local function onPlayerAdded(player) -- Function to handle when a player joins t
 
 	if success and transcript ~= nil then -- Check if transcript loaded
 		message = "Transcript loaded"
-	if success and transcript ~= nil then -- Check if transcript loaded
-		message = "Transcript loaded"
 	elseif success then -- If success, but no transcript, then create new one
-		TranscriptManager.Create(userId)
-		message = "Created new transcript"
-	else -- Otherwise we didnt get a transcript
 		TranscriptManager.Create(userId)
 		message = "Created new transcript"
 	else -- Otherwise we didnt get a transcript
@@ -161,7 +147,6 @@ local function onPlayerAdded(player) -- Function to handle when a player joins t
 		removeForceField(character)
 	end)
 
-	if player.Character then -- Remove player forcefield
 	if player.Character then -- Remove player forcefield
 		removeForceField(player.Character)
 	end
@@ -213,4 +198,3 @@ ReturnToMenu.OnServerEvent:Connect(function(player)
 	player:SetAttribute("IsSceneTransitioning", false)
 	ShowMainMenu:FireClient(player)
 end)
-
