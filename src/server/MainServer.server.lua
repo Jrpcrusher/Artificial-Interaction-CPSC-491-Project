@@ -109,7 +109,6 @@ local function connectPrompt(prompt) -- Connect interactable assets to appropria
 	end)
 end
 
-
 local function setupInteractionPrompts() -- setup NPC interactions
 	for _, obj in ipairs(workspace:GetDescendants()) do
 		if obj:IsA("ProximityPrompt") then
