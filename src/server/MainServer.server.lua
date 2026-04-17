@@ -85,16 +85,14 @@ local function findDoorAncestor(instance)
 	return nil
 end
 
-local function connectPrompt(prompt) -- Connect interactable assets to appropriate interaction
+-- Updated: Connect interactable Models, Accessories, and Tools to appropriate interaction
+local function connectPrompt(prompt)
 	prompt.Triggered:Connect(function(player)
-		local doorModel = findDoorAncestor(prompt)
-
-		local interactable
-		if doorModel then
-			interactable = doorModel
-		else
-			interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
-		end
+		local interactable = findDoorAncestor(prompt)
+			or prompt:FindFirstAncestorWhichIsA("Accessory")
+			or prompt:FindFirstAncestorWhichIsA("Tool")
+			or prompt:FindFirstAncestorOfClass("Model")
+			or prompt.Parent
 
 		if interactable then
 			InteractionHandler.HandleInteraction(player, interactable)
