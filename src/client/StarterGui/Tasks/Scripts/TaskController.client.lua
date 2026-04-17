@@ -1,6 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+local SoundService = game:GetService("SoundService")
+
+local TaskComplete = SoundService:WaitForChild("TaskComplete")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -115,6 +118,7 @@ end
 
 local function getProgressText(task)
 	if task.Completed then
+		TaskComplete:Play()
 		return "Completed"
 	end
 

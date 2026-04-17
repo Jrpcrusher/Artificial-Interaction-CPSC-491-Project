@@ -1,43 +1,47 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local Progression = {}
 
-function Progression.Start()
+function Progression.Start(player)
 	task.spawn(function()
-		local player = Players:GetPlayers()[1]
-		local sceneNumber = 1
+		local character = player.Character or player.CharacterAdded:Wait()
 
-		TaskService.ResetForScene(player, sceneNumber)
+		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene1Spawn")
+		character = player.Character or player.CharacterAdded:Wait()
+		local root = character:FindFirstChild("HumanoidRootPart")
 
+		if root and spawnPart then
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
+		end
+		
+		TaskService.ResetForScene(player, 1)
+		StartDialogue:FireClient(player, "Player", "start")
+		
 		-- Phase 1
-		TaskService.LoadTasks(player, sceneNumber, {
-			"pick_up_apple",
+		TaskService.LoadTasks(player, 1, {
+			"grab_backpack",
+			"grab_calculator",
+			"grab_keys",
 		})
-
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
-			"pick_up_apple",
+			"grab_backpack",
+			"grab_calculator",
+			"grab_keys",
 		})
 
 		-- Phase 2
-		TaskService.LoadTasks(player, sceneNumber, {
-			"talk_to_dad",
-			"talk_to_mom",
+		TaskService.LoadTasks(player, 1, {
+			"go_to_door",
 		})
-
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
-			"talk_to_dad",
-			"talk_to_mom",
-		})
-
-		-- Phase 3
-		TaskService.LoadTasks(player, sceneNumber, {
 			"go_to_door",
 		})
 	end)

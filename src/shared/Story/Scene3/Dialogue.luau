@@ -1,27 +1,84 @@
 local Scene3 = {}
 
-Scene3.DadDialogueTree = {
+Scene3.Player = {
+	start = {
+		speaker = "You",
+		text = "Just... stay calm. It doesn't matter.",
+		next = "friend_intro",
+	},
 
+	friend_intro = {
+		speaker = "Friend",
+		text = "Hey, what are you doing today?",
+		next = "friend_notice",
+	},
+
+	friend_notice = {
+		speaker = "Friend",
+		text = "Oh what are you watching this time? Is this another one of those romance ones I've caught you watching before?",
+		choices = {
+			{
+				text = "▸ I am allowed to like the things I like.",
+				next = "player_choice_1",
+			},
+			{
+				text = "▸ Why should it matter to you?",
+				next = "player_choice_2",
+			},
+			{
+				text = "▸ Do you not have any hobbies of your own?",
+				next = "player_choice_3",
+			},
+		},
+	},
+
+	player_choice_1 = {
+		speaker = "You",
+		text = "I am allowed to like the things I like, just because it doesn't align with you doesn't make it bad.",
+		next = "friend_response_1",
+	},
+
+	player_choice_2 = {
+		speaker = "You",
+		text = "So what, why should it matter to you? Don't you have your own life to worry about?",
+		next = "friend_response_2",
+	},
+
+	player_choice_3 = {
+		speaker = "You",
+		text = "Do you not have any hobbies other than trying to get me to conform to your standards? I don't need to be what you perceive as acceptable.",
+		next = "friend_response_3",
+	},
+
+	friend_response_1 = {
+		speaker = "Friend",
+		text = "Just because that may be the case doesn't mean I have to accept you for it my guy. You really need to grow up a bit and realize everything you do people judge you for, including me.",
+		next = "friend_exit",
+	},
+
+	friend_response_2 = {
+		speaker = "Friend",
+		text = "Which is exactly why I am telling you something. It's hard to relate to you when all you want to talk about is that stuff you keep watching.",
+		next = "friend_exit",
+	},
+
+	friend_response_3 = {
+		speaker = "Friend",
+		text = "Standards are the norm. In the real world if you don't conform to what people want, you won't find anything. People want normal, so just be normal.",
+		next = "friend_exit",
+	},
+
+	friend_exit = {
+		speaker = "You",
+		text = "...",
+	},
 }
 
-Scene3.MomDialogueTree = {
-
-}
-
-Scene3.SisterDialogueTree = {
-
-}
-
-Scene3.TeacherDialogueTree = {
-
-}
-
-Scene3.BullyDialogueTree = {
-
-}
-
-Scene3.MainCharacterDialogueTree = {
-
+Scene3.Registry = {
+	Player = {
+		tree = Scene3.Player,
+		defaultStartNode = "start",
+	},
 }
 
 return Scene3

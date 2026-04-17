@@ -11,24 +11,11 @@ local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local InteractionHandler = {}
 
-local FINAL_DOOR_TASK_ID = "go_to_door"
+-- local FINAL_DOOR_TASK_ID = "go_to_door"
+-- don't need this since i also have go_to_school door
 
 local function getCurrentSceneNumber(player)
 	return player:GetAttribute("Scene") or 1
-end
-
-local function resolveDialogueStartNode(interactable, sceneNumber)
-	local npcId = interactable:GetAttribute("NpcId")
-
-	if npcId == "Dad" then
-		if sceneNumber == 1 then
-			return "scene1Start"
-		elseif sceneNumber == 2 then
-			return "scene2Start"
-		end
-	end
-
-	return "start"
 end
 
 local function completeTaskIfActive(player, taskId, sceneNumber)
@@ -42,7 +29,9 @@ local function completeTaskIfActive(player, taskId, sceneNumber)
 		if task then
 			print("Completed task:", task.Title)
 		end
+		return true
 	end
+	return false
 end
 
 function InteractionHandler.HandleInteraction(player, interactable)
@@ -61,14 +50,17 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			return
 		end
 
-		local startNode = resolveDialogueStartNode(interactable, sceneNumber)
-		StartDialogue:FireClient(player, npcId, startNode)
+		StartDialogue:FireClient(player, npcId)
 
 	elseif interactionType == "Object" then
 		print("Object interaction:", interactable.Name)
 
 		local taskId = interactable:GetAttribute("TaskId")
-		completeTaskIfActive(player, taskId, sceneNumber)
+		local completed = completeTaskIfActive(player, taskId, sceneNumber)
+
+		if not completed then
+			return
+		end
 
 		if interactable:IsA("BasePart") then
 			interactable.Transparency = 1
@@ -85,26 +77,27 @@ function InteractionHandler.HandleInteraction(player, interactable)
 				descendant.CanQuery = false
 			elseif descendant:IsA("ProximityPrompt") then
 				descendant.Enabled = false
+			elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
+			descendant.Transparency = 1 -- for cereal decals
 			end
 		end
 
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
-		if not TaskService.IsTaskActive(player, FINAL_DOOR_TASK_ID) then
+		-- use door's own TaskId instead of global one
+		local doorTaskId = interactable:GetAttribute("TaskId")
+		if not doorTaskId then
+			warn("Door missing TaskId attribute:", interactable.Name)
+			return
+		end
+
+		if not TaskService.IsTaskActive(player, doorTaskId) then
 			print("There is more to do.")
 			return
 		end
 
-		completeTaskIfActive(player, FINAL_DOOR_TASK_ID, sceneNumber)
-
-		for _, descendant in ipairs(interactable:GetDescendants()) do
-			if descendant:IsA("BasePart") then
-				descendant.CanCollide = false
-			elseif descendant:IsA("ProximityPrompt") then
-				descendant.Enabled = false
-			end
-		end
+		completeTaskIfActive(player, doorTaskId, sceneNumber)
 
 		local transitioned = SceneDoorController.TriggerSceneDoor(player)
 		if not transitioned then
