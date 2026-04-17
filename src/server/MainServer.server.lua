@@ -85,16 +85,6 @@ local function findDoorAncestor(instance)
 	return nil
 end
 
-<<<<<<< HEAD
--- Updated: Connect interactable Models, Accessories, and Tools to appropriate interaction
-local function connectPrompt(prompt)
-	prompt.Triggered:Connect(function(player)
-		local interactable = findDoorAncestor(prompt)
-			or prompt:FindFirstAncestorWhichIsA("Accessory")
-			or prompt:FindFirstAncestorWhichIsA("Tool")
-			or prompt:FindFirstAncestorOfClass("Model")
-			or prompt.Parent
-=======
 local function connectPrompt(prompt) -- Connect interactable assets to appropriate interaction
 	prompt.Triggered:Connect(function(player)
 		local doorModel = findDoorAncestor(prompt)
@@ -105,14 +95,12 @@ local function connectPrompt(prompt) -- Connect interactable assets to appropria
 		else
 			interactable = prompt:FindFirstAncestorOfClass("Model") or prompt.Parent
 		end
->>>>>>> 38dd658 ( AI-176 Fixed implementation for door interaction)
 
 		if interactable then
 			InteractionHandler.HandleInteraction(player, interactable)
 		end
 	end)
 end
-
 
 local function setupInteractionPrompts() -- setup NPC interactions
 	for _, obj in ipairs(workspace:GetDescendants()) do

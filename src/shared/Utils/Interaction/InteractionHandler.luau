@@ -101,7 +101,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		completeTaskIfActive(player, doorTaskId, sceneNumber)
 =======
 		completeTaskIfActive(player, FINAL_DOOR_TASK_ID, sceneNumber)
->>>>>>> 38dd658 ( AI-176 Fixed implementation for door interaction)
 
 		local transitioned = SceneDoorController.TriggerSceneDoor(player)
 		if not transitioned then
