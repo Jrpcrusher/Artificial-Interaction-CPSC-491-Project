@@ -43,6 +43,7 @@ local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
 local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
 local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
+local ShowAIChatGui = getOrCreateRemote(ChatFolder, "ShowAIChatGui")
 
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
