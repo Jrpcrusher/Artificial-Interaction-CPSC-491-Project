@@ -101,6 +101,15 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		if not transitioned then
 			warn("Scene door interaction failed to transition scene for player:", player.Name)
 		end
+	elseif interactionType == "Static" then
+		
+		local taskId = interactable:GetAttribute("TaskId")
+		local completed = completeTaskIfActive(player, taskId, sceneNumber)
+
+		if not completed then
+			return
+		end
+
 	end
 end
 
