@@ -243,7 +243,6 @@ end
 
 function DialogueHandler:_chooseTalker(character)
 	if character == "Dad" then
-		print("dad dialogue sound")
 		return MaleSound, 0.9
 	elseif character == "Teacher" then
 		return MaleSound, 1

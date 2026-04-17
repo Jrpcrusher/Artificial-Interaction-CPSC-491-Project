@@ -1,12 +1,9 @@
 --[[Services]]
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 --[[Required]]
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
-
-local player = Players.LocalPlayer
 
 --[[References to UI Elements]]
 local scriptsFolder = script.Parent
@@ -33,10 +30,10 @@ openButton.Visible = false
 --[[Services & Remotes]]
 local UserInputService = game:GetService("UserInputService")
 local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
-local ChatbotRequest = Remotes:WaitForChild("ChatbotRequest")
-local ChatbotResponse = Remotes:WaitForChild("ChatbotResponse")
+local ChatbotRequest = Remotes:WaitForChild("Chat"):WaitForChild("ChatbotRequest")
+local ChatbotResponse = Remotes:WaitForChild("Chat"):WaitForChild("ChatbotResponse")
 local LoadTranscript = Remotes:WaitForChild("LoadTranscript")
-
+local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
 --[[Message Display]]
 local function addMessage(text, isPlayer)
 	-- Chooses the correct row template to use based on message being sent/received.
@@ -152,4 +149,10 @@ LoadTranscript.OnClientEvent:Connect(function(transcript)
 		local isPlayer = msg.sender ~= 0
 		addMessage(msg.content, isPlayer)
 	end
+end)
+
+ShowAIChatGui.OnClientEvent:Connect(function()
+	gui.Enabled = true
+	openButton.Visible = true
+	chatFrame.Visible = false
 end)

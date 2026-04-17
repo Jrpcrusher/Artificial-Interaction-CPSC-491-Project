@@ -61,25 +61,7 @@ function InteractionHandler.HandleInteraction(player, interactable)
 			return
 		end
 
-		if interactable:IsA("BasePart") then
-			interactable.Transparency = 1
-			interactable.CanCollide = false
-			interactable.CanTouch = false
-			interactable.CanQuery = false
-		end
-
-		for _, descendant in ipairs(interactable:GetDescendants()) do
-			if descendant:IsA("BasePart") then
-				descendant.Transparency = 1
-				descendant.CanCollide = false
-				descendant.CanTouch = false
-				descendant.CanQuery = false
-			elseif descendant:IsA("ProximityPrompt") then
-				descendant.Enabled = false
-			elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-				descendant.Transparency = 1 -- for cereal decals
-			end
-		end
+		interactable:Destroy()
 	elseif interactionType == "Door" then
 		print("Door interaction:", interactable.Name)
 
@@ -101,6 +83,15 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		if not transitioned then
 			warn("Scene door interaction failed to transition scene for player:", player.Name)
 		end
+	elseif interactionType == "Static" then
+		
+		local taskId = interactable:GetAttribute("TaskId")
+		local completed = completeTaskIfActive(player, taskId, sceneNumber)
+
+		if not completed then
+			return
+		end
+
 	end
 end
 
