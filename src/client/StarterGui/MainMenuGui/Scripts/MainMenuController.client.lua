@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local StarterGui = game:GetService("StarterGui")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -18,12 +19,9 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local scriptsFolder = script.Parent
 local menuGui = scriptsFolder.Parent
+local flickerActive = true
 
 local background = menuGui:WaitForChild("BackgroundFrame", 5)
-if not background then
-	warn("CRITICAL ERROR: 'BackgroundFrame' is missing.")
-	return
-end
 
 GuiMouseManager.OpenGui()
 
@@ -37,6 +35,8 @@ local credFrame = background:WaitForChild("CreditsFrame", 5)
 local closeCredBtn = credFrame:WaitForChild("CloseCredits", 5)
 
 local warningFrame = background:WaitForChild("OverwriteWarningFrame", 5)
+local backgroundImage = background:WaitForChild("ImageLabel")
+local lightObj = backgroundImage:WaitForChild("LightGlow")
 local yesBtn = warningFrame:WaitForChild("YesButton", 5)
 local noBtn = warningFrame:WaitForChild("NoButton", 5)
 local warningText = warningFrame:WaitForChild("WarningText", 5)
@@ -44,18 +44,22 @@ local warningText = warningFrame:WaitForChild("WarningText", 5)
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
 local taskGui = playerGui:WaitForChild("Tasks", 5)
 
+local ButtonHover = SoundService:WaitForChild("ButtonHover")
+local ButtonClick = SoundService:WaitForChild("ButtonClick")
+local MainMenuSound = SoundService:WaitForChild("MainMenuSoundTrack")
+
 -- Main menu owns startup visibility
+MainMenuSound:Play() -- Play the main menu sound
+
+-- Setup logic for player joining
 if aiChatGui then
 	aiChatGui.Enabled = false
 end
-
 if taskGui then
 	taskGui.Enabled = false
 end
-
 local playerHasSaveData = false
 local currentSavedScene = "Scene 1"
-
 local function updateContinueButton()
 	continueBtn.Visible = true
 	if playerHasSaveData then
@@ -66,60 +70,81 @@ local function updateContinueButton()
 		continueBtn.TextTransparency = 0.9
 	end
 end
-
 SaveDataResponse.OnClientEvent:Connect(function(hasSave, sceneNumber)
 	playerHasSaveData = hasSave
 	currentSavedScene = "Scene " .. tostring(sceneNumber)
 	updateContinueButton()
 end)
-
 updateContinueButton()
 SaveDataRequest:FireServer()
 
-local function freezePlayer(character)
-	local humanoid = character:WaitForChild("Humanoid")
-	humanoid.WalkSpeed = 0
-	humanoid.JumpPower = 0
-	humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
-	humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+-- Freeze the player
+local function disableControls()
+	local playerScripts = player:WaitForChild("PlayerScripts")
+	local playerModule = require(playerScripts:WaitForChild("PlayerModule")) :: any
+	local controls = playerModule:GetControls()
+
+	controls:Disable()
+end
+disableControls()
+
+local function enableControls()
+	local playerScripts = player:WaitForChild("PlayerScripts")
+	local playerModule = require(playerScripts:WaitForChild("PlayerModule")) :: any
+	local controls = playerModule:GetControls()
+
+	controls:Enable()
 end
 
-if player.Character then
-	freezePlayer(player.Character)
-end
-
-player.CharacterAdded:Connect(freezePlayer)
+-- End of setup for user
 
 pcall(function()
 	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 end)
 
 creditsBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = true
 end)
 
 closeCredBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	credFrame.Visible = false
 end)
 
 local function transitionToGame()
+	flickerActive = false
 	playBtn.Active = false
 	newGameBtn.Active = false
 	continueBtn.Active = false
 	creditsBtn.Active = false
 
 	local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+	local linearTransition = TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
+
 	TweenService:Create(background, tweenInfo, { BackgroundTransparency = 1 }):Play()
 
 	for _, child in pairs(background:GetDescendants()) do
 		if child:IsA("TextLabel") or child:IsA("TextButton") then
-			TweenService:Create(child, tweenInfo, { TextTransparency = 1, BackgroundTransparency = 1 }):Play()
+			TweenService:Create(child, tweenInfo, {
+				TextTransparency = 1,
+				BackgroundTransparency = 1,
+			}):Play()
 		elseif child:IsA("Frame") and child.Name ~= "CreditsFrame" and child.Name ~= "OverwriteWarningFrame" then
-			TweenService:Create(child, tweenInfo, { BackgroundTransparency = 1 }):Play()
+			TweenService:Create(child, tweenInfo, {
+				BackgroundTransparency = 1,
+			}):Play()
+		elseif child:IsA("ImageLabel") then
+			TweenService:Create(child, tweenInfo, {
+				ImageTransparency = 1,
+				BackgroundTransparency = 1,
+			}):Play()
 		end
 	end
 
-	task.wait(1)
+	TweenService:Create(MainMenuSound, linearTransition, { Volume = 0 }):Play()
+
+	task.wait(1.2)
 
 	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 	if humanoid then
@@ -135,6 +160,8 @@ local function transitionToGame()
 
 	GuiMouseManager.CloseGui()
 	menuGui.Enabled = false
+	enableControls() -- allow the user to start walking again
+	player.CameraMode = Enum.CameraMode.LockFirstPerson
 end
 
 local function startNewGame()
@@ -147,7 +174,65 @@ local function continueGame()
 	transitionToGame()
 end
 
+local function flickerLight(lightObj)
+	local baseSize = lightObj.Size
+	local basePos = lightObj.Position
+
+	task.spawn(function()
+		while flickerActive and lightObj and lightObj.Parent do
+			lightObj.ImageTransparency = 0.35 + math.random() * 0.2
+
+			local sizeOffset = math.random(-2, 2)
+			lightObj.Size = UDim2.new(
+				baseSize.X.Scale,
+				baseSize.X.Offset + sizeOffset,
+				baseSize.Y.Scale,
+				baseSize.Y.Offset + sizeOffset
+			)
+
+			local posOffsetX = math.random(-1, 1)
+			local posOffsetY = math.random(-1, 1)
+			lightObj.Position = UDim2.new(
+				basePos.X.Scale,
+				basePos.X.Offset + posOffsetX,
+				basePos.Y.Scale,
+				basePos.Y.Offset + posOffsetY
+			)
+
+			task.wait(math.random(4, 10) / 100)
+		end
+
+		lightObj.Size = baseSize
+		lightObj.Position = basePos
+	end)
+end
+
+flickerLight(lightObj)
+
+for _, child in pairs(menuGui:GetDescendants()) do -- Do animation of the buttons
+	if child:IsA("TextButton") then
+		local originalSize = child.Size
+		local hoverSize = originalSize + UDim2.new(0, 10, 0, 4)
+
+		child.MouseEnter:Connect(function()
+			ButtonHover:Play()
+			TweenService:Create(child, TweenInfo.new(0.15), {
+				BackgroundColor3 = Color3.fromRGB(235, 235, 235),
+				Size = hoverSize,
+			}):Play()
+		end)
+
+		child.MouseLeave:Connect(function()
+			TweenService:Create(child, TweenInfo.new(0.15), {
+				BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+				Size = originalSize,
+			}):Play()
+		end)
+	end
+end
+
 newGameBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		warningText.Text = "Do you wish to override last save?\n(Current Progress: " .. currentSavedScene .. ")"
 		warningFrame.Visible = true
@@ -157,15 +242,18 @@ newGameBtn.MouseButton1Click:Connect(function()
 end)
 
 yesBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 	startNewGame()
 end)
 
 noBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	warningFrame.Visible = false
 end)
 
 continueBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else
@@ -174,6 +262,7 @@ continueBtn.MouseButton1Click:Connect(function()
 end)
 
 playBtn.MouseButton1Click:Connect(function()
+	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
 	else

@@ -1,9 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+local Players = game:GetService("Players")
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
 local DialogueHandler = {}
 DialogueHandler.__index = DialogueHandler
+
+-- Sounds
+local MaleSound = SoundService:WaitForChild("MaleSound")
+local FemaleSound = SoundService:WaitForChild("FemaleSound")
 
 function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	local self = setmetatable({}, DialogueHandler)
@@ -22,6 +28,8 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self.currentNode = nil -- Set up which node is the starting node
 	self.isFinalNode = false
 	self.canAdvanceLinear = false
+	self.isTyping = false
+	self.dialogueTextLabel.MaxVisibleGraphemes = -1
 
 	self.dialogueBar.Visible = false -- Initially keep this hidden
 	self.choicesPanel.Visible = false -- Initially keep the choices panel hidden as well
@@ -62,8 +70,6 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 	self.choicesPanel.Visible = true
 
 	self.npcNameLabel.Text = node.speaker
-	self.dialogueTextLabel.Text = node.text
-
 	self:_hideAllChoices()
 
 	if node.choices then -- Depending on what we need, show appropriate choice panels
@@ -84,9 +90,17 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 		self.choicesPanel.Visible = false
 		self.isFinalNode = true
 	end
+
+	self:_typewrite(node)
 end
 
 function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
+	if self.isActive then
+		return
+	end
+
+	self.isActive = true
+	
 	if self.currentTree then
 		self:Stop()
 	end
@@ -109,6 +123,12 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 end
 
 function DialogueHandler:Stop() -- Stop the GUI
+	if not self.isActive then
+		return
+	end
+
+	self.isActive = false
+	
 	self.currentTree = nil
 	self.currentNode = nil
 	self.isFinalNode = false
@@ -117,9 +137,19 @@ function DialogueHandler:Stop() -- Stop the GUI
 	self.choicesPanel.Visible = false
 	GuiMouseManager.CloseGui()
 	GuiMovementManager.Unlock()
+
+	local player = Players.LocalPlayer
+	if player then
+		player.CameraMode = Enum.CameraMode.LockFirstPerson
+	end
 end
 
 function DialogueHandler:_choose(index) -- Function to handle when a user picks an option
+	if self.isTyping then
+		self.isTyping = false
+		return
+	end
+
 	if not self.currentTree or not self.currentNode then -- Check if we have nothing
 		warn("Missing currentTree or currentNode")
 		return
@@ -160,6 +190,11 @@ function DialogueHandler:_connectDialogueClick()
 			return
 		end
 
+		if self.isTyping then
+			self.isTyping = false
+			return
+		end
+
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
@@ -179,6 +214,51 @@ function DialogueHandler:_addHoverHighlight(button)
 	button.MouseLeave:Connect(function()
 		button.BackgroundTransparency = 1
 	end)
+end
+
+function DialogueHandler:_typewrite(node) -- Function that enables a typewriting effect of the NPC
+	local label = self.dialogueTextLabel
+	local text = node.text
+
+	self.isTyping = true
+	label.Text = text
+	label.MaxVisibleGraphemes = 0
+	local sound, pitch = self:_chooseTalker(node.speaker)
+	for i = 1, #text do
+		if not self.isTyping then
+			label.MaxVisibleGraphemes = -1
+			self.isTyping = false
+			return
+		end
+		label.MaxVisibleGraphemes = i
+
+		sound.PlaybackSpeed = pitch
+		sound:Play()
+		task.wait(0.02)
+	end
+
+	label.MaxVisibleGraphemes = -1
+	self.isTyping = false
+end
+
+function DialogueHandler:_chooseTalker(character)
+	if character == "Dad" then
+		print("dad dialogue sound")
+		return MaleSound, 0.9
+	elseif character == "Teacher" then
+		return MaleSound, 1
+	elseif character == "Bully" then
+		return MaleSound, 1.1
+	elseif character == "Mom" then
+		return FemaleSound, 0.8
+	elseif character == "Sister" then
+		return FemaleSound, 1.15
+	elseif character == "You" then
+		return FemaleSound, 1
+	else
+		print("other dialogue sound")
+		return MaleSound, 1
+	end
 end
 
 return DialogueHandler
