@@ -54,7 +54,7 @@ return {
 		Type = "Required",
 	},
 	{
-		Id = "go_to_school",
+		Id = "go_to_door",
 		Title = "Go to School",
 		Objective = "Leave for school.",
 		Type = "Required",

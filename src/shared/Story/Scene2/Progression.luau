@@ -91,13 +91,13 @@ function Progression.Start(player)
 
 		-- Phase 3: leave for school
 		TaskService.LoadTasks(player, 2, {
-			"go_to_school",
+			"go_to_door",
 		})
 
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
-			"go_to_school",
+			"go_to_door",
 		})
 	end)
 end
