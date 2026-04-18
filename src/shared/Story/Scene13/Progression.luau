@@ -11,40 +11,6 @@ local Teacher = Scene13Objects:WaitForChild("Teacher")
 
 local Progression = {}
 
-local function hideNPC(Npc)
-	for _, descendant in ipairs(Npc:GetDescendants()) do
-		if descendant:IsA("BasePart") then
-			if descendant.Name ~= "HumanoidRootPart" then
-				descendant.Transparency = 1
-			end
-			descendant.CanCollide = false
-			descendant.CanTouch = false
-			descendant.CanQuery = false
-		elseif descendant:IsA("ProximityPrompt") then
-			descendant.Enabled = false
-		elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-			descendant.Transparency = 1
-		end
-	end
-end
-
-local function showNPC(Npc)
-	for _, descendant in ipairs(Npc:GetDescendants()) do
-		if descendant:IsA("BasePart") then
-			if descendant.Name ~= "HumanoidRootPart" then
-				descendant.Transparency = 0
-			end
-			descendant.CanCollide = false
-			descendant.CanTouch = false
-			descendant.CanQuery = false
-		elseif descendant:IsA("ProximityPrompt") then
-			descendant.Enabled = true
-		elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-			descendant.Transparency = 0
-		end
-	end
-end
-
 local function knockPlayerOver(player)
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
@@ -66,8 +32,6 @@ local function restorePlayerFromKnocked(player)
 end
 
 function Progression.Start(player)
-	hideNPC(Bully)
-	hideNPC(Teacher)
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
@@ -80,7 +44,6 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 13)
-		showNPC(Bully)
 		StartDialogue:FireClient(player, "Player", "scene13IntroMonologue")
 
 		-- Phase 1
@@ -104,7 +67,6 @@ function Progression.Start(player)
 				end
 
 				if hit:IsDescendantOf(character) then
-					showNPC(Teacher)
 					StartDialogue:FireClient(player, "Teacher", "start")
 					DialogueTrigger1.Destroy()
 				end
