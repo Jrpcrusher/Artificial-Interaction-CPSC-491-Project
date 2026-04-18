@@ -11,68 +11,33 @@ local Teacher = Scene13Objects:WaitForChild("Teacher")
 
 local Progression = {}
 
-local function hideNPC(Npc)
-	for _, descendant in ipairs(Npc:GetDescendants()) do
-		if descendant:IsA("BasePart") then
-			if descendant.Name ~= "HumanoidRootPart" then
-				descendant.Transparency = 1
-			end
-			descendant.CanCollide = false
-			descendant.CanTouch = false
-			descendant.CanQuery = false
-		elseif descendant:IsA("ProximityPrompt") then
-			descendant.Enabled = false
-		elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-			descendant.Transparency = 1
-		end
-	end
-end
-
-local function showNPC(Npc)
-	for _, descendant in ipairs(Npc:GetDescendants()) do
-		if descendant:IsA("BasePart") then
-			if descendant.Name ~= "HumanoidRootPart" then
-				descendant.Transparency = 0
-			end
-			descendant.CanCollide = false
-			descendant.CanTouch = false
-			descendant.CanQuery = false
-		elseif descendant:IsA("ProximityPrompt") then
-			descendant.Enabled = true
-		elseif descendant:IsA("Decal") or descendant:IsA("Texture") then
-			descendant.Transparency = 0
-		end
-	end
-end
-
-local function knockPlayerOver(player)
+local function knockPlayerOver(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+	print("in knock player over")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 
 	humanoid.WalkSpeed = 0
 	humanoid.JumpPower = 0
 	humanoid.AutoRotate = false
-	humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+	humanoid.PlatformStand = true
 end
 
-local function restorePlayerFromKnocked(player)
+local function restorePlayerFromKnocked(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+	print("in restore player")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 
+	humanoid.PlatformStand = false
 	humanoid.WalkSpeed = 16
 	humanoid.JumpPower = 50
 	humanoid.AutoRotate = true
-	humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 end
 
 function Progression.Start(player)
-	hideNPC(Bully)
-	hideNPC(Teacher)
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
 		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene13Spawn")
-		character = player.Character or player.CharacterAdded:Wait()
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
@@ -80,10 +45,9 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 13)
-		showNPC(Bully)
+
 		StartDialogue:FireClient(player, "Player", "scene13IntroMonologue")
 
-		-- Phase 1
 		TaskService.LoadTasks(player, 13, {
 			"talk_to_bully",
 		})
@@ -94,26 +58,27 @@ function Progression.Start(player)
 			"talk_to_bully",
 		})
 
-		knockPlayerOver(player) -- Knocks player over (i.e., ragdoll the player) due to player getting punched by the bully.
+		-- simple fixed delay to let the bully dialogue finish
+		task.wait(4)
 
-		DialogueTrigger1.Touched:Connect(
-			function(hit) -- Triggers dialogue between bully, teacher, and ending monologue.
-				local currentCharacter = player.Character
-				if not currentCharacter then
-					return
-				end
+		knockPlayerOver(player)
 
-				if hit:IsDescendantOf(character) then
-					showNPC(Teacher)
-					StartDialogue:FireClient(player, "Teacher", "start")
-					DialogueTrigger1.Destroy()
-				end
+		task.wait(5)
+
+		restorePlayerFromKnocked(player)
+
+		DialogueTrigger1.Touched:Connect(function(hit)
+			local currentCharacter = player.Character
+			if not currentCharacter then
+				return
 			end
-		)
 
-		restorePlayerFromKnocked(player) -- Restores player from getting knocked over by bully.
+			if hit:IsDescendantOf(currentCharacter) then
+				StartDialogue:FireClient(player, "Teacher", "start")
+				DialogueTrigger1:Destroy()
+			end
+		end)
 
-		-- Phase 2
 		TaskService.LoadTasks(player, 13, {
 			"go_to_door",
 		})
@@ -123,11 +88,10 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"go_to_door",
 		})
-	end)
 
-	-- Destroys NPCs once task is complete.
-	Bully:Destroy()
-	Teacher:Destroy()
+		Bully:Destroy()
+		Teacher:Destroy()
+	end)
 end
 
 return Progression

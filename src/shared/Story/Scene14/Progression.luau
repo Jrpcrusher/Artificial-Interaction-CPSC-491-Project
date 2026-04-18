@@ -86,7 +86,7 @@ function Progression.Start(player)
 		})
 
 		StartDialogue:FireClient(player, "Player", "Task3Monologue")
-		ShowAIChatGui:FireClient(player) -- Hides AI Chat Gui.
+		ShowAIChatGui:FireClient(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
 
 		-- Phase 4
 		TaskService.LoadTasks(player, 14, {
