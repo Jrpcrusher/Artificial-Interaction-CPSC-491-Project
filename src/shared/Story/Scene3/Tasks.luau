@@ -6,9 +6,15 @@ return {
 		Type = "Required",
 	},
 	{
-		Id = "sit_down",
-		Title = "Sit Down",
-		Objective = "Sit down in classroom 102.",
+		Id = "get_worksheet",
+		Title = "Grab Worksheet",
+		Objective = "Grab a worksheet at the front of class.",
+		Type = "Required",
+	},
+	{
+		Id = "go_library",
+		Title = "Go to Library",
+		Objective = "Head to the library and sit at the table.",
 		Type = "Required",
 	},
 	{
