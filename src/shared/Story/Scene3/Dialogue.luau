@@ -22,7 +22,7 @@ Scene3.Player = {
 
 	friend_reply_back = {
 		speaker = "Friend",
-		text = "...Alright man. Catch you later."
+		text = "...Alright whatever. Catch you later."
 	},
 
 	-- phase 2: in class

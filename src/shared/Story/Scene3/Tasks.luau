@@ -12,13 +12,19 @@ return {
 		Type = "Required",
 	},
 	{
+		Id = "go_class",
+		Title = "Go to Class",
+		Objective = "Head to class.",
+		Type = "Required"
+	},
+	{
 		Id = "go_library",
 		Title = "Go to Library",
 		Objective = "Head to the library and sit at the table.",
 		Type = "Required",
 	},
 	{
-		Id = "go_home",
+		Id = "go_to_door",
 		Title = "Head Home",
 		Objective = "Head to the door of the school and go home.",
 		Type = "Required",
