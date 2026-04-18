@@ -9,6 +9,12 @@ local DialogueTrigger1 = workspace.Scene2Objects:WaitForChild("DialogueTrigger1"
 
 local Progression = {}
 
+function Progression.Load()
+	local SceneObjects = workspace:WaitForChild("Scene2Objects")
+	local Sister = SceneObjects:WaitForChild("Sister")
+	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793))
+end
+
 function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
 	local SceneObjects = workspace:WaitForChild("Scene2Objects")
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
