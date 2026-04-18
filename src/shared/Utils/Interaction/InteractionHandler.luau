@@ -5,7 +5,6 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local TaskConfig = require(Shared.Systems.Tasks.TaskConfig)
 local TaskService = require(Shared.Systems.Tasks.TaskService)
-local SceneDoorController = require(Shared.Systems.Scene.SceneDoorController)
 
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
@@ -78,11 +77,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		end
 
 		completeTaskIfActive(player, doorTaskId, sceneNumber)
-
-		local transitioned = SceneDoorController.TriggerSceneDoor(player)
-		if not transitioned then
-			warn("Scene door interaction failed to transition scene for player:", player.Name)
-		end
 	elseif interactionType == "Static" then
 		
 		local taskId = interactable:GetAttribute("TaskId")
