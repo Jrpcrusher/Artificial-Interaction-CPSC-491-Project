@@ -1,6 +1,18 @@
 local Scene4 = {}
 
 Scene4.Player = {
+	-- phase 1
+	beginning_inner = {
+		speaker = "You",
+		text = "I wonder where everyone is...",
+		next = "beginning_inner2"
+	},
+	beginning_inner2 = {
+		speaker = "You",
+		text = "I see my sister drawing, I can see what she's up to...or I can find out what all the noise is...",
+	},
+
+	-- required task: phase 2
 	start = {
 		speaker = "Dad",
 		text = "I need to put more time into work. Things aren't stable right now and I can't just sit around while everything piles up.",
@@ -37,7 +49,7 @@ Scene4.Player = {
 	},
 }
 
--- OPTIONAL SISTER DIALOGUE
+-- OPTIONAL SISTER DIALOGUE: phase 2
 Scene4.Sister = {
 	start = {
 		speaker = "Sister",
@@ -93,6 +105,11 @@ Scene4.Sister = {
 		speaker = "You",
 		text = "...Yeah.",
 	},
+
+	in_room = {
+		speaker = "You",
+		text = "...I'm tired. Maybe if I sleep it off, things will go away."
+	}
 }
 
 Scene4.Registry = {

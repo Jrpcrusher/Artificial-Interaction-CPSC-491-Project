@@ -61,7 +61,8 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 3)
-
+		
+		-- Phase 1: put stuff in locker after talking w friend/bully whatever his name is lol
         DialogueTrigger1.Touched:Connect(function(hit) -- Handle when dialogue Trigger 1 hit
 			local currentCharacter = player.Character
 			if not currentCharacter then
@@ -74,8 +75,7 @@ function Progression.Start(player)
 				DialogueTrigger1:Destroy()
 			end
 		end)
-		-- Phase 1: put stuff in locker after talking w friend/bully whatever his name is lol
-		
+
         TaskService.LoadTasks(player, 3, {
 			"put_stuff_away",
 		})
