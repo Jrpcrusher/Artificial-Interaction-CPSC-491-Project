@@ -31,7 +31,6 @@ function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
 
 	local prompt = workspace.Map.House.DoubleStoryUrbanHouse.UpperLevel.Doors.TDW.Door.ThePart:WaitForChild("ProximityPrompt")
 	prompt.Enabled = false
-	print("objects destroyed correctly")
 end
 
 function Progression.Start(player)

@@ -11,8 +11,37 @@ local Progression = {}
 
 function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene2Objects")
+
+	-- Model positioning
 	local Sister = SceneObjects:WaitForChild("Sister")
-	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793))
+	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793) * CFrame.Angles(0, math.rad(-90), 0))
+
+	local Mom = SceneObjects:WaitForChild("Mom")
+	Mom:PivotTo(CFrame.new(41.649, 27.349, -101.433) * CFrame.Angles(0, math.rad(180), 0))
+
+	local Dad = SceneObjects:WaitForChild("Dad")
+	Dad:PivotTo(CFrame.new(52.95, 27.349, -94.078) * CFrame.Angles(0, math.rad(135), 0))
+
+	local Toast = SceneObjects:WaitForChild("Toast")
+	Toast:PivotTo(CFrame.new(53.491, 26.649, -105.078) * CFrame.Angles(0, 0, math.rad(45)))
+	local OrangeJuice = SceneObjects:WaitForChild("OrangeJuice")
+
+	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793) * CFrame.Angles(0, math.rad(-90), 0))
+	OrangeJuice:PivotTo(CFrame.new(56.53, 27.015, -101.488) * CFrame.Angles(0, math.rad(135), 0))
+
+	-- Part positioning
+	local Apple = SceneObjects:WaitForChild("Apple")
+	Apple.Position = Vector3.new(46.2, 26.545, -94.378)
+
+	local trigger = SceneObjects:WaitForChild("DialogueTrigger1")
+	trigger.Position = Vector3.new(40.249, 27.755, -59.933)
+
+	local cereal = SceneObjects:WaitForChild("Froot Loops Cereal Box")
+	cereal.Position = Vector3.new(58.3, 27.002, -97.778)
+
+	-- mesh part
+	local milk = SceneObjects:WaitForChild("Milk Carton")
+	milk.Position = Vector3.new(56.1, 26.636, -86.678)
 end
 
 function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
@@ -23,6 +52,7 @@ function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
 end
 
 function Progression.Start(player)
+	Progression.Load()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
