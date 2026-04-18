@@ -63,8 +63,10 @@ function SceneManager.Transition(player)
 		return false, ("No next scene exists for scene %d"):format(current_scene)
 	end
 
-	player:SetAttribute("IsSceneTransitioning", true)
+	player:SetAttribute("IsSceneTransitioning", true) -- Set it true that th eplayer is transitioning
 
+	TransitionEvent:FireClient(player)
+	task.wait(1)
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", next_scene)
 		TransitionEvent:FireClient(player)

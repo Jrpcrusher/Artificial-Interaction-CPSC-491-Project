@@ -2,7 +2,7 @@ local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local TransitionEvent = ReplicatedStorage:WaitForChild("TransitionEvent") -- Trigger the transition screen gui
+local TransitionEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TransitionEvent") -- Trigger the transition screen gui
 
 local TransitionGui = script.Parent.Parent
 local MainFrame = TransitionGui.Frame
