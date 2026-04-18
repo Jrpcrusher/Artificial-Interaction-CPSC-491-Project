@@ -17,7 +17,7 @@ local goal = { Rotation = 360 }
 local fadeOut = TweenService:Create(Text, textFade, { TextTransparency = 1 })
 local fadeIn = TweenService:Create(Text, textFade, { TextTransparency = 0 })
 
-local loadingSound = SoundService.FemaleSound
+local loadingSound = SoundService:WaitForChild("FemaleSound")
 
 local function fadeObject(obj, value)
 	if obj:IsA("Frame") then
