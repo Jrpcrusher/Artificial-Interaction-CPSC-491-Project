@@ -80,7 +80,12 @@ Scene13.Bully = {
 	scene13Reply3 = {
 		speaker = "You",
 		text = "And that haircut, what is with the way you style it, its literally the most abominable thing I've seen!",
-		next = "scene13Response3",
+		next = "scene13Task1Monologue",
+	},
+
+	scene13Task1Monologue = {
+		speaker = "You",
+		text = "(internal) In a split second, I was on the ground. I was staring at the sky. I was hurting. What had happened? I looked around to see my bully next to me.",
 	},
 
 	scene13Response3 = {
