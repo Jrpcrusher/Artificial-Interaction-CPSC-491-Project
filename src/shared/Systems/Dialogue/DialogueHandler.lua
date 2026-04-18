@@ -246,7 +246,7 @@ function DialogueHandler:_chooseTalker(character)
 		return MaleSound, 0.9
 	elseif character == "Teacher" then
 		return MaleSound, 1
-	elseif character == "Bully" then
+	elseif character == "Bully" or character == "Friend" then
 		return MaleSound, 1.1
 	elseif character == "Mom" then
 		return FemaleSound, 0.8
