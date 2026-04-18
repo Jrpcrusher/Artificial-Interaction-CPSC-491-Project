@@ -19,6 +19,30 @@ Scene13.Teacher = {
 	Teacher2 = {
 		speaker = "Teacher",
 		text = "That is enough! Both of you to the principal's office now!",
+		next = "scene13EndMonologue1",
+	},
+
+	scene13EndMonologue1 = {
+		speaker = "You",
+		text = "(internal) My teacher was furious at the situation, practically dragging us to the principal's office.",
+		next = "scene13EndMonologue2",
+	},
+
+	scene13EndMonologue2 = {
+		speaker = "You",
+		text = "(internal) I had done nothing, not laid a single finger, but would I still get in trouble? My mind was worried.",
+		next = "scene13EndMonologue3",
+	},
+
+	scene13EndMonologue3 = {
+		speaker = "You",
+		text = "(internal) I was nervous about punishment. What could I do? My head and face hurt so bad.",
+		next = "scene13EndMonologue4",
+	},
+
+	scene13EndMonologue4 = {
+		speaker = "You",
+		text = "(internal) We got to the principal's office and got a stern talking to before getting sent home early for the day.",
 	},
 }
 
@@ -69,29 +93,6 @@ Scene13.Player = {
 	scene13IntroMonologue = {
 		speaker = "You",
 		text = "Charlie has given me some excellent suggestions. I could finally give my friend a taste of his own judgmental self.",
-	},
-
-	scene13EndMonologue1 = {
-		speaker = "You",
-		text = "My teacher was furious at the situation, practically dragging us to the principal's office.",
-		next = "scene13EndMonologue2",
-	},
-
-	scene13EndMonologue2 = {
-		speaker = "You",
-		text = "I had done nothing, not laid a single finger, but would I still get in trouble? My mind was worried.",
-		next = "scene13EndMonologue3",
-	},
-
-	scene13EndMonologue3 = {
-		speaker = "You",
-		text = "I was nervous about punishment. What could I do? My head and face hurt so bad.",
-		next = "scene13EndMonologue4",
-	},
-
-	scene13EndMonologue4 = {
-		speaker = "You",
-		text = "We got to the principal's office and got a stern talking to before getting sent home early for the day.",
 	},
 }
 
