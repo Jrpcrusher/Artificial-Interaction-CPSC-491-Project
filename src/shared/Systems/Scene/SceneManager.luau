@@ -99,7 +99,6 @@ function SceneManager.ContinueFromSave(player)
 
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", scene_number)
-
 		targetModule.Start(player)
 		GameSaveManager.Save(player.UserId, scene_number)
 		TranscriptManager.Save(player.UserId)
