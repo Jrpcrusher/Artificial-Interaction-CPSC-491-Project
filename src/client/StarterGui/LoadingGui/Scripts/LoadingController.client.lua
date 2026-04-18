@@ -19,7 +19,7 @@ local goal = { Rotation = 360 }
 local fadeOut = TweenService:Create(Text, textFade, { TextTransparency = 1 })
 local fadeIn = TweenService:Create(Text, textFade, { TextTransparency = 0 })
 
-local loadingSound = SoundService.FemaleSound
+local loadingSound = SoundService:WaitForChild("FemaleSound")
 
 function playLoadingScreen() -- Play the loading screen
 	MainMenu.Enabled = false -- Initialize main menu enabled to be false
