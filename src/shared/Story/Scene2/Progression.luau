@@ -1,11 +1,20 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
+local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local DialogueTrigger1 = workspace.Scene2Objects:WaitForChild("DialogueTrigger1")
 
 local Progression = {}
+
+function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
+	local SceneObjects = workspace:WaitForChild("Scene2Objects")
+	for _, obj in ipairs(SceneObjects:GetChildren()) do
+		obj:Destroy()
+	end
+end
 
 function Progression.Start(player)
 	task.spawn(function()
@@ -99,6 +108,9 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"go_to_door",
 		})
+
+		Progression.Unload()
+		SceneManager.Transition(player)
 	end)
 end
 
