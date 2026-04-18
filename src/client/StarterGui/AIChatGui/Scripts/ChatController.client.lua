@@ -152,7 +152,13 @@ LoadTranscript.OnClientEvent:Connect(function(transcript)
 end)
 
 ShowAIChatGui.OnClientEvent:Connect(function()
-	gui.Enabled = true
-	openButton.Visible = true
-	chatFrame.Visible = false
+	if gui.Enabled then
+		gui.Enabled = false
+		openButton.Visible = false
+		chatFrame.Visible = false
+	else
+		gui.Enabled = true
+		openButton.Visible = true
+		chatFrame.Visible = false
+	end
 end)
