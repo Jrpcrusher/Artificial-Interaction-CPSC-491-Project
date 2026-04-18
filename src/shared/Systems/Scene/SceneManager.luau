@@ -3,6 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 
+local TransitionEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TransitionEvent")
+
 local SceneFolder = script.Parent.Parent.Parent.Story
 
 local SceneModules = table.freeze({
@@ -61,8 +63,10 @@ function SceneManager.Transition(player)
 		return false, ("No next scene exists for scene %d"):format(current_scene)
 	end
 
-	player:SetAttribute("IsSceneTransitioning", true)
+	player:SetAttribute("IsSceneTransitioning", true) -- Set it true that th eplayer is transitioning
 
+	TransitionEvent:FireClient(player)
+	task.wait(1)
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", next_scene)
 
