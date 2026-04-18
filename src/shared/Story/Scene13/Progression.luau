@@ -36,7 +36,6 @@ function Progression.Start(player)
 		local character = player.Character or player.CharacterAdded:Wait()
 
 		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene13Spawn")
-		character = player.Character or player.CharacterAdded:Wait()
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
@@ -67,6 +66,7 @@ function Progression.Start(player)
 				end
 
 				if hit:IsDescendantOf(character) then
+					showNPC(Teacher)
 					StartDialogue:FireClient(player, "Teacher", "start")
 					DialogueTrigger1.Destroy()
 				end
