@@ -11,24 +11,26 @@ local Teacher = Scene13Objects:WaitForChild("Teacher")
 
 local Progression = {}
 
-local function knockPlayerOver(player)
+local function knockPlayerOver(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+	print("in knock player over")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 
 	humanoid.WalkSpeed = 0
 	humanoid.JumpPower = 0
 	humanoid.AutoRotate = false
-	humanoid:ChangeState(Enum.HumanoidStateType.Ragdoll)
+	humanoid.PlatformStand = true
 end
 
-local function restorePlayerFromKnocked(player)
+local function restorePlayerFromKnocked(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+	print("in restore player")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 
+	humanoid.PlatformStand = false
 	humanoid.WalkSpeed = 16
 	humanoid.JumpPower = 50
 	humanoid.AutoRotate = true
-	humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 end
 
 function Progression.Start(player)
@@ -45,7 +47,6 @@ function Progression.Start(player)
 		TaskService.ResetForScene(player, 13)
 		StartDialogue:FireClient(player, "Player", "scene13IntroMonologue")
 
-		-- Phase 1
 		TaskService.LoadTasks(player, 13, {
 			"talk_to_bully",
 		})
@@ -56,26 +57,27 @@ function Progression.Start(player)
 			"talk_to_bully",
 		})
 
-		knockPlayerOver(player) -- Knocks player over (i.e., ragdoll the player) due to player getting punched by the bully.
+		-- simple fixed delay to let the bully dialogue finish
+		task.wait(4)
 
-		DialogueTrigger1.Touched:Connect(
-			function(hit) -- Triggers dialogue between bully, teacher, and ending monologue.
-				local currentCharacter = player.Character
-				if not currentCharacter then
-					return
-				end
+		knockPlayerOver(player)
 
-				if hit:IsDescendantOf(character) then
-					showNPC(Teacher)
-					StartDialogue:FireClient(player, "Teacher", "start")
-					DialogueTrigger1.Destroy()
-				end
+		task.wait(5)
+
+		restorePlayerFromKnocked(player)
+
+		DialogueTrigger1.Touched:Connect(function(hit)
+			local currentCharacter = player.Character
+			if not currentCharacter then
+				return
 			end
-		)
 
-		restorePlayerFromKnocked(player) -- Restores player from getting knocked over by bully.
+			if hit:IsDescendantOf(currentCharacter) then
+				StartDialogue:FireClient(player, "Teacher", "start")
+				DialogueTrigger1:Destroy()
+			end
+		end)
 
-		-- Phase 2
 		TaskService.LoadTasks(player, 13, {
 			"go_to_door",
 		})
@@ -85,11 +87,10 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"go_to_door",
 		})
-	end)
 
-	-- Destroys NPCs once task is complete.
-	Bully:Destroy()
-	Teacher:Destroy()
+		Bully:Destroy()
+		Teacher:Destroy()
+	end)
 end
 
 return Progression

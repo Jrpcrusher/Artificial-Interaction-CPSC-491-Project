@@ -132,7 +132,6 @@ function SceneManager.LoadSceneNumber(player, scene_number)
 
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", scene_number)
-
 		targetModule.Start(player)
 		GameSaveManager.Save(player.UserId, scene_number)
 		TranscriptManager.Save(player.UserId)
