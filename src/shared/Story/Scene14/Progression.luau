@@ -51,11 +51,11 @@ function Progression.Load()
 
 	-- Model positioning
 	local Mom = SceneObjects:WaitForChild("Mom")
-	Mom:PivotTo(CFrame.new(21.486, 27.355, -48.541) * CFrame.Angles(0, math.rad(-135), 0))
+	Mom:PivotTo(CFrame.new(21.486, 27.311, -48.541) * CFrame.Angles(0, math.rad(-135), 0))
 
 	-- Part positioning
 	local Cable = SceneObjects:WaitForChild("Cable")
-	Cable:PivotTo(CFrame.new(-1.725, 38.958, -74.941) * CFrame.Angles(math.rad(90), math.rad(180), 0))
+	Cable:PivotTo(CFrame.new(-1.725, 38.929, -74.941) * CFrame.Angles(math.rad(90), math.rad(180), 0))
 
 	local RollingChair = SceneObjects:WaitForChild("RollingChair")
 	RollingChair:PivotTo(CFrame.new(1.887, 37.855, -76.695) * CFrame.Angles(0, math.rad(-125), 0))
@@ -65,6 +65,8 @@ function Progression.Load()
 
 	local roomInteractionTrigger = SceneObjects:WaitForChild("GoToRoomInteraction")
 	roomInteractionTrigger.Position = Vector3.new(20.1, 39.155, -75.999)
+
+	print("loading complete")
 end
 
 function Progression.Unload()
@@ -95,24 +97,24 @@ function Progression.Start(player)
 				return
 			end
 
-			if hit:IsDescendantOf(character) then
+			if hit:IsDescendantOf(currentCharacter) then
 				StartDialogue:FireClient(player, "Mom", "scene14DialogueStart")
 				DialogueTrigger1:Destroy()
 			end
 		end)
 
-		waitForDialogueToEnd(player, "scene14DialogueStart")
-
-		-- Phase 1
 		TaskService.LoadTasks(player, 14, {
 			"go_to_room",
 		})
-
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
 			"go_to_room",
 		})
+
+		waitForDialogueToEnd(player, "scene14DialogueStart")
+
+		-- Phase 1
 
 		-- Teleports player to inside the room.
 		if root and teleportPart then
@@ -141,13 +143,11 @@ function Progression.Start(player)
 		waitForChatWindowToClose(player, true)
 
 		StartDialogue:FireClient(player, "Player", "scene14Task2Monologue")
-		waitForDialogueToEnd(player, "Task2Monologue")
-
+		waitForDialogueToEnd(player, "scene14Task2Monologue")
 		-- Phase 3
 		TaskService.LoadTasks(player, 14, {
 			"ask_charlie_for_specific_solution",
 		})
-
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
@@ -157,8 +157,9 @@ function Progression.Start(player)
 		waitForChatWindowToClose(player, true)
 
 		StartDialogue:FireClient(player, "Player", "scene14Task3Monologue")
-		waitForDialogueToEnd(player, "Task3Monologue")
-		ShowAIChatGui:FireClient(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+		waitForDialogueToEnd(player, "scene14Task3Monologue")
+
+		ShowAIChatGui:FireClient(player)
 
 		-- Phase 4
 		TaskService.LoadTasks(player, 14, {
@@ -173,17 +174,18 @@ function Progression.Start(player)
 
 		-- Phase 5
 		TaskService.LoadTasks(player, 14, {
-			"go_to_door",
+			"do_the_unthinkable",
 		})
 
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
+			"do_the_unthinkable",
 		})
 
+		task.wait(5)
 		Progression.Unload()
-		-- SceneManager.Transition(player)
+		SceneManager.Transition(player)
 	end)
 end
 
