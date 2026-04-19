@@ -47,6 +47,10 @@ Scene4.Player = {
 		speaker = "You",
 		text = "I should just go lay down.",
 	},
+	in_room = {
+		speaker = "You",
+		text = "...I'm tired. Maybe if I sleep it off, things will go away."
+	}
 }
 
 -- OPTIONAL SISTER DIALOGUE: phase 2
@@ -105,11 +109,6 @@ Scene4.Sister = {
 		speaker = "You",
 		text = "...Yeah.",
 	},
-
-	in_room = {
-		speaker = "You",
-		text = "...I'm tired. Maybe if I sleep it off, things will go away."
-	}
 }
 
 Scene4.Registry = {

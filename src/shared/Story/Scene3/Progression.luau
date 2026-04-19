@@ -13,6 +13,47 @@ local Bully = Scene3Objects:WaitForChild("Bully")
 
 local Progression = {}
 
+function Progression.Load()
+    local SceneObjects = workspace:WaitForChild("Scene3Objects")
+
+    local Bully = SceneObjects:WaitForChild("Bully")
+    Bully:PivotTo(CFrame.new(-269.006, 26.527, -60.419) * CFrame.Angles(0, math.rad(-65), 0))
+
+    local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
+    FriendinLibrary:PivotTo(CFrame.new(-288.422, 26.327, -26.033) * CFrame.Angles(0, math.rad(70), 0))
+
+    local Locker = SceneObjects:WaitForChild("Locker")
+    Locker:PivotTo(CFrame.new(-273.669, 25.192, -53.832) * CFrame.Angles(0, 0, math.rad(-90)))
+
+    local TeacherInLibrary = SceneObjects:WaitForChild("TeacherInLibrary")
+    TeacherInLibrary:PivotTo(CFrame.new(-280.735, 26.355, -43.939) * CFrame.Angles(0, math.rad(90), 0))
+
+    local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
+    TeacherInClass:PivotTo(CFrame.new(-259.235, 26.555, -20.839) * CFrame.Angles(0, 0, 0))
+
+    local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
+    DialogueTrigger1.Position = Vector3.new(-267.84, 26.927, -64.229)
+
+    local DialogueTrigger2 = SceneObjects:WaitForChild("DialogueTrigger2")
+    DialogueTrigger2.Position = Vector3.new(-256.685, 27.955, -38.229)
+
+    local DialogueTrigger3 = SceneObjects:WaitForChild("DialogueTrigger3")
+    DialogueTrigger3.Position = Vector3.new(-292.055, 27.955, -28.028)
+
+    local StackOfPapers = SceneObjects:WaitForChild("StackOfPapers")
+    StackOfPapers.Position = Vector3.new(-247.435, 25.355, -23.829)
+
+    local Papers = SceneObjects:WaitForChild("Papers")
+    Papers.Position = Vector3.new(-292.235, 24.955, -29.429)
+end
+
+function Progression.Unload()
+    local SceneObjects = workspace:WaitForChild("Scene3Objects")
+    for _, obj in ipairs(SceneObjects:GetChildren()) do
+        obj:Destroy()
+    end
+end
+
 local function hideBully() -- Helper function to hide bully
 
 	for _, descendant in ipairs(Bully:GetDescendants()) do
@@ -49,6 +90,7 @@ local function showBully() -- Helper function to show bully
 end
 
 function Progression.Start(player)
+	Progression.Load()
     hideBully()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
@@ -61,7 +103,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 3)
-		
+
 		-- Phase 1: put stuff in locker after talking w friend/bully whatever his name is lol
         DialogueTrigger1.Touched:Connect(function(hit) -- Handle when dialogue Trigger 1 hit
 			local currentCharacter = player.Character
@@ -203,6 +245,7 @@ function Progression.Start(player)
 			"go_to_door",
 		})
 
+		Progression.Unload()
 		SceneManager.Transition(player)
 		
 	end)

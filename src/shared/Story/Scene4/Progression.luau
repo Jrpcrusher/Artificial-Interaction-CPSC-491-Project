@@ -6,20 +6,83 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
-local DialogueTrigger1 = workspace.Scene3Objects:WaitForChild("DialogueTrigger1")
-local DialogueTrigger2 = workspace.Scene3Objects:WaitForChild("DialogueTrigger2")
-local DialogueTrigger3 = workspace.Scene3Objects:WaitForChild("DialogueTrigger3")
-local DialogueTrigger4 = workspace.Scene3Objects:WaitForChild("DialogueTrigger4")
-
-
-
+local DialogueTrigger1 = workspace.Scene4Objects:WaitForChild("DialogueTrigger1")
+local DialogueTrigger2 = workspace.Scene4Objects:WaitForChild("DialogueTrigger2")
+local DialogueTrigger3 = workspace.Scene4Objects:WaitForChild("DialogueTrigger3")
+local DialogueTrigger4 = workspace.Scene4Objects:WaitForChild("DialogueTrigger4")
 
 local Scene4Objects = workspace:WaitForChild("Scene4Objects")
 
 
 local Progression = {}
+    
+    local SceneObjects = workspace:WaitForChild("Scene4Objects")
+    function Progression.Load()
+
+    local Sister = SceneObjects:WaitForChild("Sister")
+    Sister:PivotTo(CFrame.new(42.608, 27.355, -68.229) * CFrame.Angles(0, math.rad(-90), 0))
+
+    -- Position legs for sitting pose
+    local leftLeg = Sister:FindFirstChild("Left Leg")
+    if leftLeg then
+        leftLeg.CFrame = CFrame.new(43.423, 24.771, -68.729) * CFrame.Angles(math.rad(90), math.rad(-90), 0)
+    end
+
+    local rightLeg = Sister:FindFirstChild("Right Leg")
+    if rightLeg then
+        rightLeg.CFrame = CFrame.new(43.423, 24.771, -67.729) * CFrame.Angles(math.rad(90), math.rad(-90), 0)
+    end
+
+    local Backpack = SceneObjects:WaitForChild("Backpack")
+    Backpack.Position = Vector3.new(2.411, 39.424, -76.023)
+
+    local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
+    DialogueTrigger1.Position = Vector3.new(35.4, 27.755, -38.229)
+
+    local DialogueTrigger2 = SceneObjects:WaitForChild("DialogueTrigger2")
+    DialogueTrigger2.Position = Vector3.new(29.599, 40.755, -73.004)
+
+    local DialogueTrigger3 = SceneObjects:WaitForChild("DialogueTrigger3")
+    DialogueTrigger3.Position = Vector3.new(23.8, 40.755, -59.781)
+
+    local DialogueTrigger4 = SceneObjects:WaitForChild("DialogueTrigger4")
+    DialogueTrigger4.Position = Vector3.new(15.925, 41.955, -71)
+
+    -- local HelperPartBackpack = SceneObjects:FindFirstChild("HelperPartBackpack")
+    -- if HelperPartBackpack then
+    --     HelperPartBackpack.Position = Vector3.new(1.98, 39.424, -76.5)
+    -- else
+    --     warn("HelperPartBackpack not found - check it's inside Scene4Objects!")
+    -- end
+
+    -- local HelperPartBed = SceneObjects:FindFirstChild("HelperPartBed")
+    -- if HelperPartBed then
+    --     HelperPartBed.Position = Vector3.new(16.19, 37.755, -65)
+    -- else
+    --     warn("HelperPartBed not found - check it's inside Scene4Objects!")
+    -- end
+
+    local HelperPartBackpack = SceneObjects:WaitForChild("HelperPartBackpack")
+    HelperPartBackpack.Position = Vector3.new(1.98, 39.424, -76.5)
+
+    local HelperPartBed = SceneObjects:WaitForChild("HelperPartBed")
+    HelperPartBed.Position = Vector3.new(16.19, 37.755, -65)
+
+end
+
+function Progression.Unload()
+    local SceneObjects = workspace:WaitForChild("Scene4Objects")
+    for _, obj in ipairs(SceneObjects:GetChildren()) do
+        if obj:IsA("Model") then
+            obj:PivotTo(CFrame.new(0, -500, 0))
+        elseif obj:IsA("BasePart") then
+            obj.Position = Vector3.new(0, -500, 0)
+        end
+    end
+end
 
 function Progression.Start(player)
+    Progression.Load()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
@@ -54,15 +117,6 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"drawing_question",
 		})
-        -- required task of listening in on parents
-        TaskService.LoadTasks(player, 4, {
-			"go_upstairs",
-		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_upstairs",
-		})
         
         -- handles going upstairs task
         DialogueTrigger2.Touched:Connect(function(hit) -- Handle when dialogue Trigger 2 hit
@@ -76,6 +130,16 @@ function Progression.Start(player)
 				DialogueTrigger2:Destroy()
 			end
 		end)
+
+        -- required task of listening in on parents
+        TaskService.LoadTasks(player, 4, {
+			"go_upstairs",
+		})
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"go_upstairs",
+		})
 
 
         -- phase 2: listening in
@@ -92,24 +156,32 @@ function Progression.Start(player)
 			end
 		end)
 
+        TaskService.LoadTasks(player, 4, {
+			"listen_to_conversation",
+		})
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"listen_to_conversation",
+		})
+
         -- Remove collision on room door
-		local roomCollisionPart = workspace
+		local TDW = workspace
 			:WaitForChild("Map")
 			:WaitForChild("House")
 			:WaitForChild("DoubleStoryUrbanHouse")
+            :WaitForChild("UpperLevel")
 			:WaitForChild("Doors")
 			:WaitForChild("TDW")
-            :WaitForChild("Handle")
-            :WaitForChild("CollisionPart")
 
-		if roomCollisionPart then
-			roomCollisionPart.CanCollide = false
-			roomCollisionPart.CanTouch = false
-			roomCollisionPart.CanQuery = false
-			print("Room door collision disabled!")
-		else
-			warn("Room CollisionPart NOT found!")
-		end
+		for _, descendant in ipairs(TDW:GetDescendants()) do
+            if descendant:IsA("BasePart") then
+                descendant.CanCollide = false
+                descendant.CanTouch = false
+                descendant.CanQuery = false
+            end
+        end
+        print("Room door collision disabled!")
 
         -- phase 3: in room
         DialogueTrigger4.Touched:Connect(function(hit) -- Handle when dialogue Trigger 4 hit
@@ -134,6 +206,15 @@ function Progression.Start(player)
 			"backpack_on_chair",
 		})
 
+        for _, descendant in ipairs(TDW:GetDescendants()) do
+            if descendant:IsA("BasePart") then
+                descendant.CanCollide = true
+                descendant.CanTouch = true
+                descendant.CanQuery = true
+            end
+        end
+        print("Room door collision re-enabled!")
+
         -- Show backpack on chair
 		local backpackPart = workspace
 			:WaitForChild("Scene4Objects")
@@ -156,6 +237,9 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"rest",
 		})
+
+        Progression.Unload()
+        SceneManager.Transition(player)
 
     end)
 end

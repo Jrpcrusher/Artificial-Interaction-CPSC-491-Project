@@ -9,7 +9,7 @@ return {
 		Id = "drawing_question",
 		Title = "Ask Sister about Drawing",
 		Objective = "Ask your sister about her drawing.",
-		Type = "Optional",
+		Type = "Required",
 	},
 	{
 		Id = "listen_to_conversation",
