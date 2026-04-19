@@ -39,6 +39,16 @@ function TaskService.ResetForScene(player, sceneNumber)
 	syncTasks(player, sceneNumber)
 end
 
+function TaskService.GetCurrentTaskId(player)
+	for taskId, isActive in pairs(TaskState.GetActiveTaskIds(player)) do
+		if isActive and not TaskState.IsTaskCompleted(player, taskId) then
+			return taskId
+		end
+	end
+
+	return nil
+end
+
 function TaskService.LoadTasks(player, sceneNumber, taskIds)
 	if type(taskIds) ~= "table" then
 		warn("TaskService.LoadTasks expected taskIds table")

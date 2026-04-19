@@ -4,6 +4,8 @@ local Players = game:GetService("Players")
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
 local GuiMovementManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMovementManager)
 
+local FinishDialogue = ReplicatedStorage.Remotes.Dialogue:WaitForChild("FinishDialogue")
+
 local DialogueHandler = {}
 DialogueHandler.__index = DialogueHandler
 
@@ -23,6 +25,7 @@ function DialogueHandler.new(gui) -- Initialize our dialogue handler
 	self.choice1 = self.choicesPanel:WaitForChild("Choice1")
 	self.choice2 = self.choicesPanel:WaitForChild("Choice2")
 	self.choice3 = self.choicesPanel:WaitForChild("Choice3")
+	self.startNode = nil
 
 	self.currentTree = nil -- Initially set up our current tree
 	self.currentNode = nil -- Set up which node is the starting node
@@ -100,7 +103,7 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 	end
 
 	self.isActive = true
-	
+
 	if self.currentTree then
 		self:Stop()
 	end
@@ -115,7 +118,7 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 		warn("Start node not found:", initialNode)
 		return
 	end
-
+	self.startNode = startNode or "start"
 	self.currentTree = dialogueTree
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
@@ -128,7 +131,7 @@ function DialogueHandler:Stop() -- Stop the GUI
 	end
 
 	self.isActive = false
-	
+	self.startNode = nil
 	self.currentTree = nil
 	self.currentNode = nil
 	self.isFinalNode = false
@@ -198,7 +201,10 @@ function DialogueHandler:_connectDialogueClick()
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
+			local finishedStartNode = self.startNode
+			print("CLIENT firing FinishDialogue", finishedStartNode)
 			self:Stop()
+			FinishDialogue:FireServer(finishedStartNode)
 		end
 	end)
 end
