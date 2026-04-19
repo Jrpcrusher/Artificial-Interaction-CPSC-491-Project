@@ -21,25 +21,49 @@ Scene15.Sister = {
 Scene15.Player = {
 	scene15Task2Response = {
 		speaker = "Sister",
-		text = "Why in the world would you do such a thing?",
+		text = "Why... why would you do something like that? Do you have any idea how close I came to losing you?",
 		next = "scene15Task2MCReply1",
 	},
 
 	scene15Task2MCReply1 = {
 		speaker = "You",
-		text = "Thank you for being here for me sis. I'm sorry for letting you down.",
+		text = "I don't know anymore… everything just felt so heavy. Like no matter what I did, it wouldn't get better. I thought… I thought maybe it would just stop hurting.",
 		next = "scene15Task2Response2",
 	},
 
 	scene15Task2Response2 = {
 		speaker = "Sister",
-		text = "If you were feeling bad, you should of told me. I am here for you. We are in this together.",
+		text = "You don't have to carry that alone. You never did. I'm right here. I've always been right here… you just had to let me in.",
+		next = "scene15Task2MCReply2",
+	},
+
+	scene15Task2MCReply2 = {
+		speaker = "You",
+		text = "I didn't want to be a burden. Everyone already has so much going on… I thought if I kept it to myself, it wouldn't hurt anyone else.",
+		next = "scene15Task2Response3",
+	},
+
+	scene15Task2Response3 = {
+		speaker = "Sister",
+		text = "Losing you would hurt more than anything. You're not a burden—you're my family. We figure things out together, even when it's messy, even when it's hard.",
+		next = "scene15Task2MCReply3",
+	},
+
+	scene15Task2MCReply3 = {
+		speaker = "You",
+		text = "I was so scared… and I didn't think anyone could understand what was going on in my head.",
+		next = "scene15Task2Response4",
+	},
+
+	scene15Task2Response4 = {
+		speaker = "Sister",
+		text = "Maybe I won't understand everything. But I'll sit with you through it. I'll listen. That's what matters. You don't have to make sense of it all tonight.",
 		next = "scene15end",
 	},
 
 	scene15end = {
 		speaker = "You",
-		text = "You're right. I should have gone to you, or mom, or someone who can actually relate to me.",
+		text = "…Thank you. I should have come to you. Or mom. Or anyone who actually cares about me. I don't want to feel like this anymore—and I don't want to face it alone.",
 	},
 }
 
