@@ -41,6 +41,7 @@ local ShowMainMenu = getOrCreateRemote(EndingFolder, "ShowMainMenu")
 
 local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
 local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
+local FinishDialogue = getOrCreateRemote(DialogueFolder, "FinishDialogue")
 local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
 local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
 local ShowAIChatGui = getOrCreateRemote(ChatFolder, "ShowAIChatGui")

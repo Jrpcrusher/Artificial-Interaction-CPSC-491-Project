@@ -9,9 +9,28 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
+local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local DialogueTrigger1 = workspace.Scene13Objects:WaitForChild("DialogueTrigger1")
 
+local dialogueFinished = false -- Used for tracking when dialogue is done.
+
 local Progression = {}
+
+local function waitForDialogueToEnd(player, expectedStartNode)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
+		if firingPlayer == player and finishedStartNode == expectedStartNode then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+	print("dialogue finished")
+end
 
 local function knockPlayerOver(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
 	print("in knock player over")
@@ -87,9 +106,11 @@ function Progression.Start(player)
 			"talk_to_bully",
 		})
 
-		while PlayerDialogueBar.Visible == true do
-			task.wait()
-		end
+		waitForDialogueToEnd(player, "scene13Task1Start")
+
+		knockPlayerOver(player)
+
+		task.wait(3)
 
 		DialogueTrigger1.Touched:Connect(function(hit)
 			local currentCharacter = player.Character
@@ -100,7 +121,6 @@ function Progression.Start(player)
 			if hit:IsDescendantOf(currentCharacter) then
 				LoadTeacher()
 				StartDialogue:FireClient(player, "Teacher", "start")
-				knockPlayerOver(player)
 				DialogueTrigger1:Destroy()
 			end
 		end)
