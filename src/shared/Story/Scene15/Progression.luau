@@ -1,19 +1,16 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 
 local Progression = {}
 
-function Progression.Start()
+function Progression.Start(player)
 	task.spawn(function()
-		local player = Players:GetPlayers()[1]
-		local sceneNumber = 1
 
-		TaskService.ResetForScene(player, sceneNumber)
+		TaskService.ResetForScene(player, 15)
 
 		-- Phase 1
-		TaskService.LoadTasks(player, sceneNumber, {
+		TaskService.LoadTasks(player, 15, {
 			"check_on_older_sibling",
 		})
 
@@ -24,7 +21,7 @@ function Progression.Start()
 		})
 
 		-- Phase 2
-		TaskService.LoadTasks(player, sceneNumber, {
+		TaskService.LoadTasks(player, 15, {
 			"save_your_older_sibling",
 		})
 
