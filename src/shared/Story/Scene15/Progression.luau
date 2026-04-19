@@ -177,6 +177,7 @@ function Progression.Start(player)
 
 		StartDialogue:FireClient(player, "Player", "scene15Task2Response")
 		waitForDialogueToEnd(player, "scene15Task2Response")
+		task.wait(1)
 		Progression.Unload()
 		SceneManager.Transition(player)
 	end)
