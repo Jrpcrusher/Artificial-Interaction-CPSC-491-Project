@@ -44,19 +44,14 @@ local function clonePlayer(character, SceneObjects)
 	end
 
 	clone:PivotTo(
-		CFrame.new(3.667, 36.531, -69.54) *
-		CFrame.Angles(
-			math.rad(89.931),
-			math.rad(-51.42),
-			math.rad(139.939)
-		)
+		CFrame.new(3.667, 36.531, -69.54) * CFrame.Angles(math.rad(89.931), math.rad(-51.42), math.rad(139.939))
 	)
 
 	return clone
 end
 
 local function changeToSister(character, sister, humanoid)
-		for _, obj in ipairs(character:GetChildren()) do
+	for _, obj in ipairs(character:GetChildren()) do
 		if obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") then
 			obj:Destroy()
 		end
@@ -112,7 +107,6 @@ function Progression.Load(player)
 
 	-- Make door to sisters room nocollision
 	local door = workspace.Map.House.DoubleStoryUrbanHouse.LowerLevel.Doors.SisDoorway.SisDoor
-
 	for _, obj in ipairs(door:GetChildren()) do
 		if obj:IsA("Part") then
 			obj.CanCollide = false
@@ -125,7 +119,6 @@ function Progression.Unload()
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
 	end
-
 end
 
 function Progression.Start(player)
@@ -152,6 +145,8 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"check_on_older_sibling",
 		})
+		character:PivotTo(CFrame.new(15.271, 38.855, -78.082))
+		StartDialogue:FireClient(player, "Sister", "scene15Task1Response")
 
 		-- Phase 2
 		TaskService.LoadTasks(player, 15, {
@@ -163,7 +158,7 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"save_your_older_sibling",
 		})
-
+		StartDialogue:FireClient(player, "Player", "scene15Task2Response")
 		Progression.Unload()
 		SceneManager.Transition(player)
 	end)
