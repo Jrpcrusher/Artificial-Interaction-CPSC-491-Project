@@ -2,7 +2,10 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 
-local ShowEndCardEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Ending"):WaitForChild("ShowEndCard")
+
+local EndingFolder = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Ending")
+local ShowEndCardEvent = EndingFolder:WaitForChild("ShowEndCard")
+local EndingCardFinished = EndingFolder:WaitForChild("EndingCardFinished")
 
 local EndingCard = script.Parent.Parent
 local MainFrame = EndingCard:WaitForChild("Frame")
@@ -47,8 +50,11 @@ local function playEndCard()
 end
 
 ShowEndCardEvent.OnClientEvent:Connect(function()
+	print("Client: received ShowEndCard")
 	EndingMusic:Play()
 	playEndCard()
 	task.wait(1)
 	EndingCard.Enabled = false
+	print("Client: firing EndingCardFinished")
+	EndingCardFinished:FireServer()
 end)
