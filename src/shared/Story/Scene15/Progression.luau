@@ -3,9 +3,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
+local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 
 local Progression = {}
+
+local function waitForDialogueToEnd(player, expectedStartNode)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
+		if firingPlayer == player and finishedStartNode == expectedStartNode then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+	print("dialogue finished")
+end
 
 local function clonePlayer(character, SceneObjects)
 	if not character or not SceneObjects then
@@ -43,9 +61,7 @@ local function clonePlayer(character, SceneObjects)
 		humanoid.PlatformStand = true
 	end
 
-	clone:PivotTo(
-		CFrame.new(3.667, 36.531, -69.54) * CFrame.Angles(math.rad(89.931), math.rad(-51.42), math.rad(139.939))
-	)
+	clone:PivotTo(CFrame.new(0.667, 36.131, -74.54) * CFrame.fromOrientation(math.rad(90), math.rad(-90), math.rad(0)))
 
 	return clone
 end
@@ -57,7 +73,7 @@ local function changeToSister(character, sister, humanoid)
 		end
 	end
 
-	-- Copy Sister's clothing/body colors
+	-- Copy Sister's sclothing/body colors
 	local sisterShirt = sister:FindFirstChildOfClass("Shirt")
 	if sisterShirt then
 		sisterShirt:Clone().Parent = character
@@ -145,7 +161,7 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"check_on_older_sibling",
 		})
-		character:PivotTo(CFrame.new(15.271, 38.855, -78.082))
+		character:PivotTo(CFrame.new(15.182, 38.855, -78.081) * CFrame.Angles(0, math.rad(90), 0))
 		StartDialogue:FireClient(player, "Sister", "scene15Task1Response")
 
 		-- Phase 2
@@ -158,7 +174,9 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"save_your_older_sibling",
 		})
+
 		StartDialogue:FireClient(player, "Player", "scene15Task2Response")
+		waitForDialogueToEnd(player, "scene15Task2Response")
 		Progression.Unload()
 		SceneManager.Transition(player)
 	end)
