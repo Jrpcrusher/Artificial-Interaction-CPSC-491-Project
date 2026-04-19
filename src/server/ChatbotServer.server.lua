@@ -40,7 +40,11 @@ ChatbotRequest.OnServerEvent:Connect(function(player, message)
 	end
 
 	local sceneNumber = player:GetAttribute("Scene")
-	TaskService.CompleteTask(player, sceneNumber, "talk_to_ai")
+	local currentTaskId = TaskService.GetCurrentTaskId(player)
+
+	if currentTaskId then
+		TaskService.CompleteTask(player, sceneNumber, currentTaskId)
+	end
 
 	timeValue = os.time()
 	TranscriptManager.Add(player.UserId, MessageManager.Create(0, timeValue, reply))

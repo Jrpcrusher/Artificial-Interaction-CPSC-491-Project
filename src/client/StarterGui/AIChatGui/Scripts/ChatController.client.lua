@@ -32,6 +32,7 @@ local UserInputService = game:GetService("UserInputService")
 local Remotes = game.ReplicatedStorage:WaitForChild("Remotes")
 local ChatbotRequest = Remotes:WaitForChild("Chat"):WaitForChild("ChatbotRequest")
 local ChatbotResponse = Remotes:WaitForChild("Chat"):WaitForChild("ChatbotResponse")
+local ChatWindowIsClosed = Remotes:WaitForChild("Chat"):WaitForChild("ChatWindowIsClosed")
 local LoadTranscript = Remotes:WaitForChild("LoadTranscript")
 local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
 --[[Message Display]]
@@ -73,6 +74,12 @@ local function closeChat()
 
 	-- only show the open button if the whole AI gui is enabled
 	openButton.Visible = gui.Enabled
+
+	if chatFrame.Visible == false then
+		local chatWindowClosed = true
+		print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
+		ChatWindowIsClosed:FireServer(chatWindowClosed)
+	end
 
 	GuiMouseManager.CloseGui()
 	GuiMovementManager.Unlock()

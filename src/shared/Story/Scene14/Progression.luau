@@ -7,6 +7,7 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
+local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
 
 local Scene14Objects = workspace:WaitForChild("Scene14Objects")
 local DialogueTrigger1 = Scene14Objects:WaitForChild("DialogueTrigger1")
@@ -27,6 +28,22 @@ local function waitForDialogueToEnd(player, expectedStartNode)
 	bindable.Event:Wait()
 	bindable:Destroy()
 	print("dialogue finished")
+end
+
+local function waitForChatWindowToClose(player, chatWindowClosed)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
+		if firingPlayer == player and chatWindowStatus == chatWindowClosed then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+	print("chat window has been closed")
 end
 
 function Progression.Load()
@@ -121,8 +138,9 @@ function Progression.Start(player)
 			})
 
 		-- Trigger to wait for player to close AI chat gui with 'X' GUI button or 'Q' key.
+		waitForChatWindowToClose(player, true)
 
-		StartDialogue:FireClient(player, "Player", "Task2Monologue")
+		StartDialogue:FireClient(player, "Player", "scene14Task2Monologue")
 		waitForDialogueToEnd(player, "Task2Monologue")
 
 		-- Phase 3
@@ -136,7 +154,9 @@ function Progression.Start(player)
 			"ask_charlie_for_specific_solution",
 		})
 
-		StartDialogue:FireClient(player, "Player", "Task3Monologue")
+		waitForChatWindowToClose(player, true)
+
+		StartDialogue:FireClient(player, "Player", "scene14Task3Monologue")
 		waitForDialogueToEnd(player, "Task3Monologue")
 		ShowAIChatGui:FireClient(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
 

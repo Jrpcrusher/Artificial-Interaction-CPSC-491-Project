@@ -45,6 +45,7 @@ local FinishDialogue = getOrCreateRemote(DialogueFolder, "FinishDialogue")
 local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
 local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
 local ShowAIChatGui = getOrCreateRemote(ChatFolder, "ShowAIChatGui")
+local ChatWindowIsClosed = getOrCreateRemote(ChatFolder, "ChatWindowIsClosed")
 
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
