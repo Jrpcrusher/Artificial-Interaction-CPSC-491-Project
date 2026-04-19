@@ -201,7 +201,7 @@ function DialogueHandler:_connectDialogueClick()
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
-			local finishedStartNode = self.startNode
+			local finishedStartNode  = self.startNode
 			print("CLIENT firing FinishDialogue", finishedStartNode)
 			self:Stop()
 			FinishDialogue:FireServer(finishedStartNode)

@@ -74,6 +74,14 @@
           "$path": "src/client/StarterGui/LoadingGui/Scripts",
           "$className": "Folder"
         }
+      },
+
+      "EndingCard": {
+        "$className": "ScreenGui",
+        "Scripts": {
+          "$path": "src/client/StarterGui/EndingCard/Scripts",
+          "$className": "Folder"
+        }
       }
     }
   }
