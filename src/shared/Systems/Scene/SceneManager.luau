@@ -6,116 +6,123 @@ local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.Tran
 local SceneFolder = script.Parent.Parent.Parent.Story
 
 local SceneModules = table.freeze({
-	[1] = require(SceneFolder.Scene1.Progression),
-	[2] = require(SceneFolder.Scene2.Progression),
-	[3] = require(SceneFolder.Scene3.Progression),
-	[4] = require(SceneFolder.Scene4.Progression),
-	[5] = require(SceneFolder.Scene5.Progression),
-	[6] = require(SceneFolder.Scene6.Progression),
-	[7] = require(SceneFolder.Scene7.Progression),
-	[8] = require(SceneFolder.Scene8.Progression),
-	[9] = require(SceneFolder.Scene9.Progression),
-	[10] = require(SceneFolder.Scene10.Progression),
-	[11] = require(SceneFolder.Scene11.Progression),
-	[12] = require(SceneFolder.Scene12.Progression),
-	[13] = require(SceneFolder.Scene13.Progression),
-	[14] = require(SceneFolder.Scene14.Progression),
-	[15] = require(SceneFolder.Scene15.Progression),
-	[16] = require(SceneFolder.Scene16.Progression),
+	[1] = SceneFolder.Scene1.Progression,
+	[2] = SceneFolder.Scene2.Progression,
+	[3] = SceneFolder.Scene3.Progression,
+	[4] = SceneFolder.Scene4.Progression,
+	[5] = SceneFolder.Scene5.Progression,
+	[6] = SceneFolder.Scene6.Progression,
+	[7] = SceneFolder.Scene7.Progression,
+	[8] = SceneFolder.Scene8.Progression,
+	[9] = SceneFolder.Scene9.Progression,
+	[10] = SceneFolder.Scene10.Progression,
+	[11] = SceneFolder.Scene11.Progression,
+	[12] = SceneFolder.Scene12.Progression,
+	[13] = SceneFolder.Scene13.Progression,
+	[14] = SceneFolder.Scene14.Progression,
+	[15] = SceneFolder.Scene15.Progression,
+	[16] = SceneFolder.Scene16.Progression,
 })
 
 local SceneManager = {}
 
--- Helper function to get the currentScene from the player's attribute
-function SceneManager.GetCurrentScene(player) -- Simple function to get the player's scene
-	return player:GetAttribute("Scene") or 1 -- Return 1 on default if not set yet
+local function getSceneModule(sceneNumber)
+	local moduleScript = SceneModules[sceneNumber]
+	if not moduleScript then
+		return nil
+	end
+
+	local ok, result = pcall(require, moduleScript)
+	if not ok then
+		error(("Failed to require scene %d: %s"):format(sceneNumber, tostring(result)))
+	end
+
+	return result
 end
 
-function SceneManager.IsTransitioning(player) -- Helper function to get IsSceneTransitioning attribute
+function SceneManager.GetCurrentScene(player)
+	return player:GetAttribute("Scene") or 1
+end
+
+function SceneManager.IsTransitioning(player)
 	return player:GetAttribute("IsSceneTransitioning") == true
 end
 
-
-
-function SceneManager.Transition(player) -- Main function to transition between scenes
+function SceneManager.Transition(player)
 	if SceneManager.IsTransitioning(player) then
 		return false, "Transition already in progress"
 	end
 
-	local current_scene = SceneManager.GetCurrentScene(player) -- Variable number for current scene
-	local next_scene = current_scene + 1 -- Variable number for next scene
-	local nextModule = SceneModules[next_scene]
+	local current_scene = SceneManager.GetCurrentScene(player)
+	local next_scene = current_scene + 1
+	local nextModule = getSceneModule(next_scene)
 
 	if not nextModule then
 		return false, ("No next scene exists for scene %d"):format(current_scene)
 	end
 
-	player:SetAttribute("IsSceneTransitioning", true) -- Set it true that th eplayer is transitioning
-
+	player:SetAttribute("IsSceneTransitioning", true)
 
 	local ok, err = pcall(function()
-		player:SetAttribute("Scene", next_scene) -- Set player's attribute to the new scene value
+		player:SetAttribute("Scene", next_scene)
 
-		nextModule.Start(player) -- Start the next scene
-		GameSaveManager.Save(player.UserId, next_scene) -- Save the game's state
-		TranscriptManager.Save(player.UserId) -- save the user's messages with the AI so far
+		nextModule.Start(player)
+		GameSaveManager.Save(player.UserId, next_scene)
+		TranscriptManager.Save(player.UserId)
 	end)
 
-	player:SetAttribute("IsSceneTransitioning", false) -- We are done transitioning, continue on
+	player:SetAttribute("IsSceneTransitioning", false)
 
 	if not ok then
-		player:SetAttribute("Scene", current_scene) -- if Scene loading fails, then reset the scene to the previous one
+		player:SetAttribute("Scene", current_scene)
 		GameSaveManager.Save(player.UserId, current_scene)
-		return false, ("Failed to transition to scene %d: %s"):format(next_scene, tostring(err))-- return false if we failed transition
+		return false, ("Failed to transition to scene %d: %s"):format(next_scene, tostring(err))
 	end
-	return true, ("Transitioned to scene %d"):format(next_scene) -- return true if we successfully transitioned
+
+	return true, ("Transitioned to scene %d"):format(next_scene)
 end
 
-
-
-function SceneManager.ContinueFromSave(player) -- For continuing from a game save
+function SceneManager.ContinueFromSave(player)
 	if SceneManager.IsTransitioning(player) then
 		return false, "Transition already in progress"
 	end
 
-	local previous_scene = SceneManager.GetCurrentScene(player) or 1 -- If this fails, get 1
-	local scene_number = GameSaveManager.Load(player.UserId) or 1 -- Get the scene number if we are going to a specific scene
-	local targetModule = SceneModules[scene_number]
+	local previous_scene = SceneManager.GetCurrentScene(player) or 1
+	local scene_number = GameSaveManager.Load(player.UserId) or 1
+	local targetModule = getSceneModule(scene_number)
 
-	if not targetModule then -- If we fail to get it, say the scene does not exist
+	if not targetModule then
 		return false, ("Scene %d does not exist"):format(scene_number)
 	end
 
-	player:SetAttribute("IsSceneTransitioning", true) -- Set us to transitioning
+	player:SetAttribute("IsSceneTransitioning", true)
 
-	local ok, err = pcall(function() -- Try to start the scene
+	local ok, err = pcall(function()
 		player:SetAttribute("Scene", scene_number)
 
-		targetModule.Start(player) -- Play the scene
-		GameSaveManager.Save(player.UserId, scene_number) -- Save the scene they are at
-		TranscriptManager.Save(player.UserId) -- Save the transcript
+		targetModule.Start(player)
+		GameSaveManager.Save(player.UserId, scene_number)
+		TranscriptManager.Save(player.UserId)
 	end)
 
-	player:SetAttribute("IsSceneTransitioning", false) -- we are done transitioning
+	player:SetAttribute("IsSceneTransitioning", false)
 
-	if not ok then -- if we dont succeed, then fall back and save
+	if not ok then
 		player:SetAttribute("Scene", previous_scene)
 		GameSaveManager.Save(player.UserId, previous_scene)
 		return false, ("Failed to load saved scene %d: %s"):format(scene_number, tostring(err))
 	end
 
-	return true, ("Loaded saved scene %d"):format(scene_number) -- Successfully went to scene
+	return true, ("Loaded saved scene %d"):format(scene_number)
 end
 
-
-
-function SceneManager.LoadSceneNumber(player, scene_number) -- For continuing from new game
+function SceneManager.LoadSceneNumber(player, scene_number)
 	if SceneManager.IsTransitioning(player) then
 		return false, "Transition already in progress"
 	end
 
 	local previous_scene = SceneManager.GetCurrentScene(player)
-	local targetModule = SceneModules[scene_number]
+	local targetModule = getSceneModule(scene_number)
 
 	if not targetModule then
 		return false, ("Scene %d does not exist"):format(scene_number)
