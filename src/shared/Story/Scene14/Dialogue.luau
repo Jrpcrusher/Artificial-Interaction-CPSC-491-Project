@@ -34,53 +34,53 @@ Scene14.Mom = {
 Scene14.Player = {
 	scene14IntroMonologue = {
 		speaker = "You",
-		text = "I went home, much earlier than ever before. Going home at this time would absolutely give my parents the wrong impression, but what could I do?",
+		text = "(internal) I went home, much earlier than ever before. Going home at this time would absolutely give my parents the wrong impression, but what could I do?",
 		next = "scene14IntroMonologue2",
 	},
 
 	scene14IntroMonologue2 = {
 		speaker = "You",
-		text = "I needed a place of solitude. I needed to go home to my room and just wait everything out, talk to Charlie.",
+		text = "(internal) I needed a place of solitude. I needed to go home to my room and just wait everything out, talk to Charlie.",
 		next = "scene14IntroMonologue3",
 	},
 
 	scene14IntroMonologue3 = {
 		speaker = "You",
-		text = "If I could rely on anything, I could talk to Charlie to make me feel better.",
+		text = "(internal) If I could rely on anything, I could talk to Charlie to make me feel better.",
 	},
 
 	scene14Task1Monologue = {
 		speaker = "You",
-		text = "As soon as I shut the door, I heard a loud scream from my mother before the crash of furniture and slamming of things on the floor.",
+		text = "(internal) As soon as I shut the door, I heard a loud scream from my mother before the crash of furniture and slamming of things on the floor.",
 		next = "scene14Task1Monologue2",
 	},
 
 	scene14Task1Monologue2 = {
 		speaker = "You",
-		text = "There was nothing I could do but sit inside my room and let the storm pass. This was worse than I could ever imagine.",
+		text = "(internal) There was nothing I could do but sit inside my room and let the storm pass. This was worse than I could ever imagine.",
 		next = "scene14Task1Monologue3",
 	},
 
 	scene14Task1Monologue3 = {
 		speaker = "You",
-		text = "There was nothing that could be done. My sister was downstairs, out of reach. My dad was nowhere. My friend wasn't here.",
+		text = "(internal) There was nothing that could be done. My sister was downstairs, out of reach. My dad was nowhere. My friend wasn't here.",
 		next = "scene14Task1Monologue4",
 	},
 
 	scene14Task1Monologue4 = {
 		speaker = "You",
-		text = "My mom wasn't mine. My own mind wasn't mine anymore.",
+		text = "(internal) My mom wasn't mine. My own mind wasn't mine anymore.",
 	},
 
 	scene14Task2Monologue = {
 		speaker = "You",
-		text = "Charlie, at this moment, talked in a way that confused me. Charlie responded in a much colder tone, almost as though it wasn't human.",
+		text = "(internal) Charlie, at this moment, talked in a way that confused me. Charlie responded in a much colder tone, almost as though it wasn't human.",
 		next = "scene14Task2Monologue2",
 	},
 
 	scene14Task2Monologue2 = {
 		speaker = "You",
-		text = "But I couldn't feel the cold, I needed the warmth. I needed a solution. Answers, but Charlie would only give half-baked support and suggestions.",
+		text = "(internal) But I couldn't feel the cold, I needed the warmth. I needed a solution. Answers, but Charlie would only give half-baked support and suggestions.",
 		next = "scene14Task2Monologue3",
 	},
 
@@ -91,7 +91,7 @@ Scene14.Player = {
 
 	scene14Task3Monologue = {
 		speaker = "You",
-		text = "That was it. Charlie had given me the perfect solution.",
+		text = "(internal) That was it. Charlie had given me the perfect solution.",
 	},
 }
 
