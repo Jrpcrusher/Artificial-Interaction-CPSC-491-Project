@@ -128,6 +128,19 @@ function Progression.Load(player)
 			obj.CanCollide = false
 		end
 	end
+
+	-- load objects in
+	local Mom = SceneObjects:WaitForChild("Mom")
+	Mom:PivotTo(CFrame.new(9.51, 26.794, -44.465) * CFrame.Angles(math.rad(-23.402), math.rad(-20), 0))
+
+	local Phone = SceneObjects:WaitForChild("Phone")
+	Phone:PivotTo(CFrame.new(0.743, 35.869, -70.479) * CFrame.Angles(0, math.rad(-40), math.rad(-90)))
+
+	local GoToRoomInteraction = SceneObjects:WaitForChild("GoToRoomInteraction")
+	GoToRoomInteraction.Position = Vector3.new(20.15, 39.155, -75.9)
+
+	local SaveSiblingInteraction = SceneObjects:WaitForChild("SaveSiblingInteraction")
+	SaveSiblingInteraction.Position = Vector3.new(2.223, 37.855, -73.648)
 end
 
 function Progression.Unload()
