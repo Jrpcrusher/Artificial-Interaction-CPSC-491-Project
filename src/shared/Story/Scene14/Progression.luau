@@ -70,7 +70,7 @@ function Progression.Load()
 end
 
 function Progression.Unload()
-	local SceneObjects = workspace:WaitForChild("Scene13Objects")
+	local SceneObjects = workspace:WaitForChild("Scene14ObjectsObjects")
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
 	end
