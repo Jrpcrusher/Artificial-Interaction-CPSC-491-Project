@@ -23,6 +23,14 @@ local function showTraitsCard(player)
 end
 
 function Progression.Start(player)
+	local character = player.Character or player.CharacterAdded:Wait()
+		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene16Spawn")
+		character = player.Character or player.CharacterAdded:Wait()
+		local root = character:FindFirstChild("HumanoidRootPart")
+
+		if root and spawnPart then
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
+		end
 	local connection
 	connection = EndingCardFinished.OnServerEvent:Connect(function(finishedPlayer)
 		print("Server: got EndingCardFinished from", finishedPlayer.Name)
