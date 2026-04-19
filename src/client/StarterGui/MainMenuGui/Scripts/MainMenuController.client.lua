@@ -161,6 +161,7 @@ local function transitionToGame()
 	GuiMouseManager.CloseGui()
 	menuGui.Enabled = false
 	enableControls() -- allow the user to start walking again
+	player.CameraMode = Enum.CameraMode.Classic
 end
 
 local function startNewGame()
