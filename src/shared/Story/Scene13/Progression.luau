@@ -1,8 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local _player = Players:GetPlayers()[1]
-local PlayerDialogueGui = _player.PlayerGui:WaitForChild("DialogueGui")
-local PlayerDialogueBar = PlayerDialogueGui:WaitForChild("DialogueBar")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
@@ -11,8 +9,6 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local DialogueTrigger1 = workspace.Scene13Objects:WaitForChild("DialogueTrigger1")
-
-local dialogueFinished = false -- Used for tracking when dialogue is done.
 
 local Progression = {}
 
