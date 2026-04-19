@@ -1,4 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local _player = Players:GetPlayers()[1]
+local PlayerDialogueGui = _player.PlayerGui:WaitForChild("DialogueGui")
+local PlayerDialogueBar = PlayerDialogueGui:WaitForChild("DialogueBar")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
@@ -83,14 +87,9 @@ function Progression.Start(player)
 			"talk_to_bully",
 		})
 
-		-- simple fixed delay to let the bully dialogue finish
-		task.wait(4)
-
-		knockPlayerOver(player)
-
-		task.wait(5)
-
-		restorePlayerFromKnocked(player)
+		while PlayerDialogueBar.Visible == true do
+			task.wait()
+		end
 
 		DialogueTrigger1.Touched:Connect(function(hit)
 			local currentCharacter = player.Character
@@ -101,9 +100,12 @@ function Progression.Start(player)
 			if hit:IsDescendantOf(currentCharacter) then
 				LoadTeacher()
 				StartDialogue:FireClient(player, "Teacher", "start")
+				knockPlayerOver(player)
 				DialogueTrigger1:Destroy()
 			end
 		end)
+
+		restorePlayerFromKnocked(player)
 
 		TaskService.LoadTasks(player, 13, {
 			"go_to_door",
