@@ -24,6 +24,7 @@ function Progression.Load()
 
 	local Toast = SceneObjects:WaitForChild("Toast")
 	Toast:PivotTo(CFrame.new(53.491, 26.649, -105.078) * CFrame.Angles(0, 0, math.rad(45)))
+	
 	local OrangeJuice = SceneObjects:WaitForChild("OrangeJuice")
 
 	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793) * CFrame.Angles(0, math.rad(-90), 0))

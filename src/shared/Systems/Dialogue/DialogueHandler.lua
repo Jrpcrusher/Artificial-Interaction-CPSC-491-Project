@@ -103,7 +103,7 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 	end
 
 	self.isActive = true
-	
+
 	if self.currentTree then
 		self:Stop()
 	end
