@@ -18,20 +18,14 @@ Scene6.Player = {
 	dialogue4 = {
 		speaker = "You",
 		text = "Could it be the rain?",
+		next = "dialogue5",
+	},
+	dialogue5 = {
+		speaker = "You",
+		text = "The rain has always felt calming to me.",
 	},
 }
 
-Scene6.Rain = {
-	start = {
-		speaker = "You",
-		text = "The rain has always felt calming to me.",
-		next = "dialogue2",
-	},
-	dialogue2 = {
-		speaker = "You",
-		text = "Im hopeful for today.",
-	},
-}
 
 Scene6.Crash = {
 	start = {
@@ -122,10 +116,6 @@ Scene6.Final = {
 Scene6.Registry = {
 	Player = {
 		tree = Scene6.Player,
-		defaultStartNode = "start",
-	},
-	Rain = {
-		tree = Scene6.Rain,
 		defaultStartNode = "start",
 	},
 	Crash = {
