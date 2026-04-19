@@ -51,12 +51,12 @@ function Progression.Load()
 	trigger.Position = Vector3.new(-265.5, 32.187, -62.829)
 end
 
--- function Progression.Unload()
--- 	local SceneObjects = workspace:WaitForChild("Scene13Objects")
--- 	for _, obj in ipairs(SceneObjects:GetChildren()) do
--- 		obj:Destroy()
--- 	end
--- end
+function Progression.Unload()
+	local SceneObjects = workspace:WaitForChild("Scene13Objects")
+	for _, obj in ipairs(SceneObjects:GetChildren()) do
+		obj:Destroy()
+	end
+end
 
 function Progression.Start(player)
 	Progression.Load()
