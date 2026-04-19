@@ -1,6 +1,7 @@
 local Scene3 = {}
 
 Scene3.Player = {
+	-- phase 1: entering school/locker scene
 	start = {
 		speaker = "You",
 		text = "Just... stay calm. It doesn't matter.",
@@ -10,9 +11,33 @@ Scene3.Player = {
 	friend_intro = {
 		speaker = "Friend",
 		text = "Hey, what are you doing today?",
-		next = "friend_notice",
+		next = "reply_to_friend",
 	},
 
+	reply_to_friend = {
+		speaker = "You",
+		text = "...Nothing much. I'm going to get to class now, once you let me put my stuff away...",
+		next = "friend_reply_back"
+	},
+
+	friend_reply_back = {
+		speaker = "Friend",
+		text = "...Alright whatever. Catch you later."
+	},
+
+	-- phase 2: in class
+	teacher_intro = {
+		speaker = "Teacher",
+		text = "Alright class. Today we will be doing something different.",
+		next = "teacher_intro_2"
+	},
+
+	teacher_intro_2 = {
+		speaker = "Teacher",
+		text = "We will be going to the library to study. So please, grab a worksheet from the front of class, and head over to the library!"
+	},
+
+	-- phase 3: in library
 	friend_notice = {
 		speaker = "Friend",
 		text = "Oh what are you watching this time? Is this another one of those romance ones I've caught you watching before?",
