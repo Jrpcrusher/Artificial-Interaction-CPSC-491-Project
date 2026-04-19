@@ -22,6 +22,9 @@ local Progression = {}
     local Sister = SceneObjects:WaitForChild("Sister")
     Sister:PivotTo(CFrame.new(42.608, 27.355, -68.229) * CFrame.Angles(0, math.rad(-90), 0))
 
+    local Drawing = SceneObjects:WaitForChild("Drawing")
+    Drawing:PivotTo(CFrame.new(44.923, 25.846, -68.229) * CFrame.Angles(0, math.rad(90), 0))
+
     -- Position legs for sitting pose
     local leftLeg = Sister:FindFirstChild("Left Leg")
     if leftLeg then
@@ -47,20 +50,6 @@ local Progression = {}
 
     local DialogueTrigger4 = SceneObjects:WaitForChild("DialogueTrigger4")
     DialogueTrigger4.Position = Vector3.new(15.925, 41.955, -71)
-
-    -- local HelperPartBackpack = SceneObjects:FindFirstChild("HelperPartBackpack")
-    -- if HelperPartBackpack then
-    --     HelperPartBackpack.Position = Vector3.new(1.98, 39.424, -76.5)
-    -- else
-    --     warn("HelperPartBackpack not found - check it's inside Scene4Objects!")
-    -- end
-
-    -- local HelperPartBed = SceneObjects:FindFirstChild("HelperPartBed")
-    -- if HelperPartBed then
-    --     HelperPartBed.Position = Vector3.new(16.19, 37.755, -65)
-    -- else
-    --     warn("HelperPartBed not found - check it's inside Scene4Objects!")
-    -- end
 
     local HelperPartBackpack = SceneObjects:WaitForChild("HelperPartBackpack")
     HelperPartBackpack.Position = Vector3.new(1.98, 39.424, -76.5)
