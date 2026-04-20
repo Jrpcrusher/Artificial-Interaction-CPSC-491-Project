@@ -8,13 +8,14 @@ function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene9Objects")
 
 	local Sister = SceneObjects:WaitForChild("Sister")
-	Sister:PivotTo(CFrame.new(37.6, -27.349, -85.793))
-
+	Sister:PivotTo(CFrame.new(37.6, 27.292, -85.793))
+	print("MOved sister")
 	local FridgeTrigger = SceneObjects:WaitForChild("FridgeTrigger")
-	FridgeTrigger.Position = Vector3.new(57.554, -26.555, -83.203)
-
+	FridgeTrigger.Position = Vector3.new(54.554, 26.505, -83.203)
+	print("MOved fridge")
 	local FrontDoorTrigger = SceneObjects:WaitForChild("FrontDoorTrigger")
-	FrontDoorTrigger.Position = Vector3.new(35.6, -27.355, -27.038)
+	FrontDoorTrigger.Position = Vector3.new(35.6, 27.155, -27.519)
+	print("MOved trigger, loading complete")
 end
 
 function Progression.Unload()
@@ -25,6 +26,7 @@ function Progression.Unload()
 end
 
 function Progression.Start(player)
+	print("in start of scene 9")
 	Progression.Load()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
@@ -33,17 +35,20 @@ function Progression.Start(player)
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
-			root.CFrame = CFrame.new(35.546, 28.555, -29.5) + Vector3.new(0, 3, 0)
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
 		end
+		print("we spawned")
 
 		local collisionPart = workspace
 			:WaitForChild("Map")
 			:WaitForChild("House")
+			:WaitForChild("DoubleStoryUrbanHouse")
+			:WaitForChild("UpperLevel")
 			:WaitForChild("Doors")
 			:WaitForChild("TDW")
-			:WaitForChild("InsideDoor")
-			:WaitForChild("CollisionPart")
-
+			:WaitForChild("Door")
+			:WaitForChild("ThePart")
+		print("We got the collision part")
 		if collisionPart then
 			collisionPart.CanCollide = false
 			collisionPart.CanTouch = false
@@ -52,13 +57,14 @@ function Progression.Start(player)
 		else
 			warn("TDW CollisionPart NOT found!")
 		end
-
+		print("collision removed")
 		TaskService.ResetForScene(player, 9)
 
 		TaskService.LoadTasks(player, 9, {
 			"eat_food",
 		})
 		repeat
+			print("Waiting for user to eat food")
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
 			"eat_food",

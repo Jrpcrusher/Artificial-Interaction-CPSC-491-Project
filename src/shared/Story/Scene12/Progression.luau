@@ -8,7 +8,7 @@ function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene12Objects")
 
 	local BedTrigger = SceneObjects:WaitForChild("BedTrigger")
-	BedTrigger.Position = Vector3.new(16.19, -38.355, -64.643)
+	BedTrigger.Position = Vector3.new(16.19, 37.645, -64.643)
 end
 
 function Progression.Unload()
@@ -27,7 +27,7 @@ function Progression.Start(player)
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
-			root.CFrame = CFrame.new(35.546, 32.555, -29.5) + Vector3.new(0, 3, 0)
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
 		end
 
 		TaskService.ResetForScene(player, 12)

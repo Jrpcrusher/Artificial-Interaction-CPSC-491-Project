@@ -8,16 +8,17 @@ function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene11Objects")
 
 	local Dad = SceneObjects:WaitForChild("Dad")
-	Dad:PivotTo(CFrame.new(52.95, -27.349, -94.078))
+	Dad:PivotTo(CFrame.new(5.784, 27.233, -36.256))
+	print("Loaded dad")
 
 	local Mom = SceneObjects:WaitForChild("Mom")
-	Mom:PivotTo(CFrame.new(41.649, -27.349, -101.433))
-
+	Mom:PivotTo(CFrame.new(8.882, 27.233, -33.134))
+	print("Loaded mom")
 	local Phone = SceneObjects:WaitForChild("Phone")
-	Phone.Position = Vector3.new(47, -26.155, -91.378)
-
+	Phone.PivotTo(CFrame.new(4.729, 25.875, -29.223))
+	print("Loaded phone")
 	local RoomDoorTrigger = SceneObjects:WaitForChild("RoomDoorTrigger")
-	RoomDoorTrigger.Position = Vector3.new(19.563, -40.355, -77.999)
+	RoomDoorTrigger.Position = Vector3.new(20.21, 40.555, -77.999)
 end
 
 function Progression.Unload()
@@ -28,7 +29,9 @@ function Progression.Unload()
 end
 
 function Progression.Start(player)
+	print("In scene 11")
 	Progression.Load()
+	print("In scene 11 loading finished")
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 		
@@ -36,8 +39,9 @@ function Progression.Start(player)
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
-			root.CFrame = CFrame.new(35.546, 30.555, -29.5) + Vector3.new(0, 3, 0)
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
 		end
+		print("spawned player")
 
 		TaskService.ResetForScene(player, 11)
 

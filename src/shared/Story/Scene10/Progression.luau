@@ -20,16 +20,16 @@ function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene10Objects")
 
 	local Friend = SceneObjects:WaitForChild("Friend")
-	Friend:PivotTo(CFrame.new(-282, -27, -28))
+	Friend:PivotTo(CFrame.new(-282, 26.428, -28))
 
 	local DeskTrigger = SceneObjects:WaitForChild("DeskTrigger")
 	DeskTrigger.Position = Vector3.new(-243.135, -23.831, -36.207)
 
 	local Quiz = SceneObjects:WaitForChild("Quiz")
-	Quiz.Position = Vector3.new(-243.135, -21.831, -36.207)
+	Quiz.Position = Vector3.new(-243.135, 25.011, -35.094)
 
 	local SchoolDoorTrigger = SceneObjects:WaitForChild("SchoolDoorTrigger")
-	SchoolDoorTrigger.Position = Vector3.new(-236.534, -26.555, -63.929)
+	SchoolDoorTrigger.Position = Vector3.new(-237.635, 26.873, -63.929)
 end
 
 function Progression.Unload()
@@ -48,7 +48,7 @@ function Progression.Start(player)
 		local root = character:FindFirstChild("HumanoidRootPart")
 
 		if root and spawnPart then
-			root.CFrame = CFrame.new(35.546, 29.555, -29.5) + Vector3.new(0, 3, 0)
+			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
 		end
 
 		local libraryCollisionPart = workspace
