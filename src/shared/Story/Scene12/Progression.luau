@@ -8,7 +8,7 @@ function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene12Objects")
 
 	local BedTrigger = SceneObjects:WaitForChild("BedTrigger")
-	BedTrigger.Position = Vector3.new(16.19, 37.645, -64.643)
+	BedTrigger.Position = Vector3.new(14.145, 37.355, -65.143)
 end
 
 function Progression.Unload()
