@@ -6,6 +6,7 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local DialogueRemotes = Remotes:WaitForChild("Dialogue")
 local StartDialogue = DialogueRemotes:WaitForChild("StartDialogue")
+local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
 
 local Progression = {}
 
@@ -22,10 +23,13 @@ function Progression.Load()
 	DialogueTrigger2.Position = Vector3.new(35.5, 29.555, -36)
 
 	local DoorTrigger = SceneObjects:WaitForChild("Part")
-	DoorTrigger.Position = Vector3.new(23.65, 40.53, -77.799) 
+	DoorTrigger.Position = Vector3.new(23.65, 40.53, -77.799)
 
 	local Homework = SceneObjects:WaitForChild("homework")
 	Homework:PivotTo(CFrame.new(4.402, 38.952, -80.995) * CFrame.Angles(0, math.rad(180), 0))
+
+	local Bed = SceneObjects:WaitForChild("Bed")
+	Bed:PivotTo(CFrame.new(16.29, 38.955, -65.043))
 end
 
 function Progression.Unload()
@@ -115,10 +119,11 @@ function Progression.Start(player)
 		})
 
 		StartDialogue:FireClient(player, "Homework", "start")
-
 		TaskService.LoadTasks(player, 8, {
 			"talk_to_charlie",
 		})
+
+		ShowAIChatGui:FireClient(player)
 
 		repeat
 			task.wait()
@@ -127,6 +132,18 @@ function Progression.Start(player)
 		})
 
 		StartDialogue:FireClient(player, "Charlie", "start")
+
+		TaskService.LoadTasks(player, 8, {
+			"go_to_bed",
+		})
+
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"go_to_bed",
+		})
+
+		StartDialogue:FireClient(player, "Bed", "start")
 
 		Progression.Unload()
 		SceneManager.Transition(player)
