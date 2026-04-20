@@ -45,6 +45,7 @@ Scene12.Player = {
 	task1monologue4 = {
 		speaker = "You",
 		text = "(internal) And about being judged, it's something Charlie never has to go through, but his explanations about everyone being unique, having flaws, and accepting ourselves really helped.",
+		next = "task1monologue5",
 	},
 
 	task1monologue5 = {
