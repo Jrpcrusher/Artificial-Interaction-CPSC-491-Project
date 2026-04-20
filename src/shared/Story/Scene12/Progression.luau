@@ -1,33 +1,49 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
+local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Progression = {}
 
-function Progression.Start()
+function Progression.Load()
+	local SceneObjects = workspace:WaitForChild("Scene12Objects")
+
+	local BedTrigger = SceneObjects:WaitForChild("BedTrigger")
+	BedTrigger.Position = Vector3.new(16.19, -38.355, -64.643)
+end
+
+function Progression.Unload()
+	local SceneObjects = workspace:WaitForChild("Scene12Objects")
+	for _, obj in ipairs(SceneObjects:GetChildren()) do
+		obj:Destroy()
+	end
+end
+
+function Progression.Start(player)
+	Progression.Load()
 	task.spawn(function()
-		local player = Players:GetPlayers()[1]
-		local sceneNumber = 12
+		local character = player.Character or player.CharacterAdded:Wait()
+		
+		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene12Spawn")
+		local root = character:FindFirstChild("HumanoidRootPart")
 
-		TaskService.ResetForScene(player, sceneNumber)
+		if root and spawnPart then
+			root.CFrame = CFrame.new(35.546, 32.555, -29.5) + Vector3.new(0, 3, 0)
+		end
 
-		-- Phase 1
-		TaskService.LoadTasks(player, sceneNumber, {
-			"talk_to_ai",
+		TaskService.ResetForScene(player, 12)
+
+		TaskService.LoadTasks(player, 12, {
+			"go_to_sleep",
 		})
-
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
-			"talk_to_ai",
-		})
-
-		-- Phase 2
-		TaskService.LoadTasks(player, sceneNumber, {
 			"go_to_sleep",
 		})
-    end)
+
+		Progression.Unload()
+		SceneManager.Transition(player)
+	end)
 end
 
 return Progression

@@ -1,9 +1,5 @@
 local Scene9 = {}
 
-Scene9.DadDialogueTree = {}
-
-Scene9.MomDialogueTree = {}
-
 Scene9.SisterDialogueTree = {
 	scene9Start = {
 		speaker = "You",
@@ -16,54 +12,28 @@ Scene9.SisterDialogueTree = {
 		choices = {
 			{
 				text = "You should choose the Pizza",
-				next = "pizzaChoice",
+				next = "pizzaChoice"
 			},
 			{
 				text = "You should choose the teriyaki chicken",
-				next = "chickenChoice",
+				next = "chickenChoice"
 			}
 		}
 	},
 	pizzaChoice = {
 		speaker = "Sister",
-		text = "That sounds yummy I was thinking that, Pizza is always delicious, I’ll go with that!",
+		text = "That sounds yummy I was thinking that, Pizza is always delicious, I’ll go with that!"
 	},
 	chickenChoice = {
 		speaker = "Sister",
-		text = "That sounds like a good idea, I would normally go for the Pizza but I’ll spice it up today, thanks!",
+		text = "That sounds like a good idea, I would normally go for the Pizza but I’ll spice it up today, thanks!"
 	}
 }
 
-Scene9.TeacherDialogueTree = {}
-
-Scene9.BullyDialogueTree = {}
-
-Scene9.MainCharacterDialogueTree = {}
-
 Scene9.Registry = {
-	Dad = {
-		tree = Scene9.DadDialogueTree,
-		defaultStartNode = "start",
-	},
-	Mom = {
-		tree = Scene9.MomDialogueTree,
-		defaultStartNode = "start",
-	},
 	Sister = {
 		tree = Scene9.SisterDialogueTree,
-		defaultStartNode = "scene9Start",
-	},
-	Teacher = {
-		tree = Scene9.TeacherDialogueTree,
-		defaultStartNode = "start",
-	},
-	Bully = {
-		tree = Scene9.BullyDialogueTree,
-		defaultStartNode = "start",
-	},
-	MainCharacter = {
-		tree = Scene9.MainCharacterDialogueTree,
-		defaultStartNode = "start",
+		defaultStartNode = "scene9Start"
 	},
 }
 
