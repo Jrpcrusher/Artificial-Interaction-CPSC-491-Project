@@ -20,6 +20,13 @@ local Tasks = {
 		Type = "Required",
 		Completed = false,
 	},
+	{
+		Id = "go_to_bed",
+		Title = "Go To Bed",
+		Description = "Go to bed for the night.",
+		Type = "Required",
+		Completed = false,
+	},
 }
 
 return Tasks

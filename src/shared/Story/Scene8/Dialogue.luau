@@ -1,4 +1,5 @@
 local Scene8 = {}
+
 Scene8.Player = {
 	start = {
 		speaker = "You",
@@ -112,6 +113,16 @@ Scene8.Homework = {
 	dialogue10 = {
 		speaker = "You",
 		text = "I took a deep breathe, and calmed myself before looking back at the paper and remembering what my classmate said.",
+		next = "dialogue11",
+	},
+	dialogue11 = {
+		speaker = "You",
+		text = "Maybe Charlie AI could help me here.",
+		next = "dialogue12",
+	},
+	dialogue12 = {
+		speaker = "You",
+		text = "(Press Q to open the AI chat.)",
 	},
 }
 
@@ -148,7 +159,7 @@ Scene8.Charlie = {
 	},
 	dialogue7 = {
 		speaker = "You",
-		text = "I asked it another question, and another, and before I knew it my homework as complete.",
+		text = "I asked it another question, and another, and before I knew it my homework was complete.",
 		next = "dialogue8",
 	},
 	dialogue8 = {
@@ -163,7 +174,7 @@ Scene8.Charlie = {
 	},
 	dialogue10 = {
 		speaker = "You",
-		text = "This tool could change my outlook in school, I could ace everything I said to myself as I relaxed in my chair.",
+		text = "This tool could change my outlook in school. I could ace everything, I said to myself as I relaxed in my chair.",
 		next = "dialogue11",
 	},
 	dialogue11 = {
@@ -183,7 +194,19 @@ Scene8.Charlie = {
 	},
 	dialogue14 = {
 		speaker = "You",
-		text = "I went to bed that night, feeling satisfied. Maybe, this AI could solve more of my problems. Perhaps nothing needed to be so bad anymore.",
+		text = "I should get some sleep now.",
+	},
+}
+
+Scene8.Bed = {
+	start = {
+		speaker = "You",
+		text = "I went to bed that night, feeling satisfied. Maybe this AI could solve more of my problems. Perhaps nothing needed to be so bad anymore.",
+		next = "dialogue2",
+	},
+	dialogue2 = {
+		speaker = "You",
+		text = "Tomorrow will be another long day.",
 	},
 }
 
@@ -202,6 +225,10 @@ Scene8.Registry = {
 	},
 	Charlie = {
 		tree = Scene8.Charlie,
+		defaultStartNode = "start",
+	},
+	Bed = {
+		tree = Scene8.Bed,
 		defaultStartNode = "start",
 	},
 }

@@ -21,6 +21,8 @@ function Progression.Load() --! LOAD EVERYTHING NEEDED FOR THE SCENE
 
     local Calculator = SceneObjects:WaitForChild("Calculator")
     Calculator:PivotTo(CFrame.new(10.65, 38.061, -61.338))
+    local prompt = workspace.Map.House.DoubleStoryUrbanHouse.UpperLevel.Doors.TDW.Door.ThePart: WaitForChild("ProximityPrompt")
+    prompt.Enabled = true
 end
 
 function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
