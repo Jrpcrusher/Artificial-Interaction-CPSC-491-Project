@@ -66,7 +66,7 @@ Scene8.Parents = {
 Scene8.Homework = {
 	start = {
 		speaker = "You",
-		text = "Eventually I got to my room to do my homework.",
+		text = "Eventually I got to do my homework.",
 		next = "dialogue2",
 	},
 	dialogue2 = {
