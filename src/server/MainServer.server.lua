@@ -161,9 +161,9 @@ end
 
 SaveDataRequest.OnServerEvent:Connect(function(player) -- RemoteEvent savedatarequest fired
 	local userId = player.UserId
-	local loadedScene = 6 -- Call game save to load
+	local loadedScene = GameSaveManager.Load(userId)
 	local hasSave = loadedScene ~= nil
-	local sceneNumber = loadedScene or 6
+	local sceneNumber = loadedScene or 1
 
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
 end)
