@@ -28,7 +28,7 @@ Scene10.FriendDialogueTree = {
 }
 
 Scene10.Registry = {
-	Friend = {
+	Bully = {
 		tree = Scene10.FriendDialogueTree,
 		defaultStartNode = "scene10Start"
 	},
