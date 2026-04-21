@@ -7,28 +7,43 @@ local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local DialogueTrigger1 = workspace.Scene3Objects:WaitForChild("DialogueTrigger1")
 local DialogueTrigger2 = workspace.Scene3Objects:WaitForChild("DialogueTrigger2")
 local DialogueTrigger3 = workspace.Scene3Objects:WaitForChild("DialogueTrigger3")
+local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 
-local Scene3Objects = workspace:WaitForChild("Scene3Objects")
-local Bully = Scene3Objects:WaitForChild("Bully")
+local SceneObjects = workspace:WaitForChild("Scene3Objects")
+local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
+local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
+
+local Bully = SceneObjects:WaitForChild("Bully")
+
+local function waitForDialogueToEnd(player, expectedStartNode)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
+		if firingPlayer == player and finishedStartNode == expectedStartNode then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+end
 
 local Progression = {}
 
 function Progression.Load()
-    local SceneObjects = workspace:WaitForChild("Scene3Objects")
 
     local Bully = SceneObjects:WaitForChild("Bully")
     Bully:PivotTo(CFrame.new(-269.006, 26.527, -60.419) * CFrame.Angles(0, math.rad(-65), 0))
 
-    local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
-    FriendinLibrary:PivotTo(CFrame.new(-288.422, 26.327, -26.033) * CFrame.Angles(0, math.rad(70), 0))
 
     local Locker = SceneObjects:WaitForChild("Locker")
-    Locker:PivotTo(CFrame.new(-273.669, 25.192, -53.832) * CFrame.Angles(0, 0, math.rad(-90)))
+    Locker:PivotTo(CFrame.new(-289.219, 25.18, -53.832) * CFrame.Angles(0, 0, math.rad(-90)))
 
     local TeacherInLibrary = SceneObjects:WaitForChild("TeacherInLibrary")
     TeacherInLibrary:PivotTo(CFrame.new(-280.735, 26.355, -43.939) * CFrame.Angles(0, math.rad(90), 0))
 
-    local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
     TeacherInClass:PivotTo(CFrame.new(-259.235, 26.555, -20.839) * CFrame.Angles(0, 0, 0))
 
     local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
@@ -157,10 +172,13 @@ function Progression.Start(player)
 
 			if hit:IsDescendantOf(character) then
 				StartDialogue:FireClient(player, "Player", "teacher_intro")
+				waitForDialogueToEnd(player, "teacher_intro")
+				TeacherInClass:Destroy()
 				TaskService.CompleteTask(player, 3, "go_class") -- manually need to mark it done for dialoguetriggers
 				DialogueTrigger2:Destroy()
 			end
 		end)
+		FriendinLibrary:PivotTo(CFrame.new(-288.422, 26.327, -26.033) * CFrame.Angles(0, math.rad(70), 0))
 
 		TaskService.LoadTasks(player, 3, {
 			"go_class",
@@ -208,7 +226,7 @@ function Progression.Start(player)
 			end
 
 			if hit:IsDescendantOf(character) then
-				StartDialogue:FireClient(player, "Player", "friend_notice")
+				StartDialogue:FireClient(player, "Player", "start_worksheet")
 				TaskService.CompleteTask(player, 3, "go_library") -- manually need to mark it done for dialoguetriggers
 				DialogueTrigger3:Destroy()
 			end
