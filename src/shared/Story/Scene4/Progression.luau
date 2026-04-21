@@ -10,13 +10,13 @@ local DialogueTrigger1 = workspace.Scene4Objects:WaitForChild("DialogueTrigger1"
 local DialogueTrigger2 = workspace.Scene4Objects:WaitForChild("DialogueTrigger2")
 local DialogueTrigger3 = workspace.Scene4Objects:WaitForChild("DialogueTrigger3")
 local DialogueTrigger4 = workspace.Scene4Objects:WaitForChild("DialogueTrigger4")
-
-local Scene4Objects = workspace:WaitForChild("Scene4Objects")
-
+local HelperPartBed = workspace.Scene4Objects:WaitForChild("HelperPartBed")
+local ProximityPrompt = HelperPartBed:WaitForChild("ProximityPrompt")
 
 local Progression = {}
     
-    local SceneObjects = workspace:WaitForChild("Scene4Objects")
+local SceneObjects = workspace:WaitForChild("Scene4Objects")
+
     function Progression.Load()
 
     local Sister = SceneObjects:WaitForChild("Sister")
@@ -54,9 +54,8 @@ local Progression = {}
     local HelperPartBackpack = SceneObjects:WaitForChild("HelperPartBackpack")
     HelperPartBackpack.Position = Vector3.new(1.98, 39.424, -76.5)
 
-    local HelperPartBed = SceneObjects:WaitForChild("HelperPartBed")
-    HelperPartBed.Position = Vector3.new(16.19, 37.755, -65)
-
+    HelperPartBed.Position = Vector3.new(14.108, 37.855, -65.294)
+	ProximityPrompt.Enabled = false
 end
 
 function Progression.Unload()
@@ -213,7 +212,7 @@ function Progression.Start(player)
 			warn("Backpack NOT found!")
 		end
 
-
+		ProximityPrompt.Enabled = true
         -- player interacts w bed
         TaskService.LoadTasks(player, 4, {
 			"rest",
