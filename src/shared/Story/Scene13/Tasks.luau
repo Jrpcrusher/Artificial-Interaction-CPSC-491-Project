@@ -2,15 +2,15 @@ return {
 	{
 		Id = "talk_to_bully",
 		Title = "Talk to Bully",
-		Objective = "Speak with the bully.",
-		Steps = "Walk over to Bully and press E.",
+		Objective = "Speak with the bully",
+		Steps = "Press E on bully",
 		Type = "Required",
 	},
 	{
 		Id = "go_to_door",
-		Title = "Go home",
-		Objective = "Walk out of the school to go home.",
-		Steps = "Walk to the door that leads to the front of the school and press interact.",
+		Title = "Go Home",
+		Objective = "Walk out of the school to go home",
+		Steps = "Press E on front school door",
 		Type = "Required",
 	},
 }

@@ -30,15 +30,15 @@ return {
 	{
 		Id = "talk_to_sister",
 		Title = "Talk to Sister",
-		Objective = "Speak with your sister.",
-		Steps = "Press E on Sister.",
+		Objective = "Speak with your sister",
+		Steps = "Press E on Sister",
 		Type = "Required"
 	},
 	{
 		Id = "go_to_door",
 		Title = "Leave for School",
-		Objective = "Head to the door.",
-		Steps = "Interact with the door.",
+		Objective = "Head to the door",
+		Steps = "Press E on front door",
 		Type = "Required"
 	},
 }
