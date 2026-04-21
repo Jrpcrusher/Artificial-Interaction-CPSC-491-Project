@@ -140,9 +140,6 @@ local function updatePinnedTracker(task)
 	end
 
 	local titleText = task.Title
-	if task.Type == "Optional" then
-		titleText ..= " (Optional)"
-	end
 
 	tasksOpenButton.Text = titleText
 
