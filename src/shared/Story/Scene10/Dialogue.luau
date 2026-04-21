@@ -23,19 +23,19 @@ Scene10.FriendDialogueTree = {
 	},
 	friendReply2 = {
 		speaker = "Friend",
-		text = "How are you going to improve in school if you are just using it to give you the answers? You need to learn how to genuinely study you are falling behind and you won’t know anything for the quiz we have today."
-	}
+		text = "How are you going to improve in school if you are just using it to give you the answers? You need to learn how to genuinely study you are falling behind and you won’t know anything for the quiz we have today.",
+	},
 }
 
 Scene10.TeacherDialogueTree = {
 	teacherStart = {
 		speaker = "Teacher",
 		text = "Please remember no cheating, if you are caught cheating then you will be in serious trouble. And especially no use of AI, this quiz is meant to test you, not your AI chatbot.",
-		next = "internalReply"
+		next = "internalReply",
 	},
 	internalReply = {
 		speaker = "You",
-		text = "(Internal) I should be fine, no problem!"
+		text = "(Internal) I should be fine, no problem!",
 	},
 
 	catchCheating = {
@@ -46,14 +46,19 @@ Scene10.TeacherDialogueTree = {
 	reply = {
 		speaker = "You",
 		text = "...",
-	}
+		next = "ohno",
+	},
+	ohno = {
+		speaker = "You",
+		text = "(Internal) Oh no... I'm doomed...",
+	},
 }
 
 Scene10.PlayerDialogueTree = {
 	start = {
 		speaker = "You",
 		text = "Okay question 1, what is ... what?",
-		next = "reread"
+		next = "reread",
 	},
 	reread = {
 		speaker = "You",
@@ -68,20 +73,27 @@ Scene10.PlayerDialogueTree = {
 	solution = {
 		speaker = "You",
 		text = "Wait, I have my phone on me, maybe I can use Charlie real quick to help...",
-	}
+	},
+
+	relief = {
+		speaker = "You",
+		text = "Thank goodness, I did it!",
+	},
 }
 
 Scene10.Registry = {
 	Bully = {
 		tree = Scene10.FriendDialogueTree,
-		defaultStartNode = "scene10Start"
+		defaultStartNode = "scene10Start",
 	},
 	Teacher = {
 		tree = Scene10.TeacherDialogueTree,
-		defaultStartNode = "teacherStart"
+		defaultStartNode = "teacherStart",
 	},
-	Player = Scene10.PlayerDialogueTree,
-	defaultStartNode = "start"
+	Player = {
+		tree = Scene10.PlayerDialogueTree,
+		defaultStartNode = "start",
+	},
 }
 
 return Scene10
