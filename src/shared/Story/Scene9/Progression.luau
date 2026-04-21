@@ -50,18 +50,17 @@ end
 
 function Progression.Load()
 	local Sister = SceneObjects:WaitForChild("Sister")
-	Sister:PivotTo(CFrame.new(37.6, 27.292, -85.793))
-
+	Sister:PivotTo(CFrame.new(37.6, 27.292, -85.793) * CFrame.Angles(0, math.rad(-150), 0))
 	local Mom = SceneObjects:WaitForChild("Mom")
-	Mom:PivotTo(CFrame.new(17.421, 27.434, -48.622))
+	Mom:PivotTo(CFrame.new(17.421, 27.434, -48.622) * CFrame.Angles(0, math.rad(26.062), 0))
 
 	local Dad = SceneObjects:WaitForChild("Dad")
-	Dad:PivotTo(CFrame.new(11.531, 27.434, -49.896))
+	Dad:PivotTo(CFrame.new(11.531, 27.434, -49.896) * CFrame.Angles(0, math.rad(-93.938), 0))
 	
 	Cup:PivotTo(CFrame.new(15.688, 25.755, -56.853))
 	
 	local FridgeTrigger = SceneObjects:WaitForChild("FridgeTrigger")
-	FridgeTrigger.Position = Vector3.new(54.554, 26.505, -83.203)
+	FridgeTrigger.Position = Vector3.new(57.302, 26.94, -83.203)
 	local FrontDoorTrigger = SceneObjects:WaitForChild("FrontDoorTrigger")
 	FrontDoorTrigger.Position = Vector3.new(35.6, 27.155, -27.519)
 
@@ -108,27 +107,32 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 9, {
 			"find_noise",
 		})
+
+		Cup:Destroy()
+		Glass:PivotTo(CFrame.new(14.509, 23.119, -51.675) * CFrame.Angles(0, 0, math.rad(-90)))
+		DialogueTrigger1.Position = Vector3.new(17.394, 28.655, -50.003)
+
+		local connection
+		connection = DialogueTrigger1.Touched:Connect(function(hit)
+			local currentCharacter = player.Character
+			if not currentCharacter then
+				return
+			end
+			if hit:IsDescendantOf(currentCharacter) then
+				connection:Disconnect()
+				TaskService.CompleteTask(player, 9, "find_noise")
+
+				StartDialogue:FireClient(player, "Player", "scene9Fight")
+				DialogueTrigger1:Destroy()
+			end
+		end)
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {
 			"find_noise",
 		})
 
-		Cup:Destroy()
-		Glass:PivotTo(CFrame.new(14.509, 23.119, -51.675))
-		DialogueTrigger1.Position = Vector3.new(15.394, 27.507, -52.003)
-		DialogueTrigger1.Touched:Connect(function(hit)
-			TaskService.CompleteTask(player, 9, "find_noise")
-			local currentCharacter = player.Character
-			if not currentCharacter then
-				return
-			end
 
-			if hit:IsDescendantOf(currentCharacter) then
-				StartDialogue:FireClient(player, "Player", "scene9Fight")
-				DialogueTrigger1:Destroy()
-			end
-		end)
 		waitForDialogueToEnd(player, "scene9Fight")
 		ShowAIChatGui:FireClient(player) -- shows AI Chat Gui
 
