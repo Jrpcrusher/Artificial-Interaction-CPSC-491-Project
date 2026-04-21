@@ -170,7 +170,6 @@ function Progression.Start(player)
                 descendant.CanQuery = false
             end
         end
-        print("Room door collision disabled!")
 
         -- phase 3: in room
         DialogueTrigger4.Touched:Connect(function(hit) -- Handle when dialogue Trigger 4 hit
@@ -202,7 +201,6 @@ function Progression.Start(player)
                 descendant.CanQuery = true
             end
         end
-        print("Room door collision re-enabled!")
 
         -- Show backpack on chair
 		local backpackPart = workspace
@@ -211,7 +209,6 @@ function Progression.Start(player)
 
 		if backpackPart then
 			backpackPart.Transparency = 0
-			print("Backpack shown!")
 		else
 			warn("Backpack NOT found!")
 		end
