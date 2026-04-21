@@ -2,16 +2,16 @@ local Tasks = {
 	{
 		Id = "sit_down",
 		Title = "Sit Down",
-		Description = "Take a seat in class.",
+		Description = "Take a seat in class",
+		Steps = "Sit down in chair",
 		Type = "Required",
-		Completed = false,
 	},
 	{
 		Id = "go_home",
 		Title = "Go Home",
-		Description = "Leave school and head home.",
+		Description = "Leave school and head home",
+		Steps = "Press E on door",
 		Type = "Required",
-		Completed = false,
 	},
 }
 
