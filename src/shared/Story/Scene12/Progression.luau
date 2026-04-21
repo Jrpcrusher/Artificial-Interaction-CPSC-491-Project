@@ -75,7 +75,23 @@ function Progression.Start(player)
 		waitForDialogueToEnd(player, "start")
 		ShowAIChatGui:FireClient(player)
 
-		-- Load AI related tasks here.
+		TaskService.LoadTasks(player, 12, {
+			"talk_about_cheating_on_quiz",
+			"talk_about_mom_dad_arguing",
+			"talk_about_sis",
+			"talk_about_panic_attacks",
+			"talk_about_judgement_at_school",
+		})
+
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+				"talk_about_cheating_on_quiz",
+				"talk_about_mom_dad_arguing",
+				"talk_about_sis",
+				"talk_about_panic_attacks",
+				"talk_about_judgement_at_school",
+			})
 
 		waitForChatWindowToClose(player, true)
 
