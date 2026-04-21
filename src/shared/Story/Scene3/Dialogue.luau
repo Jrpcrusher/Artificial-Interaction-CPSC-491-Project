@@ -4,7 +4,7 @@ Scene3.Player = {
 	-- phase 1: entering school/locker scene
 	start = {
 		speaker = "You",
-		text = "Just... stay calm. It doesn't matter.",
+		text = "(Internal) Oh hey its my friend, wonder what he's up to?",
 		next = "friend_intro",
 	},
 
@@ -38,6 +38,11 @@ Scene3.Player = {
 	},
 
 	-- phase 3: in library
+	start_worksheet = {
+		speaker = "You",
+		text = "(You start the worksheet, but eventually finish and decide to watch some anime)",
+		next = "friend_notice"
+	},
 	friend_notice = {
 		speaker = "Friend",
 		text = "Oh what are you watching this time? Is this another one of those romance ones I've caught you watching before?",

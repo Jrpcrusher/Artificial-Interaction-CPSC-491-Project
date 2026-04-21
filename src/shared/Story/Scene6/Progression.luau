@@ -26,7 +26,7 @@ function Progression.Load()
 	Apple.CFrame = CFrame.new(46.2, 26.545, -94.378) * CFrame.Angles(0, 0, 0)
 
 	local trigger = SceneObjects:WaitForChild("DialogueTrigger1")
-	trigger.Position = Vector3.new(31.6, 29.155, -59)
+	trigger.Position = Vector3.new(31.137, 36.355, -67.3472)
 
 	local cereal = SceneObjects:WaitForChild("Froot Loops Cereal Box")
 	cereal.CFrame = CFrame.new(58.3, 27.049, -97.778) * CFrame.Angles(0, 0, 0)
@@ -93,6 +93,16 @@ function Progression.Start(player)
 				DialogueTrigger1:Destroy()
 			end
 		end)
+
+		TaskService.LoadTasks(player, 6, {
+			"talk_to_mom",
+		})
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"talk_to_mom",
+		})
+
 
 		-- Phase 1: choose breakfast
 		TaskService.LoadTasks(player, 6, {

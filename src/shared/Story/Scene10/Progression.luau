@@ -194,6 +194,7 @@ function Progression.Start(player)
 
 		StartDialogue:FireClient(player, "Player", "relief")
 		waitForDialogueToEnd(player, "relief")
+		ShowAIChatGui:FireClient(player) -- close AI Chat Gui
 
 		-- Now spawn the teacher
 		Teacher:PivotTo(CFrame.new(-244.317, 26.555, -33.934) * CFrame.Angles(0, math.rad(-30), 0))

@@ -6,6 +6,8 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
+local ProximityPrompt = workspace.Map.School.Doors.Doorway_Classroom102.InsideDoor.ProxPart.ProximityPrompt
+
 local Progression = {}
 
 local function seatPlayer(player)
@@ -55,7 +57,7 @@ end
 
 function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene7Objects")
-
+	ProximityPrompt.Enabled = false
 	local Boy1 = SceneObjects:WaitForChild("Boy1")
 	Boy1:PivotTo(CFrame.new(-253.735, 24.555, -33.951) * CFrame.Angles(0, 0, 0))
 
@@ -83,6 +85,7 @@ function Progression.Unload()
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
 	end
+	ProximityPrompt.Enabled = false
 end
 
 function Progression.Start(player)
@@ -126,7 +129,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 7, {
 			"go_home",
 		})
-
+		ProximityPrompt.Enabled = true
 		repeat
 			task.wait()
 		until TaskService.AreTasksComplete(player, {

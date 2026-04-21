@@ -9,8 +9,8 @@ return {
 	{
 		Id = "go_to_room",
 		Title = "Go to Room",
-		Objective = "Run to your room.",
-		Steps = "Interact with your bedroom door.",
+		Objective = "Run to your room",
+		Steps = "Press E on your bedroom door",
 		Type = "Required"
 	},
 }
