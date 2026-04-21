@@ -23,7 +23,7 @@ local Tasks = {
 	{
 		Id = "go_to_door",
 		Title = "Leave Room",
-		Description = "Leave the bedroom",
+		Objective = "Leave the bedroom",
 		Type = "Required",
 		Steps = "Press E on the door",
 	},
