@@ -7,7 +7,7 @@ local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local Progression = {}
 
-function Progression.Load() --! LOAD EVERYTHING NEEDED FOR THE SCENE
+function Progression.Load()
 	local SceneObjects = workspace:WaitForChild("Scene5Objects")
 
 	-- Keys
@@ -29,7 +29,7 @@ function Progression.Load() --! LOAD EVERYTHING NEEDED FOR THE SCENE
 	prompt.Enabled = true
 end
 
-function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
+function Progression.Unload()
 	local SceneObjects = workspace:WaitForChild("Scene5Objects")
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
