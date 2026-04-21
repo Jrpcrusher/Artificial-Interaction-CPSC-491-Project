@@ -61,6 +61,8 @@ function Progression.Load()
 	local Friend = SceneObjects:WaitForChild("Friend")
 	Friend:PivotTo(CFrame.new(-282, 26.428, -28))
 
+	Teacher:PivotTo(CFrame.new(-266.735, 26.555, -19.429))
+
 	local DeskTrigger = SceneObjects:WaitForChild("DeskTrigger")
 	DeskTrigger.Position = Vector3.new(-243.135, -23.831, -36.207)
 
@@ -140,6 +142,11 @@ function Progression.Start(player)
 		repeat
 			task.wait()
 		until isSitting(player)
+
+		
+		-- Spawn teacher when sitting
+
+		Teacher:PivotTo(CFrame.new(-257.735, 26.555, -20.429) * CFrame.Angles(0, math.rad(-20), 0))
 
 		local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 		if humanoid then
