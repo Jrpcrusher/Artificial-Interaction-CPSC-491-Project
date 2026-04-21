@@ -42,8 +42,10 @@ Scene11.DadDialogueTree = {
 		text = "I wonder who that could be?",
 		next = "monologue1",
 	},
-	speaker = "You",
-	text = "Oh no, could that be school..?",
+	monologue1 = {
+		speaker = "You",
+		text = "Oh no, could that be school..?"
+	}
 }
 
 Scene11.PlayerDialogueTree = {
