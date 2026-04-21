@@ -48,6 +48,13 @@ local Tasks = {
 		steps = "Press E on the door",
 		Type = "Required",
 	},
+	{
+		Id = "talk_to_mom",
+		Title = "Talk to Mom",
+		Description = "Talk to mom about the picture",
+		Steps = "Press E on Mom",
+		Type = "Required",
+	},
 }
 
 return Tasks
