@@ -1,6 +1,47 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
+local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
+local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
+local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
+
+local SceneObjects = workspace:WaitForChild("Scene10Objects")
+local Quiz = SceneObjects:WaitForChild("Quiz")
+local Teacher = SceneObjects:WaitForChild("Teacher")
+
+local function waitForDialogueToEnd(player, expectedStartNode)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
+		if firingPlayer == player and finishedStartNode == expectedStartNode then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+end
+
+local function waitForChatWindowToClose(player, chatWindowClosed)
+	local bindable = Instance.new("BindableEvent")
+	local connection
+
+	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
+		if firingPlayer == player and chatWindowStatus == chatWindowClosed then
+			connection:Disconnect()
+			bindable:Fire()
+		end
+	end)
+
+	bindable.Event:Wait()
+	bindable:Destroy()
+end
 
 local Progression = {}
 
@@ -17,23 +58,22 @@ local function isSitting(player)
 end
 
 function Progression.Load()
-	local SceneObjects = workspace:WaitForChild("Scene10Objects")
-
 	local Friend = SceneObjects:WaitForChild("Friend")
 	Friend:PivotTo(CFrame.new(-282, 26.428, -28))
+
+	Teacher:PivotTo(CFrame.new(-266.735, 26.555, -19.429))
 
 	local DeskTrigger = SceneObjects:WaitForChild("DeskTrigger")
 	DeskTrigger.Position = Vector3.new(-243.135, -23.831, -36.207)
 
-	local Quiz = SceneObjects:WaitForChild("Quiz")
 	Quiz.Position = Vector3.new(-243.135, 25.011, -35.094)
+	Quiz.Orientation = Vector3.new(-243.135, 12.011, -35.094)
 
 	local SchoolDoorTrigger = SceneObjects:WaitForChild("SchoolDoorTrigger")
 	SchoolDoorTrigger.Position = Vector3.new(-237.635, 26.873, -63.929)
 end
 
 function Progression.Unload()
-	local SceneObjects = workspace:WaitForChild("Scene10Objects")
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
 	end
@@ -43,7 +83,7 @@ function Progression.Start(player)
 	Progression.Load()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
-		
+
 		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene10Spawn")
 		local root = character:FindFirstChild("HumanoidRootPart")
 
@@ -100,8 +140,13 @@ function Progression.Start(player)
 			"sit_at_desk",
 		})
 		repeat
-			task.wait(0.5)
+			task.wait()
 		until isSitting(player)
+
+		
+		-- Spawn teacher when sitting
+
+		Teacher:PivotTo(CFrame.new(-257.735, 26.555, -20.429) * CFrame.Angles(0, math.rad(-20), 0))
 
 		local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
 		if humanoid then
@@ -118,6 +163,44 @@ function Progression.Start(player)
 			"flip_quiz",
 		})
 
+		-- Have the dialogue play for the quiz is hard
+		StartDialogue:FireClient(player, "Teacher", "teacherStart")
+		waitForDialogueToEnd(player, "teacherStart")
+		task.wait(1)
+		-- Animation of flipping the quiz
+		local goal = {
+			Orientation = Quiz.Orientation + Vector3.new(0, 180, 0),
+		}
+		local FlipQuiz = TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+		local animation = TweenService:Create(Quiz, FlipQuiz, goal)
+		animation:Play()
+		animation.Completed:Wait()
+
+		-- Start the next length of dialogue
+		StartDialogue:FireClient(player, "Player", "start")
+		waitForDialogueToEnd(player, "start")
+
+		-- Now charlie comes in
+		ShowAIChatGui:FireClient(player) -- shows AI Chat Gui
+		TaskService.LoadTasks(player, 10, {
+			"use_charlie_on_quiz",
+		})
+		repeat
+			task.wait()
+		until TaskService.AreTasksComplete(player, {
+			"use_charlie_on_quiz",
+		})
+		waitForChatWindowToClose(player, true)
+
+		StartDialogue:FireClient(player, "Player", "relief")
+		waitForDialogueToEnd(player, "relief")
+
+		-- Now spawn the teacher
+		Teacher:PivotTo(CFrame.new(-244.317, 26.555, -33.934) * CFrame.Angles(0, math.rad(-30), 0))
+		StartDialogue:FireClient(player, "Teacher", "catchCheating")
+		waitForDialogueToEnd(player, "catchCheating")
+		Quiz:Destroy()
+		task.wait(3)
 		if humanoid then
 			humanoid.WalkSpeed = 16
 			humanoid.JumpPower = 50
