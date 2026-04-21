@@ -26,7 +26,6 @@ local Tasks = {
 		Description = "Leave the bedroom",
 		Type = "Required",
 		Steps = "Press E on the door",
-		Completed = false,
 	},
 }
 
