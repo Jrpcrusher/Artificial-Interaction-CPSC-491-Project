@@ -31,18 +31,13 @@ function Progression.Load()
 
 	local Dad = SceneObjects:WaitForChild("Dad")
 	Dad:PivotTo(CFrame.new(5.784, 27.233, -36.256) * CFrame.Angles(0, math.rad(-69.731), 0))
-	print("loaded dad")
 	local Mom = SceneObjects:WaitForChild("Mom")
 	Mom:PivotTo(CFrame.new(8.882, 27.233, -33.134) * CFrame.Angles(0, math.rad(45), 0))
-	print("loaded mom")
 	local Phone = SceneObjects:WaitForChild("Phone")
-	Phone:PivotTo(CFrame.new(4.729, 25.875, -29.223) * CFrame.Angles(math.rad(90), math.rad(50), 0))
-	print("loaded phone")
+	Phone:PivotTo(CFrame.new(4.729, 25.959, -29.223) * CFrame.Angles(math.rad(90), math.rad(50), 0))
 	local RoomDoorTrigger = SceneObjects:WaitForChild("RoomDoorTrigger")
 	RoomDoorTrigger.Position = Vector3.new(20.21, 40.555, -77.999)
-	print("loaded door trigger")
 	DialogueTrigger1.Position = Vector3.new(7.3, 29.326, -35.505)
-	print("laoding finished")
 end
 
 function Progression.Unload()
@@ -86,12 +81,13 @@ function Progression.Start(player)
 			"talk_to_parents",
 		})
 
+		waitForDialogueToEnd(player, "scene11discussion")
 		-- TODO add phone ringing here
-
+		task.wait(2)
 		StartDialogue:FireClient(player, "Dad", "phoneCall")
 		waitForDialogueToEnd(player, "phoneCall")
 		-- TODO phone ringing stops, dad answers phone
-		task.wait(2)
+		task.wait(5)
 		StartDialogue:FireClient(player, "Dad", "scene11Fight")
 		waitForDialogueToEnd(player, "scene11Fight")
 
