@@ -1,26 +1,30 @@
 return {
 	{
 		Id = "grab_backpack",
-		Title = "Grab backpack",
+		Title = "Grab Backpack",
 		Objective = "Pick up your backpack",
+		Steps = "Press E on the backpack",
 		Type = "Required",
 	},
 	{
 		Id = "grab_calculator",
-		Title = "Grab calculator",
+		Title = "Grab Calculator",
 		Objective = "Pick up your calculator",
+		Steps = "Press E on the calculator",
 		Type = "Required",
 	},
 	{
 		Id = "grab_keys",
-		Title = "Grab keys",
+		Title = "Grab Keys",
 		Objective = "Pick up your keys",
+		Steps = "Press E on the keys",
 		Type = "Required",
 	},
 	{
 		Id = "go_to_door",
-		Title = "Open door",
-		Objective = "Leave your room",
+		Title = "Leave Room",
+		Objective = "Head outside your room",
+		Steps = "Hold E on the door",
 		Type = "Required",
 	},
 }
