@@ -14,7 +14,7 @@ local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
 local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
 
 local ProximityPrompt = workspace.Map.School.Doors.Doorway_Library.InsideDoor.ProxPart.ProximityPrompt
-
+local ProximityPrompt2 = workspace.Map.School.Doors.Doorway_Classroom102.InsideDoor.ProxPart.ProximityPrompt
 local Bully = SceneObjects:WaitForChild("Bully")
 
 local function waitForDialogueToEnd(player, expectedStartNode)
@@ -62,8 +62,9 @@ function Progression.Load()
 
     local Papers = SceneObjects:WaitForChild("Papers")
     Papers.Position = Vector3.new(-292.235, 24.955, -29.429)
-	
+
 	ProximityPrompt.Enabled = false
+	ProximityPrompt2.Enabled = false
 end
 
 function Progression.Unload()
