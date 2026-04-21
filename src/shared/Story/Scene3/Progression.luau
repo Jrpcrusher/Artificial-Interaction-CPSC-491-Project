@@ -13,6 +13,8 @@ local SceneObjects = workspace:WaitForChild("Scene3Objects")
 local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
 local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
 
+local ProximityPrompt = workspace.Map.School.Doors.Doorway_Library.InsideDoor.ProxPart.ProximityPrompt
+
 local Bully = SceneObjects:WaitForChild("Bully")
 
 local function waitForDialogueToEnd(player, expectedStartNode)
@@ -60,6 +62,8 @@ function Progression.Load()
 
     local Papers = SceneObjects:WaitForChild("Papers")
     Papers.Position = Vector3.new(-292.235, 24.955, -29.429)
+	
+	ProximityPrompt.Enabled = false
 end
 
 function Progression.Unload()
@@ -67,6 +71,8 @@ function Progression.Unload()
     for _, obj in ipairs(SceneObjects:GetChildren()) do
         obj:Destroy()
     end
+
+	ProximityPrompt.Enabled = false
 end
 
 local function hideBully() -- Helper function to hide bully
@@ -251,7 +257,7 @@ function Progression.Start(player)
 			warn("Library CollisionPart NOT found!")
 		end
 		-- -----------------------end of phase 3
-
+		ProximityPrompt.Enabled = true
 		-- once everything is done, go to door and it'll start scene 4
 		TaskService.LoadTasks(player, 3, {
 			"go_to_door",
