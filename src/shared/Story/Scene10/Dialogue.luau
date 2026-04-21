@@ -27,11 +27,61 @@ Scene10.FriendDialogueTree = {
 	}
 }
 
+Scene10.TeacherDialogueTree = {
+	teacherStart = {
+		speaker = "Teacher",
+		text = "Please remember no cheating, if you are caught cheating then you will be in serious trouble. And especially no use of AI, this quiz is meant to test you, not your AI chatbot.",
+		next = "internalReply"
+	},
+	internalReply = {
+		speaker = "You",
+		text = "(Internal) I should be fine, no problem!"
+	},
+
+	catchCheating = {
+		speaker = "Teacher",
+		text = "...",
+		next = "reply",
+	},
+	reply = {
+		speaker = "You",
+		text = "...",
+	}
+}
+
+Scene10.PlayerDialogueTree = {
+	start = {
+		speaker = "You",
+		text = "Okay question 1, what is ... what?",
+		next = "reread"
+	},
+	reread = {
+		speaker = "You",
+		text = "Okay, reread one more time, find the ... what is this even asking for?!",
+		next = "panick",
+	},
+	panick = {
+		speaker = "You",
+		text = "Oh no... this is the thing I used AI on and I didn't actually study that night, I don't know what to do..!",
+		next = "solution",
+	},
+	solution = {
+		speaker = "You",
+		text = "Wait, I have my phone on me, maybe I can use Charlie real quick to help...",
+	}
+}
+
 Scene10.Registry = {
 	Bully = {
 		tree = Scene10.FriendDialogueTree,
 		defaultStartNode = "scene10Start"
 	},
+	Teacher = {
+		tree = Scene10.TeacherDialogueTree,
+		defaultStartNode = "teacherStart"
+	},
+	Player = Scene10.PlayerDialogueTree,
+	defaultStartNode = "start"
 }
 
 return Scene10
