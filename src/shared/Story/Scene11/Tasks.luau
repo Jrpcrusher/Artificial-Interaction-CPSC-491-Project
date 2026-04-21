@@ -1,16 +1,9 @@
 return {
 	{
 		Id = "talk_to_parents",
-		Title = "Talk to Parents",
-		Objective = "Speak with Mom and Dad.",
-		Steps = "Press E on them.",
-		Type = "Required"
-	},
-	{
-		Id = "answer_phone",
-		Title = "Answer Phone",
-		Objective = "The phone is ringing.",
-		Steps = "Interact with the phone.",
+		Title = "Find Your Parents",
+		Objective = "Where are they?",
+		Steps = "Hint: First floor",
 		Type = "Required"
 	},
 	{
