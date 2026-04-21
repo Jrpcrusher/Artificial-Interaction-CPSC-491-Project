@@ -45,7 +45,7 @@ function Progression.Load()
 	milk.Position = Vector3.new(56.1, 26.636, -86.678)
 end
 
-function Progression.Unload() -- ! DELETE ALL ASSETS FROM PREVIOUS SCENE
+function Progression.Unload()
 	local SceneObjects = workspace:WaitForChild("Scene2Objects")
 	for _, obj in ipairs(SceneObjects:GetChildren()) do
 		obj:Destroy()
