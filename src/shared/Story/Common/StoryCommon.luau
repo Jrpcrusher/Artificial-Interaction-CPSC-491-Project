@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local DialogueRemotes = Remotes:WaitForChild("Dialogue")
@@ -10,13 +11,13 @@ local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 
 local StoryCommon = {}
 
-local function waitForTasks(player, taskIds)
+function StoryCommon.WaitForTasks(player, taskIds)
 	repeat
 		task.wait()
 	until TaskService.AreTasksComplete(player, taskIds)
 end
 
-function StoryCommon.startDialogueAndWait(player, dialogueName, startNode)
+function StoryCommon.StartDialogueAndWait(player, dialogueName, startNode)
 	local bindable = Instance.new("BindableEvent")
 	local connection
 
@@ -37,7 +38,7 @@ function StoryCommon.startDialogueAndWait(player, dialogueName, startNode)
 	bindable:Destroy()
 end
 
-function StoryCommon.waitForTasksThenWaitForChatClose(player, taskIds)
+function StoryCommon.WaitForChatClose(player, taskIds)
 	local bindable = Instance.new("BindableEvent")
 	local connection
 	local tasksFinished = false
@@ -62,7 +63,7 @@ function StoryCommon.waitForTasksThenWaitForChatClose(player, taskIds)
 			finish()
 		end
 	end)
-	waitForTasks(player, taskIds)
+	StoryCommon.WaitForTasks(player, taskIds)
 	tasksFinished = true
 	if not completed then
 		bindable.Event:Wait()
