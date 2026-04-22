@@ -238,8 +238,10 @@ function DialogueHandler:_typewrite(node) -- Function that enables a typewriting
 		end
 		label.MaxVisibleGraphemes = i
 
-		sound.PlaybackSpeed = pitch
-		sound:Play()
+		if 1 % 3 == 0 then
+			sound.PlaybackSpeed = pitch
+			sound:Play()
+		end
 		task.wait(0.02)
 	end
 
