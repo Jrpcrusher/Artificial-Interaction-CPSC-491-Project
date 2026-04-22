@@ -201,7 +201,7 @@ function DialogueHandler:_connectDialogueClick()
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
-			local finishedStartNode  = self.startNode
+			local finishedStartNode = self.startNode
 			print("CLIENT firing FinishDialogue", finishedStartNode)
 			self:Stop()
 			FinishDialogue:FireServer(finishedStartNode)
@@ -238,7 +238,7 @@ function DialogueHandler:_typewrite(node) -- Function that enables a typewriting
 		end
 		label.MaxVisibleGraphemes = i
 
-		if 1 % 3 == 0 then
+		if i % 3 == 0 then
 			sound.PlaybackSpeed = pitch
 			sound:Play()
 		end
