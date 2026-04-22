@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -7,7 +8,6 @@ local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local DialogueTrigger1 = workspace.Scene3Objects:WaitForChild("DialogueTrigger1")
 local DialogueTrigger2 = workspace.Scene3Objects:WaitForChild("DialogueTrigger2")
 local DialogueTrigger3 = workspace.Scene3Objects:WaitForChild("DialogueTrigger3")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 
 local SceneObjects = workspace:WaitForChild("Scene3Objects")
 local TeacherInClass = SceneObjects:WaitForChild("TeacherInClass")
@@ -17,28 +17,10 @@ local ProximityPrompt = workspace.Map.School.Doors.Doorway_Library.InsideDoor.Pr
 local ProximityPrompt2 = workspace.Map.School.Doors.Doorway_Classroom102.InsideDoor.ProxPart.ProximityPrompt
 local Bully = SceneObjects:WaitForChild("Bully")
 
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-end
-
 local Progression = {}
 
 function Progression.Load()
-
-    local Bully = SceneObjects:WaitForChild("Bully")
     Bully:PivotTo(CFrame.new(-269.006, 26.527, -60.419) * CFrame.Angles(0, math.rad(-65), 0))
-
 
     local Locker = SceneObjects:WaitForChild("Locker")
     Locker:PivotTo(CFrame.new(-289.219, 25.18, -53.832) * CFrame.Angles(0, 0, math.rad(-90)))
@@ -48,13 +30,10 @@ function Progression.Load()
 
     TeacherInClass:PivotTo(CFrame.new(-259.235, 26.555, -20.839) * CFrame.Angles(0, 0, 0))
 
-    local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
     DialogueTrigger1.Position = Vector3.new(-267.84, 26.927, -64.229)
 
-    local DialogueTrigger2 = SceneObjects:WaitForChild("DialogueTrigger2")
     DialogueTrigger2.Position = Vector3.new(-256.685, 27.955, -38.229)
 
-    local DialogueTrigger3 = SceneObjects:WaitForChild("DialogueTrigger3")
     DialogueTrigger3.Position = Vector3.new(-292.055, 27.955, -28.028)
 
     local StackOfPapers = SceneObjects:WaitForChild("StackOfPapers")
@@ -68,7 +47,6 @@ function Progression.Load()
 end
 
 function Progression.Unload()
-    local SceneObjects = workspace:WaitForChild("Scene3Objects")
     for _, obj in ipairs(SceneObjects:GetChildren()) do
         obj:Destroy()
     end
@@ -178,8 +156,7 @@ function Progression.Start(player)
 			end
 
 			if hit:IsDescendantOf(character) then
-				StartDialogue:FireClient(player, "Player", "teacher_intro")
-				waitForDialogueToEnd(player, "teacher_intro")
+				Common.startDialogueAndWait(player, "Player", "teacher_intro")
 				TeacherInClass:Destroy()
 				TaskService.CompleteTask(player, 3, "go_class") -- manually need to mark it done for dialoguetriggers
 				DialogueTrigger2:Destroy()
