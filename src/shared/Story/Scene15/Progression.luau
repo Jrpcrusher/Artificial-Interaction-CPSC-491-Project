@@ -1,29 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 
 local Progression = {}
-
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("dialogue finished")
-end
 
 local function clonePlayer(character, SceneObjects)
 	if not character or not SceneObjects then
@@ -169,11 +153,8 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 15, {
 			"check_on_older_sibling",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"check_on_older_sibling",
-		})
+		Common.WaitForTasks(player, {"check_on_older_sibling"})
+
 		character:PivotTo(CFrame.new(15.182, 38.855, -78.081) * CFrame.Angles(0, math.rad(90), 0))
 		StartDialogue:FireClient(player, "Sister", "scene15Task1Response")
 
@@ -181,15 +162,10 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 15, {
 			"save_your_older_sibling",
 		})
+		Common.WaitForTasks(player, {"save_your_older_sibling"})
 
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"save_your_older_sibling",
-		})
+		Common.StartDialogueAndWait(player, "Player", "scene15Task2Response")
 
-		StartDialogue:FireClient(player, "Player", "scene15Task2Response")
-		waitForDialogueToEnd(player, "scene15Task2Response")
 		task.wait(1)
 		Progression.Unload()
 		SceneManager.Transition(player)
