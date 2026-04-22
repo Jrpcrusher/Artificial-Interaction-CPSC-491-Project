@@ -62,6 +62,10 @@ local function openChat()
 	chatFrame.Visible = true
 	openButton.Visible = false
 
+	local chatWindowClosed = false
+	print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
+	ChatWindowIsClosed:FireServer(chatWindowClosed)
+
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
 
@@ -71,15 +75,11 @@ end
 
 local function closeChat()
 	chatFrame.Visible = false
-
-	-- only show the open button if the whole AI gui is enabled
 	openButton.Visible = gui.Enabled
 
-	if chatFrame.Visible == false then
-		local chatWindowClosed = true
-		print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
-		ChatWindowIsClosed:FireServer(chatWindowClosed)
-	end
+	local chatWindowClosed = true
+	print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
+	ChatWindowIsClosed:FireServer(chatWindowClosed)
 
 	GuiMouseManager.CloseGui()
 	GuiMovementManager.Unlock()
@@ -158,14 +158,17 @@ LoadTranscript.OnClientEvent:Connect(function(transcript)
 	end
 end)
 
-ShowAIChatGui.OnClientEvent:Connect(function()
-	if gui.Enabled then
-		gui.Enabled = false
-		openButton.Visible = false
-		chatFrame.Visible = false
-	else
+ShowAIChatGui.OnClientEvent:Connect(function(action)
+	if action == "enable" or action == true then
 		gui.Enabled = true
 		openButton.Visible = true
+		chatFrame.Visible = false
+	elseif action == "disable" or action == false then
+		if chatFrame.Visible then
+			closeChat()
+		end
+		gui.Enabled = false
+		openButton.Visible = false
 		chatFrame.Visible = false
 	end
 end)

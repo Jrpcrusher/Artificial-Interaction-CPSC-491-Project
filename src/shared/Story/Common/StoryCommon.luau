@@ -7,7 +7,7 @@ local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
---  This file is a refactor for common helpers
+
 local StoryCommon = {}
 
 local function waitForTasks(player, taskIds)
@@ -27,6 +27,7 @@ function StoryCommon.startDialogueAndWait(player, dialogueName, startNode)
 			bindable:Fire()
 		end
 	end)
+
 	StartDialogue:FireClient(player, dialogueName, startNode)
 	bindable.Event:Wait()
 
@@ -36,44 +37,40 @@ function StoryCommon.startDialogueAndWait(player, dialogueName, startNode)
 	bindable:Destroy()
 end
 
-function StoryCommon.waitForTasksThenCloseAndDisableChat(player, taskIds, toggleChatRemote)
-    	local bindable = Instance.new("BindableEvent")
+function StoryCommon.waitForTasksThenWaitForChatClose(player, taskIds)
+	local bindable = Instance.new("BindableEvent")
 	local connection
 	local tasksFinished = false
-	local chatIsClosed = false
+	local completed = false
 
-	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
-		if firingPlayer ~= player then
+	local function finish()
+		if completed then
 			return
 		end
-
-		chatIsClosed = chatWindowStatus
-
-		if tasksFinished and chatIsClosed then
-			connection:Disconnect()
-			connection = nil
-			bindable:Fire()
-		end
-	end)
-
-	waitForTasks(player, taskIds)
-	tasksFinished = true
-
-	if chatIsClosed then
+		completed = true
 		if connection then
 			connection:Disconnect()
 			connection = nil
 		end
 		bindable:Fire()
 	end
-
-	bindable.Event:Wait()
-
+	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
+		if firingPlayer ~= player then
+			return
+		end
+		if tasksFinished and chatWindowStatus == true then
+			finish()
+		end
+	end)
+	waitForTasks(player, taskIds)
+	tasksFinished = true
+	if not completed then
+		bindable.Event:Wait()
+	end
 	if connection then
 		connection:Disconnect()
 	end
 	bindable:Destroy()
-
-	toggleChatRemote:FireClient(player)
 end
+
 return StoryCommon
