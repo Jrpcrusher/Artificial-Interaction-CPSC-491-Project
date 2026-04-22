@@ -39,16 +39,9 @@ local SceneObjects = workspace:WaitForChild("Scene4Objects")
     local Backpack = SceneObjects:WaitForChild("Backpack")
     Backpack.Position = Vector3.new(2.411, 39.424, -76.023)
 
-    local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
     DialogueTrigger1.Position = Vector3.new(35.4, 27.755, -38.229)
-
-    local DialogueTrigger2 = SceneObjects:WaitForChild("DialogueTrigger2")
     DialogueTrigger2.Position = Vector3.new(29.599, 40.755, -73.004)
-
-    local DialogueTrigger3 = SceneObjects:WaitForChild("DialogueTrigger3")
     DialogueTrigger3.Position = Vector3.new(23.8, 40.755, -59.781)
-
-    local DialogueTrigger4 = SceneObjects:WaitForChild("DialogueTrigger4")
     DialogueTrigger4.Position = Vector3.new(15.925, 41.955, -71)
 
     local HelperPartBackpack = SceneObjects:WaitForChild("HelperPartBackpack")
@@ -59,7 +52,6 @@ local SceneObjects = workspace:WaitForChild("Scene4Objects")
 end
 
 function Progression.Unload()
-    local SceneObjects = workspace:WaitForChild("Scene4Objects")
     for _, obj in ipairs(SceneObjects:GetChildren()) do
         if obj:IsA("Model") then
             obj:PivotTo(CFrame.new(0, -500, 0))
