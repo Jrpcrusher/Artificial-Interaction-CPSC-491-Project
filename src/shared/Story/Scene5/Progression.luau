@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
@@ -61,9 +62,7 @@ function Progression.Start(player)
 			"grab_calculator",
 			"grab_keys",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
+		Common.WaitForTasks(player, {
 			"grab_backpack",
 			"grab_calculator",
 			"grab_keys",
@@ -73,11 +72,8 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 5, {
 			"go_to_door",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
+		Common.WaitForTasks(player, {"go_to_door"})
+
 
 		Progression.Unload()
 		SceneManager.Transition(player)
