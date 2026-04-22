@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
@@ -24,7 +25,7 @@ function Progression.Load()
 
 	local Toast = SceneObjects:WaitForChild("Toast")
 	Toast:PivotTo(CFrame.new(53.491, 26.649, -105.078) * CFrame.Angles(0, 0, math.rad(45)))
-	
+
 	local OrangeJuice = SceneObjects:WaitForChild("OrangeJuice")
 
 	Sister:PivotTo(CFrame.new(37.6, 27.349, -85.793) * CFrame.Angles(0, math.rad(-90), 0))
@@ -95,18 +96,13 @@ function Progression.Start(player)
 				TaskService.LoadTasks(player, 2, {
 					"grab_cereal",
 				})
-				repeat
-					task.wait()
-				until TaskService.AreTasksComplete(player, { "grab_cereal" })
-				breakfastComplete = true
+				Common.WaitForTasks(player, { "grab_cereal" })
 			-- Orange juice path = require toast
 			elseif TaskService.AreTasksComplete(player, { "grab_oj" }) then
 				TaskService.LoadTasks(player, 2, {
 					"grab_toast",
 				})
-				repeat
-					task.wait()
-				until TaskService.AreTasksComplete(player, { "grab_toast" })
+				Common.WaitForTasks(player, { "grab_toast" })
 
 				breakfastComplete = true
 			end
@@ -118,10 +114,7 @@ function Progression.Start(player)
 			"talk_to_dad",
 			"talk_to_sister",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
+		Common.WaitForTasks(player, {
 			"talk_to_mom",
 			"talk_to_dad",
 			"talk_to_sister",
@@ -131,12 +124,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 2, {
 			"go_to_door",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
+		Common.WaitForTasks(player, { "go_to_door" })
 
 		Progression.Unload()
 		SceneManager.Transition(player)

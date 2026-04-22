@@ -121,12 +121,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 3, {
 			"put_stuff_away",
 		})
-		
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"put_stuff_away",
-		})
+		Common.WaitForTasks(player, {"put_stuff_away"})
 
 		hideBully()
 		
@@ -156,7 +151,7 @@ function Progression.Start(player)
 			end
 
 			if hit:IsDescendantOf(character) then
-				Common.startDialogueAndWait(player, "Player", "teacher_intro")
+				Common.StartDialogueAndWait(player, "Player", "teacher_intro")
 				TeacherInClass:Destroy()
 				TaskService.CompleteTask(player, 3, "go_class") -- manually need to mark it done for dialoguetriggers
 				DialogueTrigger2:Destroy()
@@ -167,22 +162,12 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 3, {
 			"go_class",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_class",
-		})
+		Common.WaitForTasks(player, {"go_class"})
 
 		TaskService.LoadTasks(player, 3, {
 			"get_worksheet",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"get_worksheet",
-		})
+		Common.WaitForTasks(player, {"get_worksheet"})
 
 		-- Remove collision on library door
 		local libraryCollisionPart = workspace
@@ -219,12 +204,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 3, {
 			"go_library",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_library",
-		})
+		Common.WaitForTasks(player, {"go_library"})
 		-- re enable the collision on library door to smoothly transition to scene 4
 		if libraryCollisionPart then
 			libraryCollisionPart.CanCollide = true
@@ -240,13 +220,8 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 3, {
 			"go_to_door",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
-
+		Common.WaitForTasks(player, {"go_to_door"})
+		
 		Progression.Unload()
 		SceneManager.Transition(player)
 		
