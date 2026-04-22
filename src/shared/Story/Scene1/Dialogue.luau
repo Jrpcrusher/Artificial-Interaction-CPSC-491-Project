@@ -3,7 +3,7 @@ local Scene1 = {}
 Scene1.Player = {
 	start = {
 		speaker = "You",
-		text = "Is it raining...?",
+		text = "Is it raining...? (Click in this area to continue dialogue)",
 		next = "dialogue2",
 	},
 	dialogue2 = {
