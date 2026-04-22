@@ -1,32 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local DialogueTrigger1 = workspace.Scene13Objects:WaitForChild("DialogueTrigger1")
 
 local Progression = {}
 
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("dialogue finished")
-end
-
-local function knockPlayerOver(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+local function knockPlayerOver(player)
 	print("in knock player over")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
@@ -49,7 +33,7 @@ local function knockPlayerOver(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
 	humanoid.PlatformStand = true
 end
 
-local function restorePlayerFromKnocked(player) -- TODO!: FIX THIS SO IT ACTUALLY WORKS
+local function restorePlayerFromKnocked(player)
 	print("in restore player")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
@@ -121,14 +105,9 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 13, {
 			"talk_to_bully",
 		})
+		Common.WaitForTasks(player, {"talk_to_bully"})
+		Common.StartDialogueAndWait(player, "Bully", "scene13Task1Start")
 
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_bully",
-		})
-
-		waitForDialogueToEnd(player, "scene13Task1Start") -- Waits for dialogue between player and bully to end.
 
 		knockPlayerOver(player)
 
@@ -142,24 +121,17 @@ function Progression.Start(player)
 
 			if hit:IsDescendantOf(currentCharacter) then
 				LoadTeacher()
-				StartDialogue:FireClient(player, "Teacher", "start")
 				DialogueTrigger1:Destroy()
 			end
 		end)
-
-		waitForDialogueToEnd(player, "start") -- Waits for dialogue between teacher and bully to end.
-
+		Common.StartDialogueAndWait(player, "Teacher", "start")
 		restorePlayerFromKnocked(player)
 
 		TaskService.LoadTasks(player, 13, {
 			"go_to_door",
 		})
+		Common.WaitForTasks(player, {"go_to_door"})
 
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
 
 		Progression.Unload()
 		SceneManager.Transition(player)
