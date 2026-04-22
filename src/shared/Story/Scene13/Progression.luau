@@ -11,7 +11,6 @@ local DialogueTrigger1 = workspace.Scene13Objects:WaitForChild("DialogueTrigger1
 local Progression = {}
 
 local function knockPlayerOver(player)
-	print("in knock player over")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 	local root = character:FindFirstChild("HumanoidRootPart")
@@ -34,7 +33,6 @@ local function knockPlayerOver(player)
 end
 
 local function restorePlayerFromKnocked(player)
-	print("in restore player")
 	local character = player.Character or player.CharacterAdded:Wait()
 	local humanoid = character:WaitForChild("Humanoid")
 	local root = character:FindFirstChild("HumanoidRootPart")

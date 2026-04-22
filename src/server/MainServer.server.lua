@@ -70,8 +70,6 @@ local function handleStoryCompletion(player)
 
 	-- Fire the ending UI to the client
 	ShowEndingTraits:FireClient(player, traits)
-
-	print("Story completed for", player.Name, "Traits generated:", #traits)
 end
 
 -- Helper function to find door ancestor named "Door"
@@ -142,8 +140,6 @@ local function onPlayerAdded(player) -- Function to handle when a player joins t
 		message = "Failed to load transcript"
 		warn(message)
 	end
-
-	print(message)
 
 	player.CharacterAdded:Connect(function(character) -- Remove player forcefield
 		task.wait()

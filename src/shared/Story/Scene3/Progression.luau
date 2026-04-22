@@ -138,7 +138,6 @@ function Progression.Start(player)
 			collisionPart.CanCollide = false
 			collisionPart.CanTouch = false
 			collisionPart.CanQuery = false
-			print("Collision disabled!")
 		else
 			warn("CollisionPart NOT found!")
 		end
@@ -182,7 +181,6 @@ function Progression.Start(player)
 			libraryCollisionPart.CanCollide = false
 			libraryCollisionPart.CanTouch = false
 			libraryCollisionPart.CanQuery = false
-			print("Library door collision disabled!")
 		else
 			warn("Library CollisionPart NOT found!")
 		end
@@ -210,7 +208,6 @@ function Progression.Start(player)
 			libraryCollisionPart.CanCollide = true
 			libraryCollisionPart.CanTouch = true
 			libraryCollisionPart.CanQuery = true
-			print("Library door collision enabled!")
 		else
 			warn("Library CollisionPart NOT found!")
 		end

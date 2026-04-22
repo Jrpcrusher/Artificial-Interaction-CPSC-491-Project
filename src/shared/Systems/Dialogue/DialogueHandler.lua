@@ -207,7 +207,6 @@ function DialogueHandler:_connectDialogueClick()
 		elseif self.isFinalNode then
 			local finishedDialogue = self.dialogueName
 			local finishedStartNode = self.startNode
-			print("CLIENT firing FinishDialogue", finishedDialogue, finishedStartNode)
 			self:Stop()
 			FinishDialogue:FireServer(finishedDialogue, finishedStartNode)
 		end
@@ -268,7 +267,6 @@ function DialogueHandler:_chooseTalker(character)
 	elseif character == "You" then
 		return FemaleSound, 1
 	else
-		print("other dialogue sound")
 		return MaleSound, 1
 	end
 end

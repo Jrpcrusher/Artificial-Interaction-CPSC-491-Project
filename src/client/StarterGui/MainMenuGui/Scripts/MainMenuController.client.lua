@@ -255,8 +255,6 @@ continueBtn.MouseButton1Click:Connect(function()
 	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
-	else
-		print("No save file detected. Click play.")
 	end
 end)
 

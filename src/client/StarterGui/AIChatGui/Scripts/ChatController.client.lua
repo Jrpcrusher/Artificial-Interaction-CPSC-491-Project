@@ -63,7 +63,6 @@ local function openChat()
 	openButton.Visible = false
 
 	local chatWindowClosed = false
-	print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
 	ChatWindowIsClosed:FireServer(chatWindowClosed)
 
 	GuiMouseManager.OpenGui()
@@ -78,7 +77,6 @@ local function closeChat()
 	openButton.Visible = gui.Enabled
 
 	local chatWindowClosed = true
-	print("CLIENT firing ChatWindowIsClosed", chatWindowClosed)
 	ChatWindowIsClosed:FireServer(chatWindowClosed)
 
 	GuiMouseManager.CloseGui()

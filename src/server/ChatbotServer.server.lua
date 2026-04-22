@@ -15,8 +15,6 @@ local SendMessage = SoundService:WaitForChild("SendMessage")
 local Reply = SoundService:WaitForChild("ReplyMessage")
 
 ChatbotRequest.OnServerEvent:Connect(function(player, message)
-	print("Server received chat message from", player.Name, message)
-
 	if typeof(message) ~= "string" then
 		ChatbotResponse:FireClient(player, "Invalid message.")
 		return
