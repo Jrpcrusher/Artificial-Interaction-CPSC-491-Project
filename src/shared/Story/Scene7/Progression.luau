@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
@@ -109,20 +110,13 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 7, {
 			"sit_down",
 		})
+		Common.WaitForTasks(player, {"sit_down"})
 
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"sit_down",
-		})
 
 		seatPlayer(player)
 
 		task.wait(0.5)
-		StartDialogue:FireClient(player, "Conversation", "start")
-
-
-		task.wait(10)
+		Common.StartDialogueAndWait(player, "Conversation", "start")
 		unseatPlayer(player)
 
 
@@ -130,11 +124,8 @@ function Progression.Start(player)
 			"go_home",
 		})
 		ProximityPrompt.Enabled = true
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_home",
-		})
+		Common.WaitForTasks(player, {"go_home"})
+
 
 		Progression.Unload()
 		SceneManager.Transition(player)
