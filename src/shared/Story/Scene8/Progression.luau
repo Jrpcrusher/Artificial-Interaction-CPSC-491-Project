@@ -2,44 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local DialogueRemotes = Remotes:WaitForChild("Dialogue")
 local StartDialogue = DialogueRemotes:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
-local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-end
-
-local function waitForChatWindowToClose(player, chatWindowClosed)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
-		if firingPlayer == player and chatWindowStatus == chatWindowClosed then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("chat window has been closed")
-end
 
 local Progression = {}
 
@@ -150,24 +119,17 @@ function Progression.Start(player)
 			"do_homework",
 		})
 
-		StartDialogue:FireClient(player, "Homework", "start")
-		waitForDialogueToEnd(player, "start")
+		Common.startDialogueAndWait(player, "Homework", "start")
 
-		ShowAIChatGui:FireClient(player) -- open AI for user
+		ShowAIChatGui:FireClient(player, "enable") -- open AI for user
 
 		TaskService.LoadTasks(player, 8, {
 			"talk_to_charlie",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_charlie",
-		})
+		Common.waitForTasksThenWaitForChatClose(player, {"talk_to_charlie"})
+		ShowAIChatGui:FireClient(player, "disable")
 
-		waitForChatWindowToClose(player, true)
 		StartDialogue:FireClient(player, "Charlie", "start")
-
-		ShowAIChatGui:FireClient(player) -- close AI for user
 
 		TaskService.LoadTasks(player, 8, {
 			"go_to_bed",
