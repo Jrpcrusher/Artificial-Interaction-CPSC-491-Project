@@ -3,6 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 
+local TransitionEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TransitionEvent")
+
 local SceneFolder = script.Parent.Parent.Parent.Story
 
 local SceneModules = table.freeze({
@@ -65,7 +67,8 @@ function SceneManager.Transition(player)
 
 	local ok, err = pcall(function()
 		player:SetAttribute("Scene", next_scene)
-
+		TransitionEvent:FireClient(player)
+		task.wait(1)
 		nextModule.Start(player)
 		GameSaveManager.Save(player.UserId, next_scene)
 		TranscriptManager.Save(player.UserId)
