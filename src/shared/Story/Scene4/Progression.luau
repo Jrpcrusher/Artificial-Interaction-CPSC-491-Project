@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
@@ -92,11 +93,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"drawing_question",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"drawing_question",
-		})
+		Common.WaitForTasks(player, {"drawing_question"})
         
         -- handles going upstairs task
         DialogueTrigger2.Touched:Connect(function(hit) -- Handle when dialogue Trigger 2 hit
@@ -115,11 +112,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"go_upstairs",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_upstairs",
-		})
+		Common.WaitForTasks(player, {"go_upstairs"})
 
 
         -- phase 2: listening in
@@ -139,11 +132,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"listen_to_conversation",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"listen_to_conversation",
-		})
+		Common.WaitForTasks(player, {"listen_to_conversation"})
 
         -- Remove collision on room door
 		local TDW = workspace
@@ -179,11 +168,8 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"backpack_on_chair",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"backpack_on_chair",
-		})
+		Common.WaitForTasks(player, {"backpack_on_chair"})
+
 
         for _, descendant in ipairs(TDW:GetDescendants()) do
             if descendant:IsA("BasePart") then
@@ -209,11 +195,8 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"rest",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"rest",
-		})
+		Common.WaitForTasks(player, {"rest"})
+
 
         Progression.Unload()
         SceneManager.Transition(player)
