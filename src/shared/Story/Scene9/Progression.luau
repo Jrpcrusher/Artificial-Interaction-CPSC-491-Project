@@ -11,7 +11,6 @@ local Glass = SceneObjects:WaitForChild("Glass")
 local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 
 local Progression = {}
