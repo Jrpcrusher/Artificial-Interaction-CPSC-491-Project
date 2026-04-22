@@ -10,9 +10,6 @@ local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local InteractionHandler = {}
 
--- local FINAL_DOOR_TASK_ID = "go_to_door"
--- don't need this since i also have go_to_school door
-
 local function getCurrentSceneNumber(player)
 	return player:GetAttribute("Scene") or 1
 end
@@ -38,7 +35,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 	local sceneNumber = getCurrentSceneNumber(player)
 
 	if interactionType == "NPC" then
-		print("Start dialogue with", interactable.Name)
 
 		local taskId = interactable:GetAttribute("TaskId")
 		completeTaskIfActive(player, taskId, sceneNumber)
@@ -51,7 +47,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 
 		StartDialogue:FireClient(player, npcId)
 	elseif interactionType == "Object" then
-		print("Object interaction:", interactable.Name)
 
 		local taskId = interactable:GetAttribute("TaskId")
 		local completed = completeTaskIfActive(player, taskId, sceneNumber)
@@ -62,7 +57,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 
 		interactable:Destroy()
 	elseif interactionType == "Door" then
-		print("Door interaction:", interactable.Name)
 
 		-- use door's own TaskId instead of global one
 		local doorTaskId = interactable:GetAttribute("TaskId")
@@ -72,7 +66,6 @@ function InteractionHandler.HandleInteraction(player, interactable)
 		end
 
 		if not TaskService.IsTaskActive(player, doorTaskId) then
-			print("There is more to do.")
 			return
 		end
 

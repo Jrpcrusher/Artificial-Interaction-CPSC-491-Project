@@ -37,8 +37,8 @@ local closeCredBtn = credFrame:WaitForChild("CloseCredits", 5)
 local warningFrame = background:WaitForChild("OverwriteWarningFrame", 5)
 local backgroundImage = background:WaitForChild("ImageLabel")
 local lightObj = backgroundImage:WaitForChild("LightGlow")
-local yesBtn = warningFrame:WaitForChild("YesButton", 5)
-local noBtn = warningFrame:WaitForChild("NoButton", 5)
+local yesBtn = warningFrame:WaitForChild("ButtonRow"):WaitForChild("YesButton", 5)
+local noBtn = warningFrame:WaitForChild("ButtonRow"):WaitForChild("NoButton", 5)
 local warningText = warningFrame:WaitForChild("WarningText", 5)
 
 local aiChatGui = playerGui:WaitForChild("AIChatGui", 5)
@@ -255,8 +255,6 @@ continueBtn.MouseButton1Click:Connect(function()
 	ButtonClick:Play()
 	if playerHasSaveData then
 		continueGame()
-	else
-		print("No save file detected. Click play.")
 	end
 end)
 

@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
@@ -39,16 +40,9 @@ local SceneObjects = workspace:WaitForChild("Scene4Objects")
     local Backpack = SceneObjects:WaitForChild("Backpack")
     Backpack.Position = Vector3.new(2.411, 39.424, -76.023)
 
-    local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
     DialogueTrigger1.Position = Vector3.new(35.4, 27.755, -38.229)
-
-    local DialogueTrigger2 = SceneObjects:WaitForChild("DialogueTrigger2")
     DialogueTrigger2.Position = Vector3.new(29.599, 40.755, -73.004)
-
-    local DialogueTrigger3 = SceneObjects:WaitForChild("DialogueTrigger3")
     DialogueTrigger3.Position = Vector3.new(23.8, 40.755, -59.781)
-
-    local DialogueTrigger4 = SceneObjects:WaitForChild("DialogueTrigger4")
     DialogueTrigger4.Position = Vector3.new(15.925, 41.955, -71)
 
     local HelperPartBackpack = SceneObjects:WaitForChild("HelperPartBackpack")
@@ -59,7 +53,6 @@ local SceneObjects = workspace:WaitForChild("Scene4Objects")
 end
 
 function Progression.Unload()
-    local SceneObjects = workspace:WaitForChild("Scene4Objects")
     for _, obj in ipairs(SceneObjects:GetChildren()) do
         if obj:IsA("Model") then
             obj:PivotTo(CFrame.new(0, -500, 0))
@@ -100,11 +93,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"drawing_question",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"drawing_question",
-		})
+		Common.WaitForTasks(player, {"drawing_question"})
         
         -- handles going upstairs task
         DialogueTrigger2.Touched:Connect(function(hit) -- Handle when dialogue Trigger 2 hit
@@ -123,11 +112,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"go_upstairs",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_upstairs",
-		})
+		Common.WaitForTasks(player, {"go_upstairs"})
 
 
         -- phase 2: listening in
@@ -147,11 +132,7 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"listen_to_conversation",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"listen_to_conversation",
-		})
+		Common.WaitForTasks(player, {"listen_to_conversation"})
 
         -- Remove collision on room door
 		local TDW = workspace
@@ -187,11 +168,8 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"backpack_on_chair",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"backpack_on_chair",
-		})
+		Common.WaitForTasks(player, {"backpack_on_chair"})
+
 
         for _, descendant in ipairs(TDW:GetDescendants()) do
             if descendant:IsA("BasePart") then
@@ -217,11 +195,8 @@ function Progression.Start(player)
         TaskService.LoadTasks(player, 4, {
 			"rest",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"rest",
-		})
+		Common.WaitForTasks(player, {"rest"})
+
 
         Progression.Unload()
         SceneManager.Transition(player)

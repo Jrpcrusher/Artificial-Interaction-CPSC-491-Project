@@ -26,13 +26,13 @@ function DialogueController.SetHandler(newHandler) -- Set where we are doing our
 	handler = newHandler
 end
 
-function DialogueController.Start(dialogueTree, startNode) -- Start the dialogue
+function DialogueController.Start(dialogueTree, dialogueName, startNode) -- Start the dialogue
 	if not handler then
 		warn("Dialogue handler has not been set yet.")
 		return
 	end
 
-	handler:Start(dialogueTree, startNode or "start")
+	handler:Start(dialogueTree, dialogueName, startNode or "start")
 end
 
 function DialogueController.StartByNpc(player, npcId, startNode)
@@ -50,7 +50,7 @@ function DialogueController.StartByNpc(player, npcId, startNode)
 		return
 	end
 
-	DialogueController.Start(entry.tree, startNode or entry.defaultStartNode or "start") -- Start the dialogue
+	DialogueController.Start(entry.tree, npcId, startNode or entry.defaultStartNode or "start") -- Start the dialogue
 end
 
 function DialogueController.Stop()

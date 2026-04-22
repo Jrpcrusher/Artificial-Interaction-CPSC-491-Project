@@ -97,7 +97,7 @@ function DialogueHandler:_showNode(nodeName) -- Function that shows the nodes as
 	self:_typewrite(node)
 end
 
-function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off the dialogue gui
+function DialogueHandler:Start(dialogueTree, dialogueName, startNode)
 	if self.isActive then
 		return
 	end
@@ -118,19 +118,23 @@ function DialogueHandler:Start(dialogueTree, startNode) -- Function to kick off 
 		warn("Start node not found:", initialNode)
 		return
 	end
-	self.startNode = startNode or "start"
+
+	self.dialogueName = dialogueName
+	self.startNode = initialNode
 	self.currentTree = dialogueTree
+
 	GuiMouseManager.OpenGui()
 	GuiMovementManager.Lock()
 	self:_showNode(initialNode)
 end
 
-function DialogueHandler:Stop() -- Stop the GUI
+function DialogueHandler:Stop()
 	if not self.isActive then
 		return
 	end
 
 	self.isActive = false
+	self.dialogueName = nil
 	self.startNode = nil
 	self.currentTree = nil
 	self.currentNode = nil
@@ -201,10 +205,10 @@ function DialogueHandler:_connectDialogueClick()
 		if self.canAdvanceLinear and node.next then
 			self:_showNode(node.next)
 		elseif self.isFinalNode then
-			local finishedStartNode  = self.startNode
-			print("CLIENT firing FinishDialogue", finishedStartNode)
+			local finishedDialogue = self.dialogueName
+			local finishedStartNode = self.startNode
 			self:Stop()
-			FinishDialogue:FireServer(finishedStartNode)
+			FinishDialogue:FireServer(finishedDialogue, finishedStartNode)
 		end
 	end)
 end
@@ -238,8 +242,10 @@ function DialogueHandler:_typewrite(node) -- Function that enables a typewriting
 		end
 		label.MaxVisibleGraphemes = i
 
-		sound.PlaybackSpeed = pitch
-		sound:Play()
+		if i % 3 == 0 then
+			sound.PlaybackSpeed = pitch
+			sound:Play()
+		end
 		task.wait(0.02)
 	end
 
@@ -261,7 +267,6 @@ function DialogueHandler:_chooseTalker(character)
 	elseif character == "You" then
 		return FemaleSound, 1
 	else
-		print("other dialogue sound")
 		return MaleSound, 1
 	end
 end

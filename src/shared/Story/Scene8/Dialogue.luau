@@ -198,18 +198,6 @@ Scene8.Charlie = {
 	},
 }
 
-Scene8.Bed = {
-	start = {
-		speaker = "You",
-		text = "I went to bed that night, feeling satisfied. Maybe this AI could solve more of my problems. Perhaps nothing needed to be so bad anymore.",
-		next = "dialogue2",
-	},
-	dialogue2 = {
-		speaker = "You",
-		text = "Tomorrow will be another long day.",
-	},
-}
-
 Scene8.Registry = {
 	Player = {
 		tree = Scene8.Player,
@@ -225,10 +213,6 @@ Scene8.Registry = {
 	},
 	Charlie = {
 		tree = Scene8.Charlie,
-		defaultStartNode = "start",
-	},
-	Bed = {
-		tree = Scene8.Bed,
 		defaultStartNode = "start",
 	},
 }

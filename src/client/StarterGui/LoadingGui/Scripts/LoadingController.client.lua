@@ -6,7 +6,7 @@ local MainFrame = LoadingGui.Frame
 local MainMenu = script.Parent.Parent.Parent.MainMenuGui
 
 local Text = MainFrame.TextLabel
-local LoadingBar = MainFrame.LoadingBar
+local LoadingBar = MainFrame.LoadingBarOutline.LoadingBar
 local Phone = MainFrame.Phone
 local JrpGfxImage = MainFrame.JrpGfxImage
 

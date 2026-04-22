@@ -1,31 +1,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
+
 
 local SceneObjects = workspace:WaitForChild("Scene11Objects")
 local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
 
-local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
-
 local Progression = {}
 
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("dialogue finished")
-end
 
 function Progression.Load()
 
@@ -71,34 +55,23 @@ function Progression.Start(player)
 			if hit:IsDescendantOf(currentCharacter) then
 				connection:Disconnect()
 				TaskService.CompleteTask(player, 11, "talk_to_parents")
-				StartDialogue:FireClient(player, "Player", "scene11discussion")
 				DialogueTrigger1:Destroy()
 			end
 		end)
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_parents",
-		})
+		Common.WaitForTasks(player, {"talk_to_parents"})
+		Common.StartDialogueAndWait(player, "Player", "scene11discussion")
 
-		waitForDialogueToEnd(player, "scene11discussion")
 		-- TODO add phone ringing here
 		task.wait(2)
-		StartDialogue:FireClient(player, "Dad", "phoneCall")
-		waitForDialogueToEnd(player, "phoneCall")
+		Common.StartDialogueAndWait(player, "Dad", "phoneCall")
 		-- TODO phone ringing stops, dad answers phone
 		task.wait(5)
-		StartDialogue:FireClient(player, "Dad", "scene11Fight")
-		waitForDialogueToEnd(player, "scene11Fight")
+		Common.StartDialogueAndWait(player, "Dad", "scene11Fight")
 
 		TaskService.LoadTasks(player, 11, {
 			"go_to_room",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_room",
-		})
+		Common.WaitForTasks(player, {"go_to_room"})
 
 		Progression.Unload()
 		SceneManager.Transition(player)

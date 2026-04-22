@@ -8,35 +8,36 @@ local EndingCardFinished = Ending:WaitForChild("EndingCardFinished")
 local ShowEndingTraits = Ending:WaitForChild("ShowEndingTraits")
 
 local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
+local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
 
 local Progression = {}
 
 local function triggerEndingForPlayer(player)
-	print("Server: firing ending card to", player.Name)
 	ShowEndingCard:FireClient(player)
 end
 
 local function showTraitsCard(player)
 	local traits = TraitStore.Get(player.UserId) or {}
-	print("Server: showing traits to", player.Name, #traits)
 	ShowEndingTraits:FireClient(player, traits)
 end
 
 function Progression.Start(player)
 	local character = player.Character or player.CharacterAdded:Wait()
-		local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene16Spawn")
-		character = player.Character or player.CharacterAdded:Wait()
-		local root = character:FindFirstChild("HumanoidRootPart")
+	local spawnPart = workspace:WaitForChild("Spawns"):WaitForChild("Scene16Spawn")
+	local root = character:FindFirstChild("HumanoidRootPart")
 
-		if root and spawnPart then
-			root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
-		end
+	if root and spawnPart then
+		root.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
+	end
+
 	local connection
 	connection = EndingCardFinished.OnServerEvent:Connect(function(finishedPlayer)
-		print("Server: got EndingCardFinished from", finishedPlayer.Name)
-
 		if finishedPlayer == player then
 			connection:Disconnect()
+
+			local traits = TraitAnalyzer.ExtractTraits(player.UserId)
+			TraitStore.Set(player.UserId, traits)
+
 			showTraitsCard(player)
 		end
 	end)

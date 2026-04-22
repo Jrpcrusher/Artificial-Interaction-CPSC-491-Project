@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
@@ -9,44 +11,9 @@ local Glass = SceneObjects:WaitForChild("Glass")
 local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
-local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
 
 local Progression = {}
-
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("dialogue finished")
-end
-
-local function waitForChatWindowToClose(player, chatWindowClosed)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
-		if firingPlayer == player and chatWindowStatus == chatWindowClosed then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-	print("chat window has been closed")
-end
 
 function Progression.Load()
 	local Sister = SceneObjects:WaitForChild("Sister")
@@ -89,20 +56,14 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 9, {
 			"eat_food",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"eat_food",
-		})
+		Common.WaitForTasks(player, {"eat_food"})
+
 
 		TaskService.LoadTasks(player, 9, {
 			"talk_to_sister",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_sister",
-		})
+		Common.WaitForTasks(player, {"talk_to_sister"})
+
 
 		TaskService.LoadTasks(player, 9, {
 			"find_noise",
@@ -121,20 +82,13 @@ function Progression.Start(player)
 			if hit:IsDescendantOf(currentCharacter) then
 				connection:Disconnect()
 				TaskService.CompleteTask(player, 9, "find_noise")
-
-				StartDialogue:FireClient(player, "Player", "scene9Fight")
 				DialogueTrigger1:Destroy()
 			end
 		end)
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"find_noise",
-		})
+		Common.WaitForTasks(player, {"find_noise"})
 
-
-		waitForDialogueToEnd(player, "scene9Fight")
-		ShowAIChatGui:FireClient(player) -- shows AI Chat Gui
+		Common.StartDialogueAndWait(player, "Player", "scene9Fight")
+		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 
 		TaskService.LoadTasks(player, 9, {
 			"talk_to_charlie",
@@ -147,17 +101,15 @@ function Progression.Start(player)
 			"thank_charlie"
 		})
 
-		waitForChatWindowToClose(player, true)
+		Common.WaitForChatClose(player, {"talk_to_charlie", "thank_charlie"})
+		ShowAIChatGui:FireClient(player, "disable") -- shows AI Chat Gui
 		ShowAIChatGui:FireClient(player) -- close AI chat gui
 
 		TaskService.LoadTasks(player, 9, {
 			"go_to_door",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
+		Common.WaitForTasks(player, {"go_to_door"})
+
 
 		Progression.Unload()
 		SceneManager.Transition(player)

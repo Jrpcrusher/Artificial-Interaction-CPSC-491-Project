@@ -140,9 +140,6 @@ function Query.AskAI(player, message)
 		local loreSection = BuildLoreSection(player, message)
 		local behaviorSection = BuildBehaviorSection(player)
 		local systemPrompt = BASE_SYSTEM_PROMPT .. behaviorSection .. loreSection
-
-		print("Sending request to Hugging Face")
-
 		local response = HttpService:RequestAsync({
 			Url = "https://router.huggingface.co/v1/chat/completions",
 			Method = "POST",
@@ -164,9 +161,6 @@ function Query.AskAI(player, message)
 				},
 			}),
 		})
-
-		print("HTTP finished", response.StatusCode, response.Success)
-
 		if not response.Success then
 			warn("AI request failed:", response.StatusCode, response.Body)
 			return -1

@@ -50,11 +50,9 @@ local function playEndCard()
 end
 
 ShowEndCardEvent.OnClientEvent:Connect(function()
-	print("Client: received ShowEndCard")
 	EndingMusic:Play()
 	playEndCard()
 	task.wait(1)
 	EndingCard.Enabled = false
-	print("Client: firing EndingCardFinished")
 	EndingCardFinished:FireServer()
 end)
