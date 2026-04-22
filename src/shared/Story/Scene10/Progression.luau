@@ -1,47 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+
+local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
+
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
-local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
-local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
 
 local SceneObjects = workspace:WaitForChild("Scene10Objects")
 local Quiz = SceneObjects:WaitForChild("Quiz")
 local Teacher = SceneObjects:WaitForChild("Teacher")
-
-local function waitForDialogueToEnd(player, expectedStartNode)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = FinishDialogue.OnServerEvent:Connect(function(firingPlayer, finishedStartNode)
-		if firingPlayer == player and finishedStartNode == expectedStartNode then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-end
-
-local function waitForChatWindowToClose(player, chatWindowClosed)
-	local bindable = Instance.new("BindableEvent")
-	local connection
-
-	connection = ChatWindowIsClosed.OnServerEvent:Connect(function(firingPlayer, chatWindowStatus)
-		if firingPlayer == player and chatWindowStatus == chatWindowClosed then
-			connection:Disconnect()
-			bindable:Fire()
-		end
-	end)
-
-	bindable.Event:Wait()
-	bindable:Destroy()
-end
 
 local Progression = {}
 
@@ -103,7 +73,6 @@ function Progression.Start(player)
 			libraryCollisionPart.CanCollide = false
 			libraryCollisionPart.CanTouch = false
 			libraryCollisionPart.CanQuery = false
-			print("Library door collision disabled!")
 		else
 			warn("Library CollisionPart NOT found!")
 		end
@@ -120,7 +89,6 @@ function Progression.Start(player)
 			classroomCollisionPart.CanCollide = false
 			classroomCollisionPart.CanTouch = false
 			classroomCollisionPart.CanQuery = false
-			print("Classroom 102 collision disabled!")
 		else
 			warn("Classroom 102 CollisionPart NOT found!")
 		end
@@ -130,11 +98,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 10, {
 			"talk_to_friend",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_friend",
-		})
+		Common.WaitForTasks(player, {"talk_to_friend"})
 
 		TaskService.LoadTasks(player, 10, {
 			"sit_at_desk",
@@ -157,15 +121,11 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 10, {
 			"flip_quiz",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"flip_quiz",
-		})
+		Common.WaitForTasks(player, {"flip_quiz"})
 
 		-- Have the dialogue play for the quiz is hard
-		StartDialogue:FireClient(player, "Teacher", "teacherStart")
-		waitForDialogueToEnd(player, "teacherStart")
+		Common.StartDialogueAndWait(player, "Teacher", "teacherStart")
+
 		task.wait(1)
 		-- Animation of flipping the quiz
 		local goal = {
@@ -177,29 +137,23 @@ function Progression.Start(player)
 		animation.Completed:Wait()
 
 		-- Start the next length of dialogue
-		StartDialogue:FireClient(player, "Player", "start")
-		waitForDialogueToEnd(player, "start")
+		Common.StartDialogueAndWait(player, "Player", "start")
 
 		-- Now charlie comes in
-		ShowAIChatGui:FireClient(player) -- shows AI Chat Gui
+		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 		TaskService.LoadTasks(player, 10, {
 			"use_charlie_on_quiz",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"use_charlie_on_quiz",
-		})
-		waitForChatWindowToClose(player, true)
 
-		StartDialogue:FireClient(player, "Player", "relief")
-		waitForDialogueToEnd(player, "relief")
-		ShowAIChatGui:FireClient(player) -- close AI Chat Gui
+		Common.WaitForTasks(player, {"use_charlie_on_quiz"})
+		Common.WaitForChatClose(player, {"use_charlie_on_quiz"})
+		Common.StartDialogueAndWait(player, "Player", "relief")
+		ShowAIChatGui:FireClient(player, "disable") -- close AI Chat Gui
 
 		-- Now spawn the teacher
 		Teacher:PivotTo(CFrame.new(-244.317, 26.555, -33.934) * CFrame.Angles(0, math.rad(-30), 0))
-		StartDialogue:FireClient(player, "Teacher", "catchCheating")
-		waitForDialogueToEnd(player, "catchCheating")
+		Common.StartDialogueAndWait(player, "Teacher", "catchCheating")
+
 		Quiz:Destroy()
 		task.wait(3)
 		if humanoid then
@@ -210,11 +164,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 10, {
 			"go_to_door",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_door",
-		})
+		Common.WaitForTasks(player, {"go_to_door"})
 
 		Progression.Unload()
 		SceneManager.Transition(player)
