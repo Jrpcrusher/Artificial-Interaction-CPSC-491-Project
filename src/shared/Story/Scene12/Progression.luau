@@ -5,7 +5,6 @@ local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
-local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 
 local Progression = {}
@@ -39,7 +38,7 @@ function Progression.Start(player)
 		TaskService.ResetForScene(player, 12)
 		Common.StartDialogueAndWait(player, "Player", "start")
 
-		ShowAIChatGui:FireClient(player)
+		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 
 		TaskService.LoadTasks(player, 12, {
 			"talk_about_cheating_on_quiz",
@@ -66,7 +65,7 @@ function Progression.Start(player)
 
 		Common.StartDialogueAndWait(player, "Player", "task1monologue")
 
-		ShowAIChatGui:FireClient(player)
+		ShowAIChatGui:FireClient(player, "disable")
 
 		TaskService.LoadTasks(player, 12, {
 			"go_to_sleep",
