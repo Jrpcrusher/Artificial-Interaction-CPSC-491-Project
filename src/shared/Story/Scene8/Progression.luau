@@ -153,7 +153,7 @@ function Progression.Start(player)
 		StartDialogue:FireClient(player, "Homework", "start")
 		waitForDialogueToEnd(player, "start")
 
-		ShowAIChatGui:FireClient(player)
+		ShowAIChatGui:FireClient(player) -- open AI for user
 
 		TaskService.LoadTasks(player, 8, {
 			"talk_to_charlie",
@@ -165,8 +165,9 @@ function Progression.Start(player)
 		})
 
 		waitForChatWindowToClose(player, true)
-		ShowAIChatGui:FireClient(player)
 		StartDialogue:FireClient(player, "Charlie", "start")
+
+		ShowAIChatGui:FireClient(player) -- close AI for user
 
 		TaskService.LoadTasks(player, 8, {
 			"go_to_bed",
@@ -177,8 +178,6 @@ function Progression.Start(player)
 		until TaskService.AreTasksComplete(player, {
 			"go_to_bed",
 		})
-
-		StartDialogue:FireClient(player, "Bed", "start")
 
 		Progression.Unload()
 		SceneManager.Transition(player)
