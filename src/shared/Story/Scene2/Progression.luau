@@ -96,13 +96,18 @@ function Progression.Start(player)
 				TaskService.LoadTasks(player, 2, {
 					"grab_cereal",
 				})
-				Common.WaitForTasks(player, { "grab_cereal" })
+				repeat
+					task.wait()
+				until TaskService.AreTasksComplete(player, { "grab_cereal" })
+				breakfastComplete = true
 			-- Orange juice path = require toast
 			elseif TaskService.AreTasksComplete(player, { "grab_oj" }) then
 				TaskService.LoadTasks(player, 2, {
 					"grab_toast",
 				})
-				Common.WaitForTasks(player, { "grab_toast" })
+				repeat
+					task.wait()
+				until TaskService.AreTasksComplete(player, { "grab_toast" })
 
 				breakfastComplete = true
 			end
