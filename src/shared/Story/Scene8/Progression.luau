@@ -9,7 +9,6 @@ local DialogueRemotes = Remotes:WaitForChild("Dialogue")
 local StartDialogue = DialogueRemotes:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
 
-
 local Progression = {}
 
 function Progression.Load()
@@ -103,30 +102,21 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 8, {
 			"go_upstairs_to_room",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_upstairs_to_room",
-		})
+		Common.WaitForTasks(player, { "go_upstairs_to_room" })
 
 		TaskService.LoadTasks(player, 8, {
 			"do_homework",
 		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"do_homework",
-		})
+		Common.WaitForTasks(player, { "do_homework" })
 
-		Common.startDialogueAndWait(player, "Homework", "start")
+		Common.StartDialogueAndWait(player, "Homework", "start")
 
 		ShowAIChatGui:FireClient(player, "enable") -- open AI for user
 
 		TaskService.LoadTasks(player, 8, {
 			"talk_to_charlie",
 		})
-		Common.waitForTasksThenWaitForChatClose(player, {"talk_to_charlie"})
+		Common.WaitForChatClose(player, { "talk_to_charlie" })
 		ShowAIChatGui:FireClient(player, "disable")
 
 		StartDialogue:FireClient(player, "Charlie", "start")
@@ -134,12 +124,7 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 8, {
 			"go_to_bed",
 		})
-
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"go_to_bed",
-		})
+		Common.WaitForTasks(player, { "go_to_bed" })
 
 		Progression.Unload()
 		SceneManager.Transition(player)
