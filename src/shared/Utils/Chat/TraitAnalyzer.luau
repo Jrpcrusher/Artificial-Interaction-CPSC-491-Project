@@ -19,7 +19,6 @@ Your task:
 - Do NOT exceed 10 traits.
 - Each trait must be a short phrase (5-8 words).
 - Output ONLY a JSON array of strings. No commentary, no explanation.
-
 Example output:
 ["curious", "asks many questions", "emotionally reserved"]
 ]]
