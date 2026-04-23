@@ -1,6 +1,5 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
 local SoundService = game:GetService("SoundService")
 
 local TaskComplete = SoundService:WaitForChild("TaskComplete")
@@ -284,16 +283,6 @@ TaskUpdated.OnClientEvent:Connect(function(taskId, sceneNumber)
 
 	completedTaskIds[taskId] = true
 	refreshTaskUI()
-end)
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if input.KeyCode == Enum.KeyCode.J then
-		if isTaskMenuOpen() then
-			closeTaskMenu()
-		else
-			openTaskMenu()
-		end
-	end
 end)
 
 refreshTaskUI()
