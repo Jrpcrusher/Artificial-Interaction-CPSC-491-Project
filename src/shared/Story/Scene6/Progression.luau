@@ -77,6 +77,7 @@ function Progression.Start(player)
 		local DialogueTrigger1 = workspace.Scene6Objects:WaitForChild("DialogueTrigger1")
 		DialogueTrigger1.Touched:Connect(function(hit)
 			GlassBreak1:Play()
+			task.wait(0.5)
 			local currentCharacter = player.Character
 			if not currentCharacter then
 				return
