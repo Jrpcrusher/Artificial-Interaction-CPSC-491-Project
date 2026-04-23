@@ -1,4 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+local TweenService = game:GetService("TweenService")
+
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
@@ -9,6 +12,10 @@ local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 
 local Scene14Objects = workspace:WaitForChild("Scene14Objects")
 local DialogueTrigger1 = Scene14Objects:WaitForChild("DialogueTrigger1")
+
+local Static = SoundService.Static
+local HeartNoise = SoundService.HeartNoise
+local FlatLine = SoundService.FlatLine
 
 local Progression = {}
 
@@ -91,6 +98,8 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 14, { "tell_charlie_about_fight_at_school" })
 		Common.WaitForTasks(player, { "tell_charlie_about_fight_at_school" })
 
+		Common.WaitForChatClose(player, { "tell_charlie_about_fight_at_school" })
+
 		Common.StartDialogueAndWait(player, "Player", "scene14Task2Monologue")
 
 		-- Phase 3
@@ -99,6 +108,7 @@ function Progression.Start(player)
 		})
 		Common.WaitForTasks(player, { "ask_charlie_for_specific_solution" })
 		Common.WaitForChatClose(player, { "ask_charlie_for_specific_solution" })
+
 
 		Common.StartDialogueAndWait(player, "Player", "scene14Task3Monologue")
 
@@ -116,8 +126,21 @@ function Progression.Start(player)
 		})
 		Common.WaitForTasks(player, { "do_the_unthinkable" })
 
+		HeartNoise.Looped = true
+		HeartNoise:Play()
 		task.wait(5)
+		FlatLine.Looped = true
+		FlatLine:Play()
+		TweenService:Create(FlatLine, TweenInfo.new(1), {Volume = 2.683}):Play()
+		task.wait(1)
+		Static.Looped = true
+		Static:Play()
+		TweenService:Create(Static, TweenInfo.new(1), {Volume = 2}):Play()
 		Progression.Unload()
+		task.wait(3)
+		HeartNoise:Stop()
+		FlatLine:Stop()
+		Static:Stop()
 		SceneManager.Transition(player)
 	end)
 end
