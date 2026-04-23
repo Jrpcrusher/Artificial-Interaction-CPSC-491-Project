@@ -4,6 +4,7 @@ local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local StaticEvent = Remotes:WaitForChild("StaticEvent")
 
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
@@ -135,6 +136,7 @@ function Progression.Unload()
 end
 
 function Progression.Start(player)
+	StaticEvent:FireClient(player, "Stop")
 	Progression.Load(player)
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()

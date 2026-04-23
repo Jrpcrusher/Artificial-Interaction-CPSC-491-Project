@@ -7,6 +7,7 @@ local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local StaticEvent = Remotes:WaitForChild("StaticEvent")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 
@@ -191,6 +192,7 @@ function Progression.Start(player)
 
 		HeartNoise.Looped = true
 		HeartNoise:Play()
+		StaticEvent:FireClient(player, "Start")
 		task.wait(5)
 		FlatLine.Looped = true
 		FlatLine:Play()
