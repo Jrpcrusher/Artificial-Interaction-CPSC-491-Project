@@ -16,6 +16,68 @@ local DialogueTrigger1 = Scene14Objects:WaitForChild("DialogueTrigger1")
 local Static = SoundService.Static
 local HeartNoise = SoundService.HeartNoise
 local FlatLine = SoundService.FlatLine
+local Crash1 = SoundService.Crash1
+local Crash2 = SoundService.Crash2
+local Crash3 = SoundService.Crash3
+local Crash4 = SoundService.Crash4
+local Crash5 = SoundService.Crash5
+local Crash6 = SoundService.Crash6
+local Crash7 = SoundService.Crash7
+local Scream = SoundService.Scream
+local Cry = SoundService.Cry
+
+
+local crashSounds = {
+	Crash1,
+	Crash2,
+	Crash3,
+	Crash4,
+	Crash5,
+	Crash6,
+	Crash7,
+}
+
+local running = false
+local function playCrashLoop()
+	while running do
+		for _, sound in ipairs(crashSounds) do
+			if not running then
+				break
+			end
+
+			sound:Play()
+			sound.Ended:Wait()
+		end
+	end
+end
+
+local function startSoundDesign()
+	if running then
+		return
+	end
+	running = true
+
+	-- scream starts first
+	Scream:Play()
+
+	-- crying starts right after and loops
+	Cry.Looped = true
+	Cry:Play()
+
+	-- crashes play one by one, then restart from Crash1
+	task.spawn(playCrashLoop)
+end
+
+local function stopSoundDesign()
+	running = false
+
+	Scream:Stop()
+	Cry:Stop()
+
+	for _, sound in ipairs(crashSounds) do
+		sound:Stop()
+	end
+end
 
 local Progression = {}
 
@@ -79,6 +141,7 @@ function Progression.Start(player)
 			"go_to_room",
 		})
 		Common.WaitForTasks(player, { "go_to_room" })
+		startSoundDesign()
 
 		-- Phase 1
 
@@ -113,7 +176,7 @@ function Progression.Start(player)
 		Common.StartDialogueAndWait(player, "Player", "scene14Task3Monologue")
 
 		ShowAIChatGui:FireClient(player, "disable")
-
+		stopSoundDesign()
 		-- Phase 4
 		TaskService.LoadTasks(player, 14, {
 			"grab_computer_cord",
