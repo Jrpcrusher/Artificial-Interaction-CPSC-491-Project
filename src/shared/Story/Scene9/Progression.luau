@@ -90,16 +90,11 @@ function Progression.Start(player)
 		Common.StartDialogueAndWait(player, "Player", "scene9Fight")
 		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 
-		TaskService.LoadTasks(player, 9, {
-			"talk_to_charlie",
-			"thank_charlie"
-		})
-		repeat
-			task.wait()
-		until TaskService.AreTasksComplete(player, {
-			"talk_to_charlie",
-			"thank_charlie"
-		})
+		TaskService.LoadTasks(player, 9, {"talk_to_charlie"})
+		Common.WaitForTasks(player, {"talk_to_charlie"})
+
+		TaskService.LoadTasks(player, 9, {"thank_charlie"})
+		Common.WaitForTasks(player, {"thank_charlie",})
 
 		Common.WaitForChatClose(player, {"talk_to_charlie", "thank_charlie"})
 		ShowAIChatGui:FireClient(player, "disable") -- shows AI Chat Gui

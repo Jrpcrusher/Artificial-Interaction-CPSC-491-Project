@@ -41,28 +41,21 @@ function Progression.Start(player)
 
 		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 
-		TaskService.LoadTasks(player, 12, {
-			"talk_about_cheating_on_quiz",
-			"talk_about_mom_dad_arguing",
-			"talk_about_sis",
-			"talk_about_panic_attacks",
-			"talk_about_judgement_at_school",
-		})
-		Common.WaitForTasks(player, {
-					"talk_about_cheating_on_quiz",
-					"talk_about_mom_dad_arguing",
-					"talk_about_sis",
-					"talk_about_panic_attacks",
-					"talk_about_judgement_at_school",
-				})
+		TaskService.LoadTasks(player, 12, { "talk_about_cheating_on_quiz" })
+		Common.WaitForTasks(player, { "talk_about_cheating_on_quiz" })
 
-		Common.WaitForChatClose(player, {
-					"talk_about_cheating_on_quiz",
-					"talk_about_mom_dad_arguing",
-					"talk_about_sis",
-					"talk_about_panic_attacks",
-					"talk_about_judgement_at_school"
-				})
+		TaskService.LoadTasks(player, 12, { "talk_about_mom_dad_arguing" })
+		Common.WaitForTasks(player, { "talk_about_mom_dad_arguing" })
+
+		TaskService.LoadTasks(player, 12, { "talk_about_sis" })
+		Common.WaitForTasks(player, { "talk_about_sis" })
+
+		TaskService.LoadTasks(player, 12, { "talk_about_panic_attacks" })
+		Common.WaitForTasks(player, { "talk_about_panic_attacks" })
+
+		TaskService.LoadTasks(player, 12, { "talk_about_judgement_at_school" })
+		Common.WaitForTasks(player, { "talk_about_judgement_at_school" })
+
 
 		Common.StartDialogueAndWait(player, "Player", "task1monologue")
 
