@@ -17,7 +17,7 @@ local function knockPlayerOver(player)
 
 	-- Disable movement
 	humanoid.WalkSpeed = 0
-	humanoid.JumpPower = 0
+	humanoid.JumpHeight = 0
 	humanoid.AutoRotate = false
 
 	-- Put the humanoid into a physics state
@@ -54,7 +54,7 @@ local function restorePlayerFromKnocked(player)
 
 	-- Step 5: Restore movement
 	humanoid.WalkSpeed = 16
-	humanoid.JumpPower = 50
+	humanoid.JumpHeight = 7.2
 	humanoid.AutoRotate = true
 end
 

@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
@@ -16,6 +17,8 @@ local FriendinLibrary = SceneObjects:WaitForChild("FriendinLibrary")
 local ProximityPrompt = workspace.Map.School.Doors.Doorway_Library.InsideDoor.ProxPart.ProximityPrompt
 local ProximityPrompt2 = workspace.Map.School.Doors.Doorway_Classroom102.InsideDoor.ProxPart.ProximityPrompt
 local Bully = SceneObjects:WaitForChild("Bully")
+
+local Bell = SoundService:WaitForChild("Bell")
 
 local Progression = {}
 
@@ -122,7 +125,7 @@ function Progression.Start(player)
 			"put_stuff_away",
 		})
 		Common.WaitForTasks(player, {"put_stuff_away"})
-
+		Bell:Play()
 		hideBully()
 		
 

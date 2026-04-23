@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
@@ -8,6 +9,8 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
 local ProximityPrompt = workspace.Map.School.Doors.Doorway_Classroom102.InsideDoor.ProxPart.ProximityPrompt
+
+local Bell = SoundService:WaitForChild("Bell")
 
 local Progression = {}
 
@@ -33,7 +36,6 @@ local function seatPlayer(player)
 
 	humanoid.Sit = true
 	humanoid.WalkSpeed = 0
-	humanoid.JumpPower = 0
 	humanoid.JumpHeight = 0
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
 end
@@ -51,7 +53,6 @@ local function unseatPlayer(player)
 
 	humanoid.Sit = false
 	humanoid.WalkSpeed = 16
-	humanoid.JumpPower = 50
 	humanoid.JumpHeight = 7.2
 	humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 end
@@ -91,7 +92,7 @@ end
 
 function Progression.Start(player)
 	Progression.Load()
-
+	Common.PlayRain()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
@@ -105,6 +106,7 @@ function Progression.Start(player)
 		TaskService.ResetForScene(player, 7)
 
 		task.wait(1)
+		Bell:Play()
 		StartDialogue:FireClient(player, "Player", "start")
 
 		TaskService.LoadTasks(player, 7, {

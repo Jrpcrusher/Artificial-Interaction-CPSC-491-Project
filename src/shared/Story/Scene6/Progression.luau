@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
@@ -6,6 +7,8 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
+
+local GlassBreak1 = SoundService:WaitForChild("GlassBreak1")
 
 local Progression = {}
 
@@ -53,7 +56,7 @@ end
 
 function Progression.Start(player)
 	Progression.Load()
-
+	Common.PlayRain()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 
@@ -72,25 +75,14 @@ function Progression.Start(player)
 
 		-- Enable crash trigger after opening dialogue has had time to finish
 		local DialogueTrigger1 = workspace.Scene6Objects:WaitForChild("DialogueTrigger1")
-		local triggered = false
-		local triggerEnabled = false
-
-		task.delay(4, function()
-			triggerEnabled = true
-		end)
-
 		DialogueTrigger1.Touched:Connect(function(hit)
-			if triggered or not triggerEnabled then
-				return
-			end
-
+			GlassBreak1:Play()
+			task.wait(0.5)
 			local currentCharacter = player.Character
 			if not currentCharacter then
 				return
 			end
-
 			if hit:IsDescendantOf(currentCharacter) then
-				triggered = true
 				StartDialogue:FireClient(player, "Crash", "start")
 				DialogueTrigger1:Destroy()
 			end

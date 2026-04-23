@@ -8,7 +8,7 @@ local GuiMovementManager = {}
 local lockCount = 0
 
 local DEFAULT_WALK_SPEED = 16
-local DEFAULT_JUMP_POWER = 50
+local DEFAULT_JUMP_HEIGHT = 7.2
 
 local function applyState()
 	local character = player.Character
@@ -23,11 +23,11 @@ local function applyState()
 
 	if lockCount > 0 then
 		humanoid.WalkSpeed = 0
-		humanoid.JumpPower = 0
+		humanoid.JumpHeight = 7.2
 		humanoid.AutoRotate = false
 	else
 		humanoid.WalkSpeed = DEFAULT_WALK_SPEED
-		humanoid.JumpPower = DEFAULT_JUMP_POWER
+		humanoid.JumpHeight = DEFAULT_JUMP_HEIGHT
 		humanoid.AutoRotate = true
 	end
 end

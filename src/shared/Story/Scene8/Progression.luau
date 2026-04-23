@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+local TweenService = game:GetService("TweenService")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
@@ -8,6 +10,8 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local DialogueRemotes = Remotes:WaitForChild("Dialogue")
 local StartDialogue = DialogueRemotes:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes:WaitForChild("Chat"):WaitForChild("ShowAIChatGui")
+
+local Rain = SoundService:WaitForChild("Rain")
 
 local Progression = {}
 
@@ -42,6 +46,10 @@ end
 
 function Progression.Start(player)
 	Progression.Load()
+	if Rain.Playing then
+		Rain:Stop()
+		TweenService:Create(Rain, TweenInfo.new(3), {Volume = 0}):Play()
+	end
 
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()

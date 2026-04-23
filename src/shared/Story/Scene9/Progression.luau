@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
@@ -12,6 +13,8 @@ local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
+
+local GlassBreak2 = SoundService:WaitForChild("GlassBreak2")
 
 local Progression = {}
 
@@ -63,7 +66,8 @@ function Progression.Start(player)
 			"talk_to_sister",
 		})
 		Common.WaitForTasks(player, {"talk_to_sister"})
-
+		task.wait(1)
+		GlassBreak2:Play()
 
 		TaskService.LoadTasks(player, 9, {
 			"find_noise",

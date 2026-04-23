@@ -1,14 +1,84 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
+local TweenService = game:GetService("TweenService")
+
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local StaticEvent = Remotes:WaitForChild("StaticEvent")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 
 local Scene14Objects = workspace:WaitForChild("Scene14Objects")
 local DialogueTrigger1 = Scene14Objects:WaitForChild("DialogueTrigger1")
+
+local Static = SoundService.Static
+local HeartNoise = SoundService.HeartNoise
+local FlatLine = SoundService.FlatLine
+local Crash1 = SoundService.Crash1
+local Crash2 = SoundService.Crash2
+local Crash3 = SoundService.Crash3
+local Crash4 = SoundService.Crash4
+local Crash5 = SoundService.Crash5
+local Crash6 = SoundService.Crash6
+local Crash7 = SoundService.Crash7
+local Scream = SoundService.Scream
+local Cry = SoundService.Cry
+
+
+local crashSounds = {
+	Crash1,
+	Crash2,
+	Crash3,
+	Crash4,
+	Crash5,
+	Crash6,
+	Crash7,
+}
+
+local running = false
+local function playCrashLoop()
+	while running do
+		for _, sound in ipairs(crashSounds) do
+			if not running then
+				break
+			end
+
+			sound:Play()
+			sound.Ended:Wait()
+		end
+	end
+end
+
+local function startSoundDesign()
+	if running then
+		return
+	end
+	running = true
+
+	-- scream starts first
+	Scream:Play()
+
+	-- crying starts right after and loops
+	Cry.Looped = true
+	Cry:Play()
+
+	-- crashes play one by one, then restart from Crash1
+	task.spawn(playCrashLoop)
+end
+
+local function stopSoundDesign()
+	running = false
+
+	Scream:Stop()
+	Cry:Stop()
+
+	for _, sound in ipairs(crashSounds) do
+		sound:Stop()
+	end
+end
 
 local Progression = {}
 
@@ -72,6 +142,7 @@ function Progression.Start(player)
 			"go_to_room",
 		})
 		Common.WaitForTasks(player, { "go_to_room" })
+		startSoundDesign()
 
 		-- Phase 1
 
@@ -91,6 +162,8 @@ function Progression.Start(player)
 		TaskService.LoadTasks(player, 14, { "tell_charlie_about_fight_at_school" })
 		Common.WaitForTasks(player, { "tell_charlie_about_fight_at_school" })
 
+		Common.WaitForChatClose(player, { "tell_charlie_about_fight_at_school" })
+
 		Common.StartDialogueAndWait(player, "Player", "scene14Task2Monologue")
 
 		-- Phase 3
@@ -100,10 +173,11 @@ function Progression.Start(player)
 		Common.WaitForTasks(player, { "ask_charlie_for_specific_solution" })
 		Common.WaitForChatClose(player, { "ask_charlie_for_specific_solution" })
 
+
 		Common.StartDialogueAndWait(player, "Player", "scene14Task3Monologue")
 
 		ShowAIChatGui:FireClient(player, "disable")
-
+		stopSoundDesign()
 		-- Phase 4
 		TaskService.LoadTasks(player, 14, {
 			"grab_computer_cord",
@@ -116,8 +190,22 @@ function Progression.Start(player)
 		})
 		Common.WaitForTasks(player, { "do_the_unthinkable" })
 
+		HeartNoise.Looped = true
+		HeartNoise:Play()
+		StaticEvent:FireClient(player, "Start")
 		task.wait(5)
+		FlatLine.Looped = true
+		FlatLine:Play()
+		TweenService:Create(FlatLine, TweenInfo.new(1), {Volume = 2.683}):Play()
+		task.wait(1)
+		Static.Looped = true
+		Static:Play()
+		TweenService:Create(Static, TweenInfo.new(1), {Volume = 2}):Play()
 		Progression.Unload()
+		task.wait(3)
+		HeartNoise:Stop()
+		FlatLine:Stop()
+		Static:Stop()
 		SceneManager.Transition(player)
 	end)
 end

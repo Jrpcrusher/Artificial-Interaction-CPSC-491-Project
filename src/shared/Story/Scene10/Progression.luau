@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 
 local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
@@ -12,6 +13,8 @@ local ShowAIChatGui = Remotes.Chat:WaitForChild("ShowAIChatGui")
 local SceneObjects = workspace:WaitForChild("Scene10Objects")
 local Quiz = SceneObjects:WaitForChild("Quiz")
 local Teacher = SceneObjects:WaitForChild("Teacher")
+
+local Bell = SoundService:WaitForChild("Bell")
 
 local Progression = {}
 
@@ -99,23 +102,22 @@ function Progression.Start(player)
 			"talk_to_friend",
 		})
 		Common.WaitForTasks(player, {"talk_to_friend"})
-
 		TaskService.LoadTasks(player, 10, {
 			"sit_at_desk",
 		})
 		repeat
 			task.wait()
 		until isSitting(player)
-
+		Bell:Play()
 		
 		-- Spawn teacher when sitting
 
 		Teacher:PivotTo(CFrame.new(-257.735, 26.555, -20.429) * CFrame.Angles(0, math.rad(-20), 0))
 
-		local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+		local humanoid = character:WaitForChild("Humanoid")
 		if humanoid then
 			humanoid.WalkSpeed = 0
-			humanoid.JumpPower = 0
+			humanoid.JumpHeight = 0
 		end
 
 		TaskService.LoadTasks(player, 10, {
@@ -158,7 +160,7 @@ function Progression.Start(player)
 		task.wait(3)
 		if humanoid then
 			humanoid.WalkSpeed = 16
-			humanoid.JumpPower = 50
+			humanoid.JumpHeight = 7.2
 		end
 
 		TaskService.LoadTasks(player, 10, {
