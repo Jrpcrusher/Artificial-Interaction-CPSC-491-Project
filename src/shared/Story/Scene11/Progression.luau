@@ -9,7 +9,7 @@ local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 local SceneObjects = workspace:WaitForChild("Scene11Objects")
 local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
 
-local Phone = SoundService:WaitForChild("Phone")
+local PhoneRing = SoundService:WaitForChild("Phone")
 
 local Progression = {}
 
@@ -63,11 +63,11 @@ function Progression.Start(player)
 		end)
 		Common.WaitForTasks(player, {"talk_to_parents"})
 		Common.StartDialogueAndWait(player, "Player", "scene11discussion")
-		Phone.Looped = true
-		Phone:Play()
+		PhoneRing.Looped = true
+		PhoneRing:Play()
 		task.wait(3)
 		Common.StartDialogueAndWait(player, "Dad", "phoneCall")
-		Phone:Stop()
+		PhoneRing:Stop()
 		task.wait(5)
 		Common.StartDialogueAndWait(player, "Dad", "scene11Fight")
 
