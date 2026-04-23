@@ -36,7 +36,7 @@ local closeCredBtn = credFrame:WaitForChild("CloseCredits", 5)
 
 local warningFrame = background:WaitForChild("OverwriteWarningFrame", 5)
 local backgroundImage = background:WaitForChild("ImageLabel")
-local lightObj = backgroundImage:WaitForChild("LightGlow")
+local lightObject = backgroundImage:WaitForChild("LightGlow")
 local yesBtn = warningFrame:WaitForChild("ButtonRow"):WaitForChild("YesButton", 5)
 local noBtn = warningFrame:WaitForChild("ButtonRow"):WaitForChild("NoButton", 5)
 local warningText = warningFrame:WaitForChild("WarningText", 5)
@@ -206,7 +206,7 @@ local function flickerLight(lightObj)
 	end)
 end
 
-flickerLight(lightObj)
+flickerLight(lightObject)
 
 for _, child in pairs(menuGui:GetDescendants()) do -- Do animation of the buttons
 	if child:IsA("TextButton") then
