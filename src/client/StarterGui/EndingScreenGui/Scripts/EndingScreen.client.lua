@@ -2,7 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local EndingFolder = Remotes:WaitForChild("Ending")
 local ShowEndingTraits = EndingFolder:WaitForChild("ShowEndingTraits")
-local ReturnToMainMenu = EndingFolder:WaitForChild("ReturnToMainMenu")
 
 --[[Required]]
 local GuiMouseManager = require(ReplicatedStorage.Shared.Systems.Input.GuiMouseManager)
@@ -53,11 +52,5 @@ end)
 returnButton.MouseButton1Click:Connect(function()
     gui.Enabled = false
     GuiMouseManager.CloseGui()
-    
-    -- Put unlock here to hopefully prevent any movement issues when starting a new game from the main menu
-    -- Movement is frozen once entering the main menu anyways
     GuiMovementManager.Unlock()
-
-    -- Tell the server the player wants to return to the main menu
-    ReturnToMainMenu:FireServer()
 end)

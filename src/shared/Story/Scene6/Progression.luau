@@ -67,6 +67,7 @@ function Progression.Start(player)
 		TaskService.ResetForScene(player, 6)
 
 		-- ONLY start one opening dialogue tree
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "start")
 
 		-- Enable crash trigger after opening dialogue has had time to finish

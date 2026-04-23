@@ -33,44 +33,24 @@ local SaveDataRequest = getOrCreateRemote(SaveFolder, "SaveDataRequest")
 local SaveDataResponse = getOrCreateRemote(SaveFolder, "SaveDataResponse")
 local StartNewGame = getOrCreateRemote(SaveFolder, "StartNewGame")
 local ContinueGame = getOrCreateRemote(SaveFolder, "ContinueGame")
-
-local StoryCompleted = getOrCreateRemote(EndingFolder, "StoryCompleted")
-local ShowEndingTraits = getOrCreateRemote(EndingFolder, "ShowEndingTraits")
 local ReturnToMenu = getOrCreateRemote(EndingFolder, "ReturnToMenu")
 local ShowMainMenu = getOrCreateRemote(EndingFolder, "ShowMainMenu")
 
-local TaskUpdated = getOrCreateRemote(TaskFolder, "TaskUpdated")
-local StartDialogue = getOrCreateRemote(DialogueFolder, "StartDialogue")
-local FinishDialogue = getOrCreateRemote(DialogueFolder, "FinishDialogue")
-local ChatbotRequest = getOrCreateRemote(ChatFolder, "ChatbotRequest")
-local ChatbotResponse = getOrCreateRemote(ChatFolder, "ChatbotResponse")
-local ShowAIChatGui = getOrCreateRemote(ChatFolder, "ShowAIChatGui")
-local ChatWindowIsClosed = getOrCreateRemote(ChatFolder, "ChatWindowIsClosed")
+getOrCreateRemote(EndingFolder, "StoryCompleted")
+getOrCreateRemote(EndingFolder, "ShowEndingTraits")
+getOrCreateRemote(TaskFolder, "TaskUpdated")
+getOrCreateRemote(DialogueFolder, "StartDialogue")
+getOrCreateRemote(DialogueFolder, "FinishDialogue")
+getOrCreateRemote(ChatFolder, "ChatbotRequest")
+getOrCreateRemote(ChatFolder, "ChatbotResponse")
+getOrCreateRemote(ChatFolder, "ShowAIChatGui")
+getOrCreateRemote(ChatFolder, "ChatWindowIsClosed")
 
 local TranscriptManager = require(ReplicatedStorage.Shared.Utils.Transcript.TranscriptManager)
 local InteractionHandler = require(ReplicatedStorage.Shared.Utils.Interaction.InteractionHandler)
 local GameSaveManager = require(ReplicatedStorage.Shared.Systems.Save.GameSaveManager)
 local Scenes = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
-local TraitAnalyzer = require(ReplicatedStorage.Shared.Utils.Chat.TraitAnalyzer)
 local TraitStore = require(ReplicatedStorage.Shared.Utils.Chat.TraitStore)
-
-local function handleStoryCompletion(player)
-	local userId = player.UserId
-
-	-- If player already has stored traits (e.g., loading into an already-completed game)
-	local storedTraits = TraitStore.Get(userId)
-	if storedTraits and #storedTraits > 0 then
-		ShowEndingTraits:FireClient(player, storedTraits)
-		return
-	end
-
-	-- Extract traits once at the end of the story
-	local traits = TraitAnalyzer.ExtractTraits(userId)
-	TraitStore.Set(userId, traits)
-
-	-- Fire the ending UI to the client
-	ShowEndingTraits:FireClient(player, traits)
-end
 
 -- Helper function to find door ancestor named "Door"
 
@@ -185,10 +165,6 @@ ContinueGame.OnServerEvent:Connect(function(player) -- On continue game, load th
 	if not ok then
 		warn("Failed to load continue scene:", msg)
 	end
-end)
-
-StoryCompleted.OnServerEvent:Connect(function(player)
-	handleStoryCompletion(player)
 end)
 
 ReturnToMenu.OnServerEvent:Connect(function(player)

@@ -53,6 +53,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 14)
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "scene14IntroMonologue")
 
 		DialogueTrigger1.Touched:Connect(function(hit)
@@ -84,20 +85,11 @@ function Progression.Start(player)
 		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui
 
 		-- Phase 2
-		TaskService.LoadTasks(player, 14, {
-			"tell_charlie_mom_being_destructive",
-			"tell_charlie_about_fight_at_school",
-		})
-		Common.WaitForTasks(player, {
-			"tell_charlie_mom_being_destructive",
-			"tell_charlie_about_fight_at_school",
-		})
+		TaskService.LoadTasks(player, 14, { "tell_charlie_mom_being_destructive" })
+		Common.WaitForTasks(player, { "tell_charlie_mom_being_destructive" })
 
-		-- Trigger to wait for player to close AI chat gui with 'X' GUI button or 'Q' key.
-		Common.WaitForChatClose(player, {
-			"tell_charlie_mom_being_destructive",
-			"tell_charlie_about_fight_at_school",
-		})
+		TaskService.LoadTasks(player, 14, { "tell_charlie_about_fight_at_school" })
+		Common.WaitForTasks(player, { "tell_charlie_about_fight_at_school" })
 
 		Common.StartDialogueAndWait(player, "Player", "scene14Task2Monologue")
 
