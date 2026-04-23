@@ -92,7 +92,7 @@ end
 
 function Progression.Start(player)
 	Progression.Load()
-
+	Common.PlayRain()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 

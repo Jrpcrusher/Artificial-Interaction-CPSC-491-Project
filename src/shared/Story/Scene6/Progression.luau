@@ -7,6 +7,7 @@ local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local StartDialogue = Remotes.Dialogue:WaitForChild("StartDialogue")
 
+
 local Progression = {}
 
 function Progression.Load()
@@ -53,7 +54,7 @@ end
 
 function Progression.Start(player)
 	Progression.Load()
-
+	Common.PlayRain()
 	task.spawn(function()
 		local character = player.Character or player.CharacterAdded:Wait()
 

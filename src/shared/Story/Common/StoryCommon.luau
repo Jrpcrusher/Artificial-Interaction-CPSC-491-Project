@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local SoundService = game:GetService("SoundService")
 
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 
@@ -8,6 +10,8 @@ local FinishDialogue = Remotes.Dialogue:WaitForChild("FinishDialogue")
 local ChatWindowIsClosed = Remotes.Chat:WaitForChild("ChatWindowIsClosed")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
+
+local Rain = SoundService:WaitForChild("Rain")
 
 local StoryCommon = {}
 
@@ -72,6 +76,21 @@ function StoryCommon.WaitForChatClose(player, taskIds)
 		connection:Disconnect()
 	end
 	bindable:Destroy()
+end
+
+function StoryCommon.PlayRain()
+	Rain.Volume = 0
+	Rain.Looped = true
+
+	local eq = Instance.new("EqualizerSoundEffect")
+	eq.HighGain = -40
+	eq.MidGain = -10
+	eq.LowGain = 0
+	eq.Parent = Rain
+
+	Rain:Play()
+
+	TweenService:Create(Rain, TweenInfo.new(3), {Volume = 0.5}):Play()
 end
 
 return StoryCommon
