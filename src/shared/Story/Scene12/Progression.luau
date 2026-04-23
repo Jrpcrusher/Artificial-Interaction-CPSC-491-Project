@@ -36,6 +36,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 12)
+		task.wait(1)
 		Common.StartDialogueAndWait(player, "Player", "start")
 
 		ShowAIChatGui:FireClient(player, "enable") -- shows AI Chat Gui

@@ -12,11 +12,12 @@ local TRAIT_SYSTEM_PROMPT = [[
 You are an analysis subsystem. Your job is to read a transcript of messages between a player and an in-game AI companion.
 
 Your task:
-- Extract personality traits, behavioral patterns, emotional tendencies, or conversational habits.
-- Base traits ONLY on what is observable in the transcript.
+- Extract personality traits, behavioral patterns, emotional tendencies, or conversational habits, you can describe their interests as well.
+- When extracting personality traits, such as if they actually gave full sentence questions, or just rapidly went through prompts by typing 1 word or letter.
+- Base traits ONLY on what is observable in the transcript and sent by the player, do not analyze your own messages.
 - Do NOT invent lore, diagnoses, or backstory.
 - Do NOT exceed 10 traits.
-- Each trait must be a short phrase (3-8 words).
+- Each trait must be a short phrase (5-8 words).
 - Output ONLY a JSON array of strings. No commentary, no explanation.
 
 Example output:

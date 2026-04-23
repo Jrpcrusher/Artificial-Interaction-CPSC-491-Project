@@ -104,7 +104,7 @@ function Progression.Start(player)
 
 		TaskService.ResetForScene(player, 7)
 
-
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "start")
 
 		TaskService.LoadTasks(player, 7, {

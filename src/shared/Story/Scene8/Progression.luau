@@ -53,7 +53,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 8)
-
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "start")
 
 		local DialogueTrigger2 = workspace.Scene8Objects:WaitForChild("DialogueTrigger2")

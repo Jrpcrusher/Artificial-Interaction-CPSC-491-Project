@@ -53,6 +53,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 1)
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "start")
 
 		-- Phase 1

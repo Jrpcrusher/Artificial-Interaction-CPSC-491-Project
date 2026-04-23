@@ -53,6 +53,7 @@ function Progression.Start(player)
 		end
 
 		TaskService.ResetForScene(player, 14)
+		task.wait(1)
 		StartDialogue:FireClient(player, "Player", "scene14IntroMonologue")
 
 		DialogueTrigger1.Touched:Connect(function(hit)
