@@ -1,4 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local TaskService = require(ReplicatedStorage.Shared.Systems.Tasks.TaskService)
 local SceneManager = require(ReplicatedStorage.Shared.Systems.Scene.SceneManager)
@@ -7,6 +8,8 @@ local Common = require(ReplicatedStorage.Shared.Story.Common.StoryCommon)
 
 local SceneObjects = workspace:WaitForChild("Scene11Objects")
 local DialogueTrigger1 = SceneObjects:WaitForChild("DialogueTrigger1")
+
+local Phone = SoundService:WaitForChild("Phone")
 
 local Progression = {}
 
@@ -60,11 +63,11 @@ function Progression.Start(player)
 		end)
 		Common.WaitForTasks(player, {"talk_to_parents"})
 		Common.StartDialogueAndWait(player, "Player", "scene11discussion")
-
-		-- TODO add phone ringing here
-		task.wait(2)
+		Phone.Looped = true
+		Phone:Play()
+		task.wait(3)
 		Common.StartDialogueAndWait(player, "Dad", "phoneCall")
-		-- TODO phone ringing stops, dad answers phone
+		Phone:Stop()
 		task.wait(5)
 		Common.StartDialogueAndWait(player, "Dad", "scene11Fight")
 
