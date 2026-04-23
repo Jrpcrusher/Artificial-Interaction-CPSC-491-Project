@@ -105,6 +105,6 @@ function fadeInJrpGfxLogo()
 	LoadingGui.Enabled = false
 end
 
-playLoadingScreen()
-fadeLoadingScreen()
-fadeInJrpGfxLogo()
+-- playLoadingScreen()
+-- fadeLoadingScreen()
+-- fadeInJrpGfxLogo()

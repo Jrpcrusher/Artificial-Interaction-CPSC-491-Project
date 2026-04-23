@@ -149,7 +149,7 @@ local function transitionToGame()
 	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
 	if humanoid then
 		humanoid.WalkSpeed = 16
-		humanoid.JumpPower = 0
+		humanoid.JumpHeight = 0
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, true)
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
 	end
@@ -296,7 +296,7 @@ ShowMainMenu.OnClientEvent:Connect(function()
         local humanoid = player.Character:FindFirstChild("Humanoid")
         if humanoid then
             humanoid.WalkSpeed = 0
-            humanoid.JumpPower = 0
+            humanoid.JumpHeight = 0
             humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
             humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
         end
