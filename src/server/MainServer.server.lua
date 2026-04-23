@@ -139,10 +139,9 @@ end
 
 SaveDataRequest.OnServerEvent:Connect(function(player) -- RemoteEvent savedatarequest fired
 	local userId = player.UserId
-	-- local loadedScene = GameSaveManager.Load(userId)
-	local loadedScene = 10
+	local loadedScene = GameSaveManager.Load(userId)
 	local hasSave = loadedScene ~= nil
-	local sceneNumber = loadedScene or 10
+	local sceneNumber = loadedScene or 1
 
 	SaveDataResponse:FireClient(player, hasSave, sceneNumber)
 end)
@@ -155,7 +154,7 @@ StartNewGame.OnServerEvent:Connect(function(player) -- On start new game, delete
 	TranscriptManager.Create(userId)
 	TraitStore.Clear(userId)
 
-	local ok, msg = Scenes.LoadSceneNumber(player, 10)
+	local ok, msg = Scenes.LoadSceneNumber(player, 1)
 	if not ok then
 		warn("Failed to load new game scene:", msg)
 	end
